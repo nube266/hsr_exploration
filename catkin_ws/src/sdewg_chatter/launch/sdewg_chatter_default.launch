@@ -1,0 +1,4 @@
+<launch>
+  <node name="sdewg_talker" pkg="sdewg_chatter" type="sdewg_talker" output="screen" />
+  <node name="sdewg_listener" pkg="sdewg_chatter" type="sdewg_listener" output="screen" />
+</launch>
