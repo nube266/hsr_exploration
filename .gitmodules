@@ -1,0 +1,4 @@
+[submodule "HSR.wiki"]
+	path = gitlab-wiki
+	url = git@gitlab.com:hsr-sde-wg/HSR.wiki.git
+	branch = master

@@ -2,7 +2,7 @@
 
 # HSR Software Development Environment (SDE)
 
-The project aims to develop a common platform for research and development on the Toyota [Human Support Robot (HSR)](https://hsr.io/) within the Toyota HSR Community. The effort is driven by the HSR [Software Development Environment Working Group (SDE-WG)](https://hsr-sde-wg.gitlab.io/) and officially endorsed by Toyota. The ultimate goal is to provide a robust, scalable, virtualized, and documented environment to all internal and external contributors.
+The project aims to develop a common platform for research and development on the Toyota Human Support Robot (HSR) within the [Toyota HSR Community](https://hsr.io/). The effort is driven by the [HSR Software Development Environment Working Group (SDE-WG)](https://hsr-sde-wg.gitlab.io/) and officially endorsed by [Toyota Motor Corporation (TMC)](https://global.toyota/en/). The ultimate goal is to provide a robust, scalable, virtualized, and documented environment to all internal and external contributors.
 
 **Content:**
 
