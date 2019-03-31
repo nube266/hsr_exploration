@@ -1,0 +1,14 @@
+LICENSE
+
+This software and associated documentation files (the "Software") is licensed under the Toyota HSR Community terms and conditions:
+* Basic software license: https://docs.hsr.io/manual_en/_downloads/HSR-Software-License-for-Basic-Software.pdf
+* Community software license A: https://docs.hsr.io/manual_en/_downloads/HSR-Software-License-for-Community-Software-A.pdf
+* Community software license B: https://docs.hsr.io/manual_en/_downloads/HSR-Software-License-for-Community-Software-B.pdf
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The above copyright notice shall be included in all copies or substantial portions of the Software.
+
+Copyright (c) 2016 Toyota Motor Corporation (TMC).
+Copyright (c) 2019 HSR Software Development Environment Working Group (SDE-WG).
+All rights reserved.

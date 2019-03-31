@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>sdewg_chatter</name>
+  <version>1.0.0</version>
+  <description>The 'sdewg_chatter' package allows the quick test of a ROS setup by providing two simple nodes that communicate to each other.</description>
+
+  <maintainer email="lotfi.elhafi@gmail.com">Lotfi El Hafi</maintainer>
+  <license>Toyota HSR Community</license>
+  <url type="website">https://hsr-sde-wg.gitlab.io/</url>
+  <author email="lotfi.elhafi@gmail.com">Lotfi El Hafi</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+</package>
