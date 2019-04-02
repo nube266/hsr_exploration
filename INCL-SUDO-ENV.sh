@@ -3,6 +3,7 @@
 DOCKER_VERSION="5:18.09.3~3-0~ubuntu-$(lsb_release -cs)"
 DOCKER_COMPOSE_VERSION="1.23.2"
 NVIDIA_DOCKER_VERSION="2.0.3+docker18.09.3-1"
+NVIDIA_RUNTIME_VERSION="2.0.0+docker18.09.3-1"
 
 ################################################################################
 
@@ -111,7 +112,8 @@ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.li
 
 # Install 'nvidia-docker2' version 'NVIDIA_DOCKER_VERSION' and reload the Docker daemon configuration.
 apt-get update && apt-get install -y \
-  nvidia-docker2=${NVIDIA_DOCKER_VERSION}
+  nvidia-docker2=${NVIDIA_DOCKER_VERSION} \
+  nvidia-container-runtime=${NVIDIA_RUNTIME_VERSION}
 
 # Test the Nvidia Docker installation after making sure that the service is running and that Nvidia drivers are found.
 service docker stop
