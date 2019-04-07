@@ -2,7 +2,7 @@
 
 ################################################################################
 
-# Pin the versions of the core tools and packages for improved stabiliy.
+# Pin the versions of the core tools and packages for improved stability.
 DOCKER_VERSION="5:18.09.3~3-0~ubuntu-$(lsb_release -cs)"
 DOCKER_COMPOSE_VERSION="1.23.2"
 NVIDIA_DOCKER_VERSION="2.0.3+docker18.09.3-1"

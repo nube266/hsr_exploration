@@ -4,11 +4,11 @@
 
 ################################################################################
 
-# Pin the versions of the core tools and packages for improved stabiliy.
-ARG NVIDIA_CUDAGL_VERSION=10.1-devel-ubuntu16.04
-ARG NVIDIA_CUDNN_VERSION=7.5.0.56-1+cuda10.1
-ARG ROS_DESKTOP_VERSION=1.3.2-0xenial-20190320-232543-0800
-ARG ROS_TMC_VERSION=0.10.0-1.xenial.20181129.0043.+0000
+# Pin the versions of the core tools and packages using global arguments for improved stability.
+ARG nvidia_cudagl_version=10.1-devel-ubuntu16.04
+ARG nvidia_cudnn_version=7.5.0.56-1+cuda10.1
+ARG ros_desktop_version=1.3.2-0xenial-20190320-232543-0800
+ARG ros_tmc_version=0.10.0-1.xenial.20181129.0043.+0000
 
 ################################################################################
 
@@ -18,10 +18,12 @@ ARG ROS_TMC_VERSION=0.10.0-1.xenial.20181129.0043.+0000
 # https://github.com/NVIDIA/libglvnd
 
 # Pull the official parent image from the Nvidia repository.
-FROM nvidia/cudagl:${NVIDIA_CUDAGL_VERSION}
+FROM nvidia/cudagl:${nvidia_cudagl_version}
 
 # Install the Nvidia cuDNN library missing in the parent image.
 # https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/10.1/devel/cudnn7/Dockerfile
+ARG nvidia_cudnn_version
+ENV NVIDIA_CUDNN_VERSION=${nvidia_cudnn_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	libcudnn7=${NVIDIA_CUDNN_VERSION} \
 	libcudnn7-dev=${NVIDIA_CUDNN_VERSION} \
@@ -40,6 +42,8 @@ RUN echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources
 RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 
 # Install 'ros-kinetic-desktop-full' packages (including ROS, Rqt, Rviz, and more).
+ARG ros_desktop_version
+ENV ROS_DESKTOP_VERSION=${ros_desktop_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-kinetic-desktop-full=${ROS_DESKTOP_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
@@ -73,6 +77,8 @@ RUN wget https://hsr-user:jD3k4G2e@packages.hsr.io/tmc.key -P /tmp \
 	&& rm /tmp/gazebo.key
 
 # Install the Toyota Motor Corporation ROS packages (including the simulator).
+ARG ros_tmc_version
+ENV ROS_TMC_VERSION=${ros_tmc_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-kinetic-tmc-desktop-full=${ROS_TMC_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
