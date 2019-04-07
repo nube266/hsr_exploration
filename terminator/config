@@ -1,0 +1,434 @@
+[global_config]
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      profile = default
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+  [[hsr-v1]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_window = True
+      maximised = True
+      order = 0
+      parent = ""
+      title = HSR
+      type = Window
+    [[[child1]]]
+      order = 0
+      parent = child0
+      ratio = 0.5
+      type = HPaned
+    [[[child11]]]
+      order = 1
+      parent = child1
+      ratio = 0.5
+      type = VPaned
+    [[[child12]]]
+      order = 0
+      parent = child11
+      ratio = 0.5
+      type = HPaned
+    [[[child15]]]
+      order = 1
+      parent = child11
+      ratio = 0.5
+      type = HPaned
+    [[[child16]]]
+      order = 0
+      parent = child15
+      ratio = 0.5
+      type = VPaned
+    [[[child17]]]
+      order = 0
+      parent = child16
+      ratio = 0.5
+      type = VPaned
+    [[[child2]]]
+      order = 0
+      parent = child1
+      ratio = 0.5
+      type = VPaned
+    [[[child20]]]
+      order = 1
+      parent = child16
+      ratio = 0.5
+      type = VPaned
+    [[[child23]]]
+      order = 1
+      parent = child15
+      ratio = 0.5
+      type = VPaned
+    [[[child24]]]
+      order = 0
+      parent = child23
+      ratio = 0.5
+      type = VPaned
+    [[[child27]]]
+      order = 1
+      parent = child23
+      ratio = 0.5
+      type = VPaned
+    [[[child4]]]
+      order = 1
+      parent = child2
+      ratio = 0.5
+      type = HPaned
+    [[[child5]]]
+      order = 0
+      parent = child4
+      ratio = 0.5
+      type = VPaned
+    [[[child8]]]
+      order = 1
+      parent = child4
+      ratio = 0.5
+      type = VPaned
+    [[[terminal10]]] #7
+      order = 1
+      parent = child8
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal13]]] #2
+      order = 0
+      parent = child12
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal14]]] #3
+      order = 1
+      parent = child12
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal18]]] #8
+      order = 0
+      parent = child17
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal19]]] #9
+      order = 1
+      parent = child17
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal21]]] #10
+      order = 0
+      parent = child20
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal22]]] #11
+      order = 1
+      parent = child20
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal25]]] #12
+      order = 0
+      parent = child24
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal26]]] #13
+      order = 1
+      parent = child24
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal28]]] #14
+      order = 0
+      parent = child27
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal29]]] #15
+      order = 1
+      parent = child27
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal3]]] #1
+      order = 0
+      parent = child2
+      profile = default
+      type = Terminal
+    [[[terminal6]]] #4
+      order = 0
+      parent = child5
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal7]]] #5
+      order = 1
+      parent = child5
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal9]]] #6
+      order = 0
+      parent = child8
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+  [[hsr-v2]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_window = True
+      maximised = True
+      order = 0
+      parent = ""
+      title = HSR
+      type = Window
+    [[[child1]]]
+      order = 0
+      parent = child0
+      ratio = 0.5
+      type = HPaned
+    [[[child10]]]
+      order = 1
+      parent = child6
+      ratio = 0.5
+      type = VPaned
+    [[[child13]]]
+      order = 1
+      parent = child1
+      ratio = 0.5
+      type = VPaned
+    [[[child14]]]
+      order = 0
+      parent = child13
+      ratio = 0.5
+      type = HPaned
+    [[[child15]]]
+      order = 0
+      parent = child14
+      ratio = 0.5
+      type = VPaned
+    [[[child16]]]
+      order = 0
+      parent = child15
+      ratio = 0.5
+      type = VPaned
+    [[[child19]]]
+      order = 1
+      parent = child15
+      ratio = 0.5
+      type = VPaned
+    [[[child2]]]
+      order = 0
+      parent = child1
+      ratio = 0.5
+      type = VPaned
+    [[[child22]]]
+      order = 1
+      parent = child14
+      ratio = 0.5
+      type = VPaned
+    [[[child23]]]
+      order = 0
+      parent = child22
+      ratio = 0.5
+      type = VPaned
+    [[[child26]]]
+      order = 1
+      parent = child22
+      ratio = 0.5
+      type = VPaned
+    [[[child29]]]
+      order = 1
+      parent = child13
+      ratio = 0.5
+      type = HPaned
+    [[[child3]]]
+      order = 0
+      parent = child2
+      ratio = 0.5
+      type = HPaned
+    [[[child30]]]
+      order = 0
+      parent = child29
+      ratio = 0.5
+      type = VPaned
+    [[[child31]]]
+      order = 0
+      parent = child30
+      ratio = 0.5
+      type = VPaned
+    [[[child34]]]
+      order = 1
+      parent = child30
+      ratio = 0.5
+      type = VPaned
+    [[[child37]]]
+      order = 1
+      parent = child29
+      ratio = 0.5
+      type = VPaned
+    [[[child38]]]
+      order = 0
+      parent = child37
+      ratio = 0.5
+      type = VPaned
+    [[[child41]]]
+      order = 1
+      parent = child37
+      ratio = 0.5
+      type = VPaned
+    [[[child6]]]
+      order = 1
+      parent = child2
+      ratio = 0.5
+      type = HPaned
+    [[[child7]]]
+      order = 0
+      parent = child6
+      ratio = 0.5
+      type = VPaned
+    [[[terminal11]]] #5
+      order = 0
+      parent = child10
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal12]]] #6
+      order = 1
+      parent = child10
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal17]]] #7
+      order = 0
+      parent = child16
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal18]]] #8
+      order = 1
+      parent = child16
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal20]]] #9
+      order = 0
+      parent = child19
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal21]]] #10
+      order = 1
+      parent = child19
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal24]]] #11
+      order = 0
+      parent = child23
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal25]]] #12
+      order = 1
+      parent = child23
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal27]]] #13
+      order = 0
+      parent = child26
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal28]]] #14
+      order = 1
+      parent = child26
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal32]]] #15
+      order = 0
+      parent = child31
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal33]]] #16
+      order = 1
+      parent = child31
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal35]]] #17
+      order = 0
+      parent = child34
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal36]]] #18
+      order = 1
+      parent = child34
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal39]]] #19
+      order = 0
+      parent = child38
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal4]]] #1
+      order = 0
+      parent = child3
+      profile = default
+      type = Terminal
+    [[[terminal40]]] #20
+      order = 1
+      parent = child38
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal42]]] #21
+      order = 0
+      parent = child41
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal43]]] #22
+      order = 1
+      parent = child41
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal5]]] #2
+      order = 1
+      parent = child3
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal8]]] #3
+      order = 0
+      parent = child7
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+    [[[terminal9]]] #4
+      order = 1
+      parent = child7
+      profile = default
+      type = Terminal
+      command = sh ./RUN-DOCKER-CONTAINER.sh
+[plugins]
+[profiles]
+  [[default]]
+    background_color = "#300a24"
+    background_darkness = 0.9
+    background_image = None
+    background_type = transparent
+    font = Ubuntu Mono 12
+    foreground_color = "#ffffff"
+    use_system_font = False
