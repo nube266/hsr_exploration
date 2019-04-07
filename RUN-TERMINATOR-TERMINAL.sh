@@ -14,5 +14,5 @@ cp ./terminator/config ~/.config/terminator/config
 ################################################################################
 
 # Run Terminator with the project's custom layout.
-terminator -m -l hsr-v2 &
+terminator -m -l hsr-term-11 &
 sleep 1

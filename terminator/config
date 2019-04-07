@@ -9,7 +9,7 @@
     [[[window0]]]
       parent = ""
       type = Window
-  [[hsr-v1]]
+  [[hsr-term-11]]
     [[[child0]]]
       fullscreen = False
       last_active_window = True
@@ -99,13 +99,13 @@
       parent = child12
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} tmc_gazebo_default.launch
     [[[terminal14]]] #3
       order = 1
       parent = child12
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_chatter_default.launch
     [[[terminal18]]] #8
       order = 0
       parent = child17
@@ -177,7 +177,7 @@
       profile = default
       type = Terminal
       command = sh ./RUN-DOCKER-CONTAINER.sh
-  [[hsr-v2]]
+  [[hsr-term-22]]
     [[[child0]]]
       fullscreen = False
       last_active_window = True
