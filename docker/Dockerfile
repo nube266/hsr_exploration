@@ -4,19 +4,28 @@
 
 ################################################################################
 
+# Pin the versions of the core tools and packages for improved stabiliy.
+ARG NVIDIA_CUDAGL_VERSION=10.1-devel-ubuntu16.04
+ARG NVIDIA_CUDNN_VERSION=7.5.0.56-1+cuda10.1
+ARG ROS_DESKTOP_VERSION=1.3.2-0xenial-20190320-232543-0800
+ARG ROS_TMC_VERSION=0.10.0-1.xenial.20181129.0043.+0000
+
+################################################################################
+
 # Install Ubuntu Xenial Xerus (16.04) with CUDA and OpenGL support.
 # https://hub.docker.com/r/nvidia/cudagl/
 # https://gitlab.com/nvidia/cudagl
 # https://github.com/NVIDIA/libglvnd
 
 # Pull the official parent image from the Nvidia repository.
-FROM nvidia/cudagl:9.0-devel-ubuntu16.04
+FROM nvidia/cudagl:${NVIDIA_CUDAGL_VERSION}
 
 # Install the Nvidia cuDNN library missing in the parent image.
-# https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/9.0/devel/cudnn7/Dockerfile
+# https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/10.1/devel/cudnn7/Dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	libcudnn7=7.1.3.16-1+cuda9.0 \
-	libcudnn7-dev=7.1.3.16-1+cuda9.0 \
+	libcudnn7=${NVIDIA_CUDNN_VERSION} \
+	libcudnn7-dev=${NVIDIA_CUDNN_VERSION} \
+	&& apt-mark hold libcudnn7 \
 	&& rm -rf /var/lib/apt/lists/*
 
 ################################################################################
@@ -32,7 +41,7 @@ RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C3
 
 # Install 'ros-kinetic-desktop-full' packages (including ROS, Rqt, Rviz, and more).
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	ros-kinetic-desktop-full \
+	ros-kinetic-desktop-full=${ROS_DESKTOP_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Initialize 'rosdep'.
@@ -41,7 +50,7 @@ RUN rosdep init
 
 ################################################################################
 
-# Install the Toyota ROS packages.
+# Install the Toyota Motor Corporation ROS packages.
 # https://docs.hsr.io/manual_en/howto/pc_install.html
 
 # Install the missing required tools.
@@ -63,9 +72,9 @@ RUN wget https://hsr-user:jD3k4G2e@packages.hsr.io/tmc.key -P /tmp \
 	&& apt-key add /tmp/gazebo.key \
 	&& rm /tmp/gazebo.key
 
-# Install the Toyota ROS packages (including the simulator).
+# Install the Toyota Motor Corporation ROS packages (including the simulator).
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	ros-kinetic-tmc-desktop-full \
+	ros-kinetic-tmc-desktop-full=${ROS_TMC_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
 
 ################################################################################
