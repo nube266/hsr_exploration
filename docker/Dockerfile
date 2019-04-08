@@ -85,6 +85,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ################################################################################
 
+# Install dependencies for the 'flexbe_app' ROS package.
+# https://github.com/FlexBE/flexbe_app
+
+# Gather the dependencies from the Ubuntu repositories.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libcanberra-gtk3-module \
+	&& rm -rf /var/lib/apt/lists/*
+
+################################################################################
+
 # Install common optional packages/tools.
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	git \
