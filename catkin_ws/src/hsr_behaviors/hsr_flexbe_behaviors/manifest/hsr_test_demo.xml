@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR test DEMO">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_test_demo_sm" class="HSRtestDEMOSM" />
+	<tagstring>demo</tagstring>
+	<author>LEH</author>
+	<date>Tue Apr 09 2019</date>
+	<description>
+		A description
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

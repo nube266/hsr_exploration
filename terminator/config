@@ -99,7 +99,7 @@
       parent = child12
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} tmc_gazebo_default.launch
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_gazebo_default.launch
     [[[terminal14]]] #3
       order = 1
       parent = child12
@@ -164,7 +164,7 @@
       parent = child5
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} flexbe_app_default.launch
     [[[terminal7]]] #5
       order = 1
       parent = child5
