@@ -43,7 +43,7 @@
     </include>
     <!-- FlexBE launch file. -->
     <!-- http://wiki.ros.org/flexbe/Tutorials/Running%20Behaviors%20Without%20Operator -->
-    <arg name="behavior_name" default="run flexbe behavior automatically"/>
+    <arg name="behavior_name" default="HSR Move Base Around"/>#
     <include file="$(find flexbe_onboard)/launch/behavior_onboard.launch"/>
     <node name="behavior_launcher" pkg="flexbe_widget" type="be_launcher" output="screen" args="-b '$(arg behavior_name)'"/>
   </group>

@@ -1,21 +1,22 @@
-<package>
+<?xml version="1.0"?>
+<package format="2">
   <name>hsr_flexbe_states</name>
   <version>1.0.0</version>
   <description>
-     hsr_flexbe_states provides a collection of custom states.
-     Feel free to add new states.
+    The 'hsr_flexbe_states' packages provides a collection of custom states for the Toyota HSR robot.
   </description>
-  <maintainer email="todo@todo.com">TODO</maintainer>
-  <license>BSD</license>
+
+  <maintainer email="lotfi.elhafi@gmail.com">Lotfi El Hafi</maintainer>
+  <license>Toyota HSR Community</license>
+  <url type="website">https://hsr-sde-wg.gitlab.io/</url>
+  <author email="lotfi.elhafi@gmail.com">Lotfi El Hafi</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>rospy</run_depend>
-
   <run_depend>flexbe_core</run_depend>
 
   <export>
     <flexbe_states />
   </export>
-
 </package>

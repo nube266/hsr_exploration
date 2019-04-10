@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Move Base Around">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_move_base_around_sm" class="HSRMoveBaseAroundSM" />
+	<tagstring>hsr</tagstring>
+	<author>Lotfi El Hafi</author>
+	<date>Tue Apr 09 2019</date>
+	<description>
+		A simple behavior to move the HSR around predifined waypoints. The main purpose of this behavior is to quickly test the development environment and the tools integration.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
