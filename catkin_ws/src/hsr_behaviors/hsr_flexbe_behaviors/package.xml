@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>hsr_flexbe_behaviors</name>
+  <version>1.0.0</version>
+  <description>
+    The 'hsr_flexbe_behaviors' packages references all implemented behaviors for the Toyota HSR robot.
+  </description>
+
+  <maintainer email="lotfi.elhafi@gmail.com">Lotfi El Hafi</maintainer>
+  <license>Toyota HSR Community</license>
+  <url type="website">https://hsr-sde-wg.gitlab.io/</url>
+  <author email="lotfi.elhafi@gmail.com">Lotfi El Hafi</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>rospy</run_depend>
+
+  <export>
+    <flexbe_behaviors />
+  </export>
+</package>

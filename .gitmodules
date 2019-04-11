@@ -2,3 +2,15 @@
 	path = gitlab-wiki
 	url = git@gitlab.com:hsr-sde-wg/HSR.wiki.git
 	branch = master
+[submodule "flexbe_behavior_engine"]
+	path = catkin_ws/src/flexbe_behavior_engine
+	url = https://github.com/team-vigir/flexbe_behavior_engine.git
+	branch = master
+[submodule "flexbe_app"]
+	path = catkin_ws/src/flexbe_app
+	url = https://github.com/FlexBE/flexbe_app.git
+	branch = master
+[submodule "generic_flexbe_states"]
+	path = catkin_ws/src/flexbe_generic_states
+	url = https://github.com/FlexBE/generic_flexbe_states.git
+	branch = master

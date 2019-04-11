@@ -93,19 +93,19 @@
       parent = child8
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_chatter_default.launch
     [[[terminal13]]] #2
       order = 0
       parent = child12
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} tmc_gazebo_default.launch
+      command = sh ./RUN-DOCKER-CONTAINER.sh
     [[[terminal14]]] #3
       order = 1
       parent = child12
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_chatter_default.launch
+      command = sh ./RUN-DOCKER-CONTAINER.sh
     [[[terminal18]]] #8
       order = 0
       parent = child17
@@ -164,19 +164,19 @@
       parent = child5
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_gazebo_default.launch
     [[[terminal7]]] #5
       order = 1
       parent = child5
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} tmc_gazebo_default.launch
     [[[terminal9]]] #6
       order = 0
       parent = child8
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} flexbe_app_default.launch
   [[hsr-term-22]]
     [[[child0]]]
       fullscreen = False
