@@ -54,6 +54,7 @@ case "$2" in
   ( "flexbe_app_default.launch" | \
     "sdewg_chatter_default.launch" | \
     "sdewg_gazebo_default.launch" | \
+    "sdewg_rviz_default.launch" | \
     "tmc_gazebo_default.launch" )
   docker exec -i -t ${CONTAINER} bash -i -c "source ~/HSR/docker/scripts/run-roslaunch-repeatedly.sh $2"
   ;;
