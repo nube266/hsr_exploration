@@ -14,3 +14,7 @@
 	path = catkin_ws/src/flexbe_generic_states
 	url = https://github.com/FlexBE/generic_flexbe_states.git
 	branch = master
+[submodule "darknet_ros"]
+	path = catkin_ws/src/darknet_ros
+	url = https://github.com/leggedrobotics/darknet_ros.git
+	branch = master
