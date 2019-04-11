@@ -93,7 +93,7 @@
       parent = child8
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_chatter_default.launch
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} darknet_ros_default.launch
     [[[terminal13]]] #2
       order = 0
       parent = child12

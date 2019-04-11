@@ -51,7 +51,8 @@ case "$2" in
   ( "" )
   docker exec -i -t ${CONTAINER} bash
   ;;
-  ( "flexbe_app_default.launch" | \
+  ( "darknet_ros_default.launch" | \
+    "flexbe_app_default.launch" | \
     "sdewg_chatter_default.launch" | \
     "sdewg_gazebo_default.launch" | \
     "sdewg_rviz_default.launch" | \
