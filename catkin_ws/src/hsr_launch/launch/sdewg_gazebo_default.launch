@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <launch>
   <!-- Simulation type: unattended or not. -->
   <arg name="unattended" default="false"/>
+
   <!-- Attended simulation case. -->
   <group unless="$(arg unattended)">
-
     <!-- Gazebo launch file. -->
     <include file="$(find hsrb_gazebo_launch)/launch/hsrb_mock_home_world.launch">
       <arg name="debug" default="false"/>
@@ -41,11 +42,11 @@
       <arg name="use_teleop" default="false"/>
       <arg name="use_web" default="false"/>
     </include>
+
     <!-- FlexBE launch file. -->
     <!-- http://wiki.ros.org/flexbe/Tutorials/Running%20Behaviors%20Without%20Operator -->
     <arg name="behavior_name" default="HSR Move Base Around"/>#
     <include file="$(find flexbe_onboard)/launch/behavior_onboard.launch"/>
     <node name="behavior_launcher" pkg="flexbe_widget" type="be_launcher" output="screen" args="-b '$(arg behavior_name)'"/>
   </group>
-
 </launch>
