@@ -12,19 +12,22 @@
 # Python auto-generated files.
 *.pyc
 
-# ROS 'catkin build' auto-generated files.
+# 'catkin build' auto-generated files.
 catkin_ws/CMakeLists.txt
 catkin_ws/.catkin_tools/
 catkin_ws/build/
 catkin_ws/devel/
 catkin_ws/logs/
 
-# ROS 'catkin_make' auto-generated files.
+# 'catkin_make' auto-generated files.
 catkin_ws/src/CMakeLists.txt
 catkin_ws/.catkin_workspace
 catkin_ws/build/
 catkin_ws/devel/
 catkin_ws/install/
 
-# ROS 'rosbag' files.
+# 'rosbag' files.
 *.bag
+
+# 'darknet_ros' YOLO models.
+catkin_ws/src/hsr_launch/config/darknet_ros/weights/
