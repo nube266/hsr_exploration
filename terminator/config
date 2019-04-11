@@ -170,7 +170,7 @@
       parent = child5
       profile = default
       type = Terminal
-      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} tmc_gazebo_default.launch
+      command = sh ./RUN-DOCKER-CONTAINER.sh ${USER} sdewg_rviz_default.launch
     [[[terminal9]]] #6
       order = 0
       parent = child8
