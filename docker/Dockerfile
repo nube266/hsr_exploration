@@ -5,8 +5,8 @@
 ################################################################################
 
 # Pin the versions of the core tools and packages using global arguments for improved stability.
-ARG nvidia_cudagl_version=10.1-devel-ubuntu16.04
-ARG nvidia_cudnn_version=7.5.0.56-1+cuda10.1
+ARG nvidia_cudagl_version=9.0-devel-ubuntu16.04
+ARG nvidia_cudnn_version=7.1.3.16-1+cuda9.0
 ARG ros_desktop_version=1.3.2-0xenial-20190320-232543-0800
 ARG ros_tmc_version=0.10.0-1.xenial.20181129.0043.+0000
 
