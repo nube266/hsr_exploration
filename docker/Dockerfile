@@ -145,7 +145,7 @@ RUN echo 'alias hsrviz="rosrun rviz rviz -d `rospack find hsrb_common_launch`/co
 RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /root/.bashrc
 
 # Overwrite the entry point of the parent image.
-ENTRYPOINT []
+# ENTRYPOINT []
 
 #
 # AISL ROS packages and dependencies
@@ -177,7 +177,7 @@ RUN cd /tmp \
     && update-alternatives --config javac \
     && update-alternatives --config javaws
 
-RUN echo "133.15.23.96 hsr" >> /etc/hosts
+RUN echo '133.15.23.96 hsr' >> /etc/hosts
 # Stanford NLP
 # TODO: Change this part so that the zip file is downloaded using curl
 #       (Problem occured where the downloaded file can't be unzipped. File broken?)

@@ -18,3 +18,36 @@
 	path = catkin_ws/src/darknet_ros
 	url = https://github.com/leggedrobotics/darknet_ros.git
 	branch = master
+[submodule "catkin_ws/src/grasp_server"]
+	path = catkin_ws/src/grasp_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/grasp_server
+[submodule "catkin_ws/src/hsr_demo_smach"]
+	path = catkin_ws/src/hsr_demo_smach
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demo_smach
+[submodule "catkin_ws/src/hsr_demonstration"]
+	path = catkin_ws/src/hsr_demonstration
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demonstration
+[submodule "catkin_ws/src/hsrb_python_wrapper"]
+	path = catkin_ws/src/hsrb_python_wrapper
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsrb_python_wrapper
+[submodule "catkin_ws/src/ork_tf_broadcaster"]
+	path = catkin_ws/src/ork_tf_broadcaster
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/ork_tf_broadcaster
+[submodule "catkin_ws/src/pocketsphinx"]
+	path = catkin_ws/src/pocketsphinx
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pocketsphinx
+[submodule "catkin_ws/src/pose_server"]
+	path = catkin_ws/src/pose_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pose_server
+[submodule "catkin_ws/src/search_object"]
+	path = catkin_ws/src/search_object
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/search_object
+[submodule "catkin_ws/src/stanford_nlp_python"]
+	path = catkin_ws/src/stanford_nlp_python
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/stanford_nlp_python
+[submodule "catkin_ws/src/wrs_semantics"]
+	path = catkin_ws/src/wrs_semantics
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/wrs_semantics
+[submodule "catkin_ws/src/yolo_tf_broadcaster"]
+	path = catkin_ws/src/yolo_tf_broadcaster
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/yolo_tf_broadcaster
