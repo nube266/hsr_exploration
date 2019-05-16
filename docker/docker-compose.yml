@@ -23,5 +23,7 @@ services:
       - ../:/root/HSR/
       # Grant display access to X Server.
       - /tmp/.X11-unix:/tmp/.X11-unix
+      # Grant access to the microphone
+      - /dev/snd:/dev/snd
     network_mode: host
     command: ./HSR/docker/scripts/initialize-docker-container.sh
