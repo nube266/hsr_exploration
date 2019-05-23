@@ -140,6 +140,7 @@ RUN chmod -R +x /root/HSR/docker/scripts/*
 RUN echo "HSRB_HOSTNAME=\"TMP_HOSTNAME\"" >> /root/.bashrc
 RUN echo "source /root/HSR/docker/scripts/initialize-bash-shell.sh" >> /root/.bashrc
 RUN echo 'alias hsrviz="rosrun rviz rviz -d `rospack find hsrb_common_launch`/config/hsrb_display_full_hsrb.rviz"' >> /root/.bashrc
+RUN echo 'ln -s /root/HSR/params.yaml ~/root/.ros/params.yaml' >> /root/.bashrc
 
 # Force color prompt in terminal.
 RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /root/.bashrc
@@ -191,25 +192,6 @@ RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-
 RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
 RUN pip install pocketsphinx mecab-python pycorenlp 
 # pyaudio
-
-# ENV GIT_SSL_NO_VERIFY 1
-# ENV PATH $PATH:/opt/ros/kinetic/bin
-# ENV PYTHONPATH $PYTHONPATH:/opt/ros/kinetic/lib/python2.7/dist-packages
-# ENV CMAKE_PREFIX_PATH $CMAKE_PREFIX_PATH:/opt/ros/kinetic
-
-# RUN cd /root/HSR/catkin_ws/ && src/ \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/wrs-smach \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsrb_python_wrapper \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pose_server \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demonstration \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/wrs_semantics \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/stanford_nlp_python \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pocketsphinx \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/ork_tf_broadcaster \
-#     && git clone https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demo_smach
-#    && git clone https://bitbucket.org/rospeex/rospeex.git
-#RUN cd /root/catkin_ws/src && rosdep install rospeex
-# RUN cd /root/catkin_ws && catkin_make_isolated
 
 # Enter the container with a Bash shell.
 CMD ["/bin/bash"]
