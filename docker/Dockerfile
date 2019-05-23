@@ -139,12 +139,59 @@ RUN chmod -R +x /root/HSR/docker/scripts/*
 # The value of 'TMP_HOSTNAME' is substituted by './RUN-DOCKER-CONTAINER.sh' when entering the container.
 RUN echo "HSRB_HOSTNAME=\"TMP_HOSTNAME\"" >> /root/.bashrc
 RUN echo "source /root/HSR/docker/scripts/initialize-bash-shell.sh" >> /root/.bashrc
+RUN echo 'alias hsrviz="rosrun rviz rviz -d `rospack find hsrb_common_launch`/config/hsrb_display_full_hsrb.rviz"' >> /root/.bashrc
+RUN echo 'ln -s /root/HSR/params.yaml ~/root/.ros/params.yaml' >> /root/.bashrc
 
 # Force color prompt in terminal.
 RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /root/.bashrc
 
 # Overwrite the entry point of the parent image.
-ENTRYPOINT []
+# ENTRYPOINT []
+
+#
+# AISL ROS packages and dependencies
+# 
+
+# NLP
+RUN cd /tmp \ 
+    && wget http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz \
+    && tar -zxvf swig* \
+    && cd swig* \
+    && ./configure \
+    && make \
+    && make install
+
+COPY jdk* /tmp/
+
+RUN cd /tmp \ 
+    && tar -zxvf jdk-8u121-linux-x64.tar.gz \
+    && mkdir -p /usr/lib/jvm \
+    && mv ./jdk1.8.0_121 /usr/lib/jvm/ \
+    && update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_121/bin/java" 1 \
+    && update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_121/bin/javac" 1 \
+    && update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.8.0_121/bin/javaws" 1 \
+    && chmod a+x /usr/bin/java \
+    && chmod a+x /usr/bin/javac \
+    && chmod a+x /usr/bin/javaws \
+    && chown -R root:root /usr/lib/jvm/jdk1.8.0_121 \
+    && update-alternatives --config java \
+    && update-alternatives --config javac \
+    && update-alternatives --config javaws
+
+RUN echo '133.15.23.96 hsr' >> /etc/hosts
+# Stanford NLP
+# TODO: Change this part so that the zip file is downloaded using curl
+#       (Problem occured where the downloaded file can't be unzipped. File broken?)
+# RUN cd /tmp && curl -O http://nlp.stanford.edu/software/stanford-corenlp-full-2015-12-09.zip \
+COPY ./stanford-corenlp-full-2015-12-09.zip /tmp/.
+RUN  cd /tmp && unzip stanford-corenlp-full-2015-12-09.zip -d /root/.
+
+RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-dev python-pyaudio \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
+RUN pip install pocketsphinx mecab-python pycorenlp 
+# pyaudio
 
 # Enter the container with a Bash shell.
 CMD ["/bin/bash"]
