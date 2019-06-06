@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Search Object State Test">
+
+	<executable package_path="hsr_flexbe_behaviors.search_object_state_test_sm" class="SearchObjectStateTestSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Wed Jun 05 2019</date>
+	<description>
+		Test hsr_SearchObjectState
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
+
+	</params>
+
+
+</behavior>
