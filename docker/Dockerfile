@@ -186,11 +186,11 @@ RUN echo '133.15.23.96 hsr' >> /etc/hosts
 COPY ./stanford-corenlp-full-2015-12-09.zip /tmp/.
 RUN  cd /tmp && unzip stanford-corenlp-full-2015-12-09.zip -d /root/.
 
-RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-dev python-pyaudio \
+RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-dev portaudio19-dev \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
-RUN pip install pocketsphinx mecab-python pycorenlp 
+RUN pip install pyaudio pocketsphinx mecab-python pycorenlp 
 # pyaudio
 
 # Enter the container with a Bash shell.
