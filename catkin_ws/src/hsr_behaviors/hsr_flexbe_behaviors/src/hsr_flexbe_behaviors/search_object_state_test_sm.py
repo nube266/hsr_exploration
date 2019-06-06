@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_set_base_pose_state import hsr_SetBasePoseState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -46,7 +47,7 @@ class SearchObjectStateTestSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:130 y:365
+		# x:87 y:660, x:681 y:294
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -70,12 +71,31 @@ class SearchObjectStateTestSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:30 y:209
+			# x:50 y:244
 			OperatableStateMachine.add('SearchObject',
 										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor'),
+										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:43 y:398
+			OperatableStateMachine.add('FetchObject',
+										hsr_FetchObjectState(fetch_place_type='floor', service_name='/grasp/service', target_name='closest'),
+										transitions={'succeeded': 'SetPosePuttingPoint', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:258 y:494
+			OperatableStateMachine.add('SetPosePuttingPoint',
+										hsr_SetBasePoseState(pose_position_x=-1.0, pose_position_y=0.0, pose_orientation_z=1.57, pose_orientation_w=0.0),
+										transitions={'completed': 'MoveToPuttingPoint'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose2'})
+
+			# x:494 y:489
+			OperatableStateMachine.add('MoveToPuttingPoint',
+										hsr_MoveBaseState(),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'pose': 'pose'})
+										remapping={'request': 'pose2'})
 
 
 		return _state_machine

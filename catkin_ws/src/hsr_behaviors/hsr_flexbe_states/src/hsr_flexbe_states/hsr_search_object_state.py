@@ -13,22 +13,19 @@ from search_object.srv import search_object_srv, search_object_srvRequest
 
 class hsr_SearchObjectState(EventState):
     '''
-    A state to call search_object searvice used in Tidy Up task. 
+    A state to call search_object service used in Tidy Up task. 
     Requred package : search_object (https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/search_object)
 
     -- search_point          String    A tf name of a searching point
     -- search_place_type     String    A type of the place to be checked {'floor'}
-
-    #> tf_name               String    The tf name of the location to go next
-    #> next_task             String    The task state name to be done next (FETCH, PUT, SEARCH etc.)
+    -- service_name          String    A name of the service to be called
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
     '''
 
     def __init__(self, search_point, search_place_type, service_name):
-        super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'],
-                                                    input_keys=['pose'])
+        super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'])
 
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
@@ -39,7 +36,7 @@ class hsr_SearchObjectState(EventState):
         '''
         Execute the state
         '''
-#        rospy.loginfo('Let\'s search')
+        rospy.loginfo('Let\'s search')
 
         # Wait for a second
         rospy.sleep(1)
@@ -47,9 +44,6 @@ class hsr_SearchObjectState(EventState):
         if not  self._failed:
             rospy.loginfo('I found an object')
             return 'succeeded'
-    
-        # If not found and there's another searching points, go to the next searching point and continue searching.
-        # If all the searching points have been checked, go to the initial location and end the task
         else:
             rospy.loginfo('I could\'nt find any objects')
             return 'failed'
@@ -61,7 +55,7 @@ class hsr_SearchObjectState(EventState):
         # Execute the searching motion
         #
         req = search_object_srvRequest('', self._search_place_type, self._search_point)
-        # res = self._search_object_server('', self._search_place_type, self._search_point)
+
         self._failed = False
         try:
             self._srv_result = self._search_object_server.call(self._service_name, req)
