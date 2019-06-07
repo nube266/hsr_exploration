@@ -20,15 +20,15 @@ from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 Created on Fri Jun 07 2019
 @author: ShigemichiMatsuzaki
 '''
-class GraspobjectonthefloorSM(Behavior):
+class HSRgraspobjectonthefloorSM(Behavior):
 	'''
 	Demo code for the task of recognizing and grasping an object on the floor
 	'''
 
 
 	def __init__(self):
-		super(GraspobjectonthefloorSM, self).__init__()
-		self.name = 'Grasp object on the floor'
+		super(HSRgraspobjectonthefloorSM, self).__init__()
+		self.name = 'HSR grasp object on the floor'
 
 		# parameters of this behavior
 		self.add_parameter('searching_point', 'searching_point_0')

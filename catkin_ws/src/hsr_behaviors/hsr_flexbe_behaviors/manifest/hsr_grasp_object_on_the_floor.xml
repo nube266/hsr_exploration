@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="Search Object State Test">
+<behavior name="HSR grasp object on the floor">
 
-	<executable package_path="hsr_flexbe_behaviors.search_object_state_test_sm" class="SearchObjectStateTestSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_grasp_object_on_the_floor_sm" class="HSRgraspobjectonthefloorSM" />
 	<tagstring></tagstring>
 	<author>ShigemichiMatsuzaki</author>
-	<date>Wed Jun 05 2019</date>
+	<date>Fri Jun 07 2019</date>
 	<description>
-		Test hsr_SearchObjectState
+		Demo code for the task of recognizing and grasping an object on the floor
 	</description>
 
 
