@@ -24,7 +24,7 @@ class hsr_SearchObjectState(EventState):
     <= failed                          No object was found.
     '''
 
-    def __init__(self, search_point, search_place_type, service_name):
+    def __init__(self, search_point, search_place_type, service_name='/search_object/search_floor'):
         super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'])
 
         self._search_point = search_point # The locations to be checked

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Grasp object on the floor">
+
+	<executable package_path="hsr_flexbe_behaviors.grasp_object_on_the_floor_sm" class="GraspobjectonthefloorSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Fri Jun 07 2019</date>
+	<description>
+		Demo code for the task of recognizing and grasping an object on the floor
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
+
+	</params>
+
+
+</behavior>

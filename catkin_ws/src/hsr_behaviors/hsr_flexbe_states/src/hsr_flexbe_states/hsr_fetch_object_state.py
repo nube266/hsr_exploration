@@ -10,6 +10,7 @@ from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
 from grasp_server.srv import grasp_srv, grasp_srvRequest
+from std_srvs.srv import Empty, EmptyRequest
 
 class hsr_FetchObjectState(EventState):
     '''
@@ -22,15 +23,18 @@ class hsr_FetchObjectState(EventState):
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
+
+    
     '''
 
-    def __init__(self, fetch_place_type, service_name, target_name):
+    def __init__(self, fetch_place_type, grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'):
         super(hsr_FetchObjectState, self).__init__(outcomes=['succeeded', 'failed'])
 
         self._fetch_place_type = fetch_place_type
-        self._service_name     = service_name
+        self._grasp_srv_name   = grasp_srv_name
+        self._stop_tf_srv_name = stop_tf_srv_name
         self._target_name      = target_name
-        self._grasp_server     = ProxyServiceCaller({self._service_name : grasp_srv})
+        self._grasp_server     = ProxyServiceCaller({self._grasp_srv_name : grasp_srv})
 
     def execute(self, userdata):
 
@@ -50,7 +54,7 @@ class hsr_FetchObjectState(EventState):
         req = grasp_srvRequest(self._target_name, self._fetch_place_type)
         self._failed = False
         try:
-            self._srv_result = self._grasp_server.call(self._service_name, req)
+            self._srv_result = self._grasp_server.call(self._grasp_srv_name, req)
             rospy.loginfo(self._srv_result)
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
@@ -58,6 +62,15 @@ class hsr_FetchObjectState(EventState):
     
     def on_exit(self, userdata):
         pass
+        #
+        # Stop publishing the tf
+        #
+        req = EmptyRequest()
+        try:
+            self._srv_result = self._grasp_server.call(self._stop_tf_srv_name, req)
+        except Exception as e:
+            rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
+            self._failed = True
     
     def on_start(self):
         pass
