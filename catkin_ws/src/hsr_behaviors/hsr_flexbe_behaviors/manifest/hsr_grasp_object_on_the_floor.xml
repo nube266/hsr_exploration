@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="Tidy Up Here 2018">
+<behavior name="HSR grasp object on the floor">
 
-	<executable package_path="hsr_flexbe_behaviors.tidy_up_here_2018_sm" class="TidyUpHere2018SM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_grasp_object_on_the_floor_sm" class="HSRgraspobjectonthefloorSM" />
 	<tagstring></tagstring>
 	<author>ShigemichiMatsuzaki</author>
-	<date>Wed Jun 05 2019</date>
+	<date>Fri Jun 07 2019</date>
 	<description>
-		Demo code of the entire flow of Tidy Up Here in WRS 2018
+		Demo code for the task of recognizing and grasping an object on the floor
 	</description>
 
 

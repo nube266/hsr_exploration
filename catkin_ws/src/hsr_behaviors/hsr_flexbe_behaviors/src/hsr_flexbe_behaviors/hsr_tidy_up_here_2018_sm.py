@@ -22,15 +22,15 @@ from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 Created on Wed Jun 05 2019
 @author: ShigemichiMatsuzaki
 '''
-class TidyUpHere2018SM(Behavior):
+class HSRTidyUpHere2018SM(Behavior):
 	'''
 	Demo code of the entire flow of Tidy Up Here in WRS 2018
 	'''
 
 
 	def __init__(self):
-		super(TidyUpHere2018SM, self).__init__()
-		self.name = 'Tidy Up Here 2018'
+		super(HSRTidyUpHere2018SM, self).__init__()
+		self.name = 'HSR Tidy Up Here 2018'
 
 		# parameters of this behavior
 		self.add_parameter('searching_point', 'searching_point_0')
