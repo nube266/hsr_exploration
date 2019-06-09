@@ -16,15 +16,15 @@ class hsr_PutObjectState(EventState):
     A state to call grasp_server service. 
     Requred package : grasp_server (https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/grasp_server)
 
-    -- fetch_place_type      String    A type of the place where the grasping is done {'floor', 'diningtable', ...}
+    -- put_place_type        String    A type of the place where the putting is done {'shelf', 'toyshelf', 'rubbishbin'}
     -- service_name          String    A name of a service to be called
-    -- target_name           String    The name of tf which the robot tries to grasp
+    -- target_name           String    The name of tf on which the robot tries to put
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
     '''
 
-    def __init__(self, put_place_type, service_name, target_name):
+    def __init__(self, put_place_type, target_name, service_name='/grasp/put'):
         super(hsr_PutObjectState, self).__init__(outcomes=['succeeded', 'failed'])
 
         self._put_place_type = put_place_type
@@ -50,8 +50,10 @@ class hsr_PutObjectState(EventState):
         req = grasp_srvRequest(self._target_name, self._put_place_type)
         self._failed = False
         try:
-            self._srv_result = self._grasp_server.call(self._service_name, req)
-            rospy.loginfo(self._srv_result)
+            self._srv_result = self._put_server.call(self._service_name, req)
+            rospy.loginfo(self._srv_result['is_succeeded'])
+            if not self._srv_result['is_succeeded']:
+                self._failed = True
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
