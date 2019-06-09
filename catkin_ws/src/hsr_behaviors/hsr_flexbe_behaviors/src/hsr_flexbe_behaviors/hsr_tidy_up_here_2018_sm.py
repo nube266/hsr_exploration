@@ -8,10 +8,12 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_set_base_pose_by_angle_state import hsr_SetBasePoseByAngleState
-from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
+from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
+from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
+from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -57,23 +59,17 @@ class HSRTidyUpHere2018SM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:40
+			# x:61 y:66
 			OperatableStateMachine.add('SetPoseSearchingPoint',
-										hsr_SetBasePoseByAngleState(pose_position_x=-1.0, pose_position_y=0.0, pose_orientation_theta=180.0, is_rad=False),
+										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchingPoint'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:43 y:398
-			OperatableStateMachine.add('FetchObject',
-										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
-										transitions={'succeeded': 'SetPosePuttingPoint', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
 			# x:494 y:489
 			OperatableStateMachine.add('MoveToPuttingPoint',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										transitions={'succeeded': 'PutObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose2'})
 
@@ -84,18 +80,36 @@ class HSRTidyUpHere2018SM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:250 y:460
-			OperatableStateMachine.add('SetPosePuttingPoint',
-										hsr_SetBasePoseByAngleState(pose_position_x=-1.0, pose_position_y=0.0, pose_orientation_theta=-90.0, is_rad=False),
-										transitions={'completed': 'MoveToPuttingPoint'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose2'})
-
 			# x:50 y:244
 			OperatableStateMachine.add('SearchObject',
 										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor'),
 										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:719 y:560
+			OperatableStateMachine.add('PutObject',
+										hsr_PutObjectState(put_place_type='shelf', target_name='soundtoybox', service_name='/grasp/put'),
+										transitions={'succeeded': 'finished', 'failed': 'Escape'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:229 y:469
+			OperatableStateMachine.add('SetPosePuttingPoint',
+										hsr_SetBasePoseByTfNameState(tf_name='toyshelf', service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveToPuttingPoint'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose2'})
+
+			# x:43 y:398
+			OperatableStateMachine.add('FetchObject',
+										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
+										transitions={'succeeded': 'SetPosePuttingPoint', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:792 y:447
+			OperatableStateMachine.add('Escape',
+										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=-0.5, linear_y=0.0, angular=0.0, duration=2.0),
+										transitions={'completed': 'failed'},
+										autonomy={'completed': Autonomy.Off})
 
 
 		return _state_machine
