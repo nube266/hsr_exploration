@@ -16,20 +16,29 @@ class hsr_SearchObjectState(EventState):
     A state to call search_object service used in Tidy Up task. 
     Requred package : search_object (https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/search_object)
 
-    -- search_point          String    A tf name of a searching point
-    -- search_place_type     String    A type of the place to be checked {'floor'}
-    -- service_name          String    A name of the service to be called
+    -- search_point            String    A tf name of a searching point
+    -- search_place_type       String    A type of the place to be checked {'floor'}
+    -- service_name            String    A name of the service to be called
+    -- centroid_x(yz)_max(min) float     Threshold of tf to publish
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
     '''
 
-    def __init__(self, search_point, search_place_type, service_name='/search_object/search_floor'):
+    def __init__(self, search_point, search_place_type, service_name='/search_object/search_floor',
+                 centroid_x_max = 1.5, centroid_y_max = 1.0, centroid_y_min = -1.0,
+                 centroid_z_max  = 0.1, centroid_z_min = 0.0):
         super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'])
 
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
         self._service_name = service_name
+        self._centroid_x_max = centroid_x_max
+        self._centroid_y_max = centroid_y_max
+        self._centroid_y_min = centroid_y_min
+        self._centroid_z_max = centroid_z_max
+        self._centroid_z_min = centroid_z_min
+
         self._search_object_server = ProxyServiceCaller({self._service_name : search_object_srv})
 
     def execute(self, userdata):
