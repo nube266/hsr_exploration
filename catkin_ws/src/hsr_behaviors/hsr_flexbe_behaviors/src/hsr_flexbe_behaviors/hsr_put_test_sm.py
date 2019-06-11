@@ -55,7 +55,7 @@ class HSRPutTestSM(Behavior):
 		with _state_machine:
 			# x:61 y:153
 			OperatableStateMachine.add('PutObject',
-										hsr_PutObjectState(put_place_type='shelf', target_name='soundtoyshelf', service_name='/grasp/put'),
+										hsr_PutObjectState(put_place_type='shelf', target_name='put_rubbishbin', service_name='/grasp/put'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
