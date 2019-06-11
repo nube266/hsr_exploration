@@ -72,7 +72,7 @@ Make sure to run roslaunch hsr_demonstration demo_sim_2019.launch.
 
 			# x:262 y:172
 			OperatableStateMachine.add('SetPose2',
-										hsr_SetBasePoseByTfNameState(tf_name='diningtable_0', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='rubbishbin', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveBase'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
@@ -86,7 +86,7 @@ Make sure to run roslaunch hsr_demonstration demo_sim_2019.launch.
 
 			# x:577 y:331
 			OperatableStateMachine.add('SetPose3',
-										hsr_SetBasePoseByTfNameState(tf_name='kitchen', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveBase3'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
@@ -100,7 +100,7 @@ Make sure to run roslaunch hsr_demonstration demo_sim_2019.launch.
 
 			# x:702 y:502
 			OperatableStateMachine.add('SetPose4',
-										hsr_SetBasePoseByTfNameState(tf_name='tidyup_start', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='rubbishbin', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveBase4'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Tidy Up Here C2-502">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_c2_502_sm" class="HSRTidyUpHereC2502SM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Wed Jun 05 2019</date>
+	<description>
+		Demo code of the entire flow of Tidy Up Here in C2-502
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
+
+		<param type="text" name="putting_point" default="rubbishbin" label="putting_point" hint="Sets the putting_point" />
+
+	</params>
+
+
+</behavior>
