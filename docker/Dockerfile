@@ -140,7 +140,8 @@ RUN chmod -R +x /root/HSR/docker/scripts/*
 RUN echo "HSRB_HOSTNAME=\"TMP_HOSTNAME\"" >> /root/.bashrc
 RUN echo "source /root/HSR/docker/scripts/initialize-bash-shell.sh" >> /root/.bashrc
 RUN echo 'alias hsrviz="rosrun rviz rviz -d `rospack find hsrb_common_launch`/config/hsrb_display_full_hsrb.rviz"' >> /root/.bashrc
-RUN echo 'ln -s /root/HSR/params.yaml ~/root/.ros/params.yaml' >> /root/.bashrc
+RUN echo 'echo $ROS_IP hsr >> /etc/hosts' >> /root/.bashrc
+
 
 # Force color prompt in terminal.
 RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /root/.bashrc
@@ -178,7 +179,6 @@ RUN cd /tmp \
     && update-alternatives --config javac \
     && update-alternatives --config javaws
 
-RUN echo '133.15.23.96 hsr' >> /etc/hosts
 # Stanford NLP
 # TODO: Change this part so that the zip file is downloaded using curl
 #       (Problem occured where the downloaded file can't be unzipped. File broken?)
@@ -193,5 +193,7 @@ RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
 RUN pip install pyaudio pocketsphinx mecab-python pycorenlp 
 # pyaudio
 
+RUN echo 'rm -rf ~/.ros/params.yaml' >> /root/.bashrc
+RUN echo 'ln -s /root/HSR/params.yaml ~/.ros/params.yaml' >> /root/.bashrc
 # Enter the container with a Bash shell.
 CMD ["/bin/bash"]
