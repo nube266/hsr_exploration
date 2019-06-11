@@ -19,7 +19,11 @@ class hsr_SearchObjectState(EventState):
     -- search_point            String    A tf name of a searching point
     -- search_place_type       String    A type of the place to be checked {'floor'}
     -- service_name            String    A name of the service to be called
-    -- centroid_x(yz)_max(min) float     Threshold of tf to publish
+    -- centroid_x_max          float     Threshold of tf to publish
+    -- centroid_y_max          float     Threshold of tf to publish
+    -- centroid_y_min          float     Threshold of tf to publish
+    -- centroid_z_max          float     Threshold of tf to publish
+    -- centroid_z_min          float     Threshold of tf to publish
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
