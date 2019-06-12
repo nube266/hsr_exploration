@@ -8,7 +8,7 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -16,20 +16,22 @@ from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
 
 
 '''
-Created on Fri Jun 07 2019
+Created on Wed Jun 11 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRPutTestSM(Behavior):
+class HSRSpeakStateTestSM(Behavior):
 	'''
-	Test behavior of hsr_PutObjectState
+	Demo code of hsr_SpeakState
 	'''
 
 
 	def __init__(self):
-		super(HSRPutTestSM, self).__init__()
-		self.name = 'HSR Put Test'
+		super(HSRSpeakStateTestSM, self).__init__()
+		self.name = 'HSR Speak State Test'
 
 		# parameters of this behavior
+		self.add_parameter('searching_point', 'searching_point_0')
+		self.add_parameter('putting_point', 'rubbishbin')
 
 		# references to used behaviors
 
@@ -43,7 +45,7 @@ class HSRPutTestSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:130 y:365
+		# x:87 y:660, x:805 y:508
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -53,11 +55,11 @@ class HSRPutTestSM(Behavior):
 
 
 		with _state_machine:
-			# x:61 y:153
-			OperatableStateMachine.add('PutObject',
-										hsr_PutObjectState(put_place_type='shelf', target_name='put_rubbishbin', service_name='/grasp/put'),
-										transitions={'succeeded': 'finished', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+			# x:30 y:40
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakState(sentence='Hello, I am HSR', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'finished'},
+										autonomy={'done': Autonomy.Off})
 
 
 		return _state_machine

@@ -10,6 +10,7 @@ from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
 from grasp_server.srv import grasp_srv, grasp_srvRequest
+import hsrb_interface
 
 class hsr_PutObjectState(EventState):
     '''
@@ -32,28 +33,29 @@ class hsr_PutObjectState(EventState):
         self._target_name      = target_name
         self._put_server     = ProxyServiceCaller({self._service_name : grasp_srv})
 
+        # self._whole_body = hsrb_interface.Robot().get('whole_body')
+
     def execute(self, userdata):
-
-        rospy.loginfo('Let\'s Put')
-        rospy.sleep(1)
-
         # If succeeded to grasp, return 'succeeded'. Otherwise, false.
-        if not  self._failed:
+        if not self._failed:
             return 'succeeded'
         else:
+            self._whole_body.move_to_neutral()
             return 'failed'
 
     def on_enter(self, userdata):
         #
         # Execute the searching motion
-        #
+        rospy.loginfo('Let\'s Put')
+        rospy.sleep(1)      #
+
         req = grasp_srvRequest(self._target_name, self._put_place_type)
         self._failed = False
         try:
             self._srv_result = self._put_server.call(self._service_name, req)
-            rospy.loginfo(self._srv_result['is_succeeded'])
-            if not self._srv_result['is_succeeded']:
-                self._failed = True
+            rospy.loginfo(self._srv_result.is_succeeded)
+            if not self._srv_result.is_succeeded:
+                self._failed = False
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
