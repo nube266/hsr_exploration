@@ -9,7 +9,8 @@ import rospy
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
-from std_msgs.msg import Empty
+from std_srvs.srv import Empty, EmptyRequest
+import hsrb_interface
 
 class hsr_PassObjectState(EventState):
     '''
@@ -20,11 +21,16 @@ class hsr_PassObjectState(EventState):
     '''
 
     def __init__(self, service_name='/kinesthetic/wait_open'):
-        super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'])
+        super(hsr_PassObjectState,self).__init__(outcomes=['succeeded', 'failed'])
 
         self._service_name = service_name
         self._pass_server  = ProxyServiceCaller({self._service_name : Empty}) 
 
+        # 
+        # Robot interface
+        # 
+        self._robot = hsrb_interface.Robot()
+        self._whole_body = self._robot.get('whole_body')
 
     def execute(self, userdata):
         '''
@@ -42,9 +48,14 @@ class hsr_PassObjectState(EventState):
 
 
     def on_enter(self, userdata):
-        pass
         #
-        # Execute the searching motion
+        # Hold out the object
+        #
+        self._whole_body.move_to_joint_positions({'wrist_flex_joint': -1.13,
+                                                 'arm_flex_joint': -0.35})
+
+        #
+        # Wait for a person to receive
         #
         req = EmptyRequest()
 
@@ -55,6 +66,8 @@ class hsr_PassObjectState(EventState):
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
+        
+        self._whole_body.move_to_neutral()
     
     def on_exit(self, userdata):
         pass

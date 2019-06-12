@@ -55,9 +55,9 @@ class HSRSpeakStateTestSM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:40
+			# x:141 y:149
 			OperatableStateMachine.add('Speak',
-										hsr_SpeakState(sentence='Hello, I am HSR', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										hsr_SpeakState(sentence='Fuck you Inouchi', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 

@@ -10,6 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
+from hsr_flexbe_states.hsr_pass_object_state import hsr_PassObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -57,13 +58,19 @@ class HSRgraspobjectonthefloorSM(Behavior):
 		with _state_machine:
 			# x:30 y:40
 			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor'),
+										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.1, centroid_z_min=0.0),
 										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:292 y:141
 			OperatableStateMachine.add('FetchObject',
 										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
+										transitions={'succeeded': 'Pass', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:378 y:290
+			OperatableStateMachine.add('Pass',
+										hsr_PassObjectState(service_name='/kinesthetic/wait_open'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 

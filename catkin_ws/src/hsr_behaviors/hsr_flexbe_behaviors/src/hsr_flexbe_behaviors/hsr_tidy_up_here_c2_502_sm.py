@@ -8,12 +8,13 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
-from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
-from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
 from flexbe_states.subscriber_state import SubscriberState
+from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState as hsr_flexbe_states__hsr_SearchObjectState
+from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
+from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
+from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -60,12 +61,11 @@ class HSRTidyUpHereC2502SM(Behavior):
 
 
 		with _state_machine:
-			# x:43 y:49
-			OperatableStateMachine.add('Listen',
-										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'SetPoseSearchingPoint', 'unavailable': 'Listen'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+			# x:22 y:127
+			OperatableStateMachine.add('Ask',
+										hsr_SpeakState(sentence='How may I help you?', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'Listen'},
+										autonomy={'done': Autonomy.Off})
 
 			# x:345 y:221
 			OperatableStateMachine.add('MoveToSearchingPoint',
@@ -76,7 +76,7 @@ class HSRTidyUpHereC2502SM(Behavior):
 
 			# x:214 y:304
 			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.1, centroid_z_min=0.0),
+										hsr_flexbe_states__hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.1, centroid_z_min=0.0),
 										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -112,6 +112,19 @@ class HSRTidyUpHereC2502SM(Behavior):
 										transitions={'completed': 'MoveToSearchingPoint'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
+
+			# x:258 y:81
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakState(sentence='Ok', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'SetPoseSearchingPoint'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:43 y:49
+			OperatableStateMachine.add('Listen',
+										SubscriberState(topic='/sr_res', blocking=True, clear=True),
+										transitions={'received': 'Speak', 'unavailable': 'Listen'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'message'})
 
 
 		return _state_machine
