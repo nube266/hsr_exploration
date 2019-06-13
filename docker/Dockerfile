@@ -7,7 +7,7 @@
 # Pin the versions of the core tools and packages using global arguments for improved stability.
 ARG nvidia_cudagl_version=9.0-devel-ubuntu16.04
 ARG nvidia_cudnn_version=7.1.3.16-1+cuda9.0
-ARG ros_desktop_version=1.3.2-0xenial-20190320-232543-0800
+#ARG ros_desktop_version=1.3.2-0xenial-20190320-232543-0800
 ARG ros_tmc_version=0.10.0-1.xenial.20181129.0043.+0000
 
 ################################################################################
@@ -39,13 +39,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros-latest.list
 
 # Add the package keys.
-RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+RUN apt-key adv --keyserver 'hkp://ha.pool.sks-keyservers.net:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # Install 'ros-kinetic-desktop-full' packages (including ROS, Rqt, Rviz, and more).
-ARG ros_desktop_version
-ENV ROS_DESKTOP_VERSION=${ros_desktop_version}
+#ARG ros_desktop_version
+#ENV ROS_DESKTOP_VERSION=${ros_desktop_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	ros-kinetic-desktop-full=${ROS_DESKTOP_VERSION} \
+	ros-kinetic-desktop-full \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Initialize 'rosdep'.
