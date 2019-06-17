@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Bring Me C2-502">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_bring_me_c2_502_sm" class="HSRBringMeC2502SM" />
+	<tagstring></tagstring>
+	<author>Shigemichi Matsuzaki</author>
+	<date>Tue Jun 12 2019</date>
+	<description>
+		Demo code of the entire flow of Bring Me in C2-502
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
