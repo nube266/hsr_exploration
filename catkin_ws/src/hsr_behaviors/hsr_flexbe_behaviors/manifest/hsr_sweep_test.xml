@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR sweep test">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_sweep_test_sm" class="HSRsweeptestSM" />
+	<tagstring></tagstring>
+	<author>YusukeMiake</author>
+	<date>Wed Jun 19 2019</date>
+	<description>
+		Move to the destination.
+Sweep if there is an obstacle at the destination.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
