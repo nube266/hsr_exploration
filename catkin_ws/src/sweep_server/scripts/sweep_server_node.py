@@ -1,7 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+#h -*- coding: utf-8 -*-
 
-from sweep_server.srv import *
+import hsrb_interface
 import rospy
+import tf
+import sys
+from hsrb_interface import geometry
+from sweep_server.srv import *
+
 def sweep(req):
     print req.word + req.word
     return sweep_serverResponse(req.word + req.word)
