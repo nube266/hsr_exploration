@@ -12,14 +12,17 @@ from flexbe_core.proxy import ProxyServiceCaller
 from grasp_server.srv import grasp_srv, grasp_srvRequest
 from std_srvs.srv import Empty, EmptyRequest
 
-class hsr_FetchObjectState(EventState):
+class hsr_FetchObjectDynState(EventState):
     '''
-    A state to call grasp_server service. 
+    A state to call grasp_server service given target object name and location name as userdata. 
     Requred package : grasp_server (https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/grasp_server)
 
-    -- fetch_place_type      String    A type of the place where the grasping is done {'floor', 'diningtable', ...}
-    -- service_name          String    A name of a service to be called
-    -- target_name           String    The name of tf which the robot tries to grasp
+    -- grasp_srv_name          String    A name of a service to be called
+    -- stop_tf_srv_name      String    The name of a service used for stoping tf from ork_tf_broadcaster (if needed)
+    -- is_yolo               Bool      Whether YOLO is used for the object detection
+     
+    ># target_name           String    Name of the object to be grasped
+    ># location_name         String    Name of the place where the object is located
 
     <= succeeded                       An object was found.
     <= failed                          No object was found.
@@ -27,14 +30,14 @@ class hsr_FetchObjectState(EventState):
     
     '''
 
-    def __init__(self, fetch_place_type, grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'):
-        super(hsr_FetchObjectState, self).__init__(outcomes=['succeeded', 'failed'])
+    def __init__(self, grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True):
+        super(hsr_FetchObjectDynState, self).__init__(input_keys=['target_name', 'location_name'], outcomes=['succeeded', 'failed'])
 
-        self._fetch_place_type = fetch_place_type
         self._grasp_srv_name   = grasp_srv_name
         self._stop_tf_srv_name = stop_tf_srv_name
-        self._target_name      = target_name
         self._grasp_server     = ProxyServiceCaller({self._grasp_srv_name : grasp_srv})
+        self._stop_tf_server   = ProxyServiceCaller({self._stop_tf_srv_name : Empty})
+        self._is_yolo          = is_yolo
 
     def execute(self, userdata):
 
@@ -51,6 +54,13 @@ class hsr_FetchObjectState(EventState):
         #
         # Execute the searching motion
         #
+        if self._is_yolo:
+            self._target_name = 'yolo_' + userdata.target_name
+        else:
+            self._target_name = userdata.target_name
+
+        self._fetch_place_type = userdata.location_name
+
         req = grasp_srvRequest(self._target_name, self._fetch_place_type)
         self._failed = False
         try:
