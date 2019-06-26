@@ -36,6 +36,7 @@ class hsr_FetchObjectDynState(EventState):
         self._grasp_srv_name   = grasp_srv_name
         self._stop_tf_srv_name = stop_tf_srv_name
         self._grasp_server     = ProxyServiceCaller({self._grasp_srv_name : grasp_srv})
+        self._stop_tf_server   = ProxyServiceCaller({self._stop_tf_srv_name : Empty})
         self._is_yolo          = is_yolo
 
     def execute(self, userdata):
@@ -76,7 +77,7 @@ class hsr_FetchObjectDynState(EventState):
         #
         req = EmptyRequest()
         try:
-            self._srv_result = self._grasp_server.call(self._stop_tf_srv_name, req)
+            self._srv_result = self._stop_tf_server.call(self._stop_tf_srv_name, req)
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
