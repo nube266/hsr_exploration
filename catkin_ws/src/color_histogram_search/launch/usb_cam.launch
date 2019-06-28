@@ -1,0 +1,25 @@
+<launch>
+    <!--	
+    <node pkg="usb_cam" type="usb_cam_node" name="usb_cam_node" />
+    -->
+
+   <!-- Arguments -->
+   <arg name="min_window" default="40" />
+   <arg name="max_window" default="160" />
+   <arg name="delta_window" default="10" />
+   <arg name="window_shift" default="10" />
+   <arg name="query_image" default="$(find color_histogram_search)/image/coffee.png" />
+   <arg name="input_topic" default="/usb_cam/image_raw" />
+   <arg name="active_search" default="false" />
+
+    <node pkg="color_histogram_search" name="color_histogram_search_node" type="color_histogram_search_node"  output="screen">
+        <param name="min_window" value="$(arg min_window)" />
+        <param name="max_window" value="$(arg max_window)" />
+        <param name="delta_window" value="$(arg delta_window)" />
+        <param name="window_shift" value="$(arg window_shift)" />
+        <param name="query_image" value="$(arg query_image)" />
+        <param name="active_search" value="$(arg active_search)" />
+        <remap from="/color_histogram_search_node/input" to="$(arg input_topic)" />
+    </node>
+
+</launch>
