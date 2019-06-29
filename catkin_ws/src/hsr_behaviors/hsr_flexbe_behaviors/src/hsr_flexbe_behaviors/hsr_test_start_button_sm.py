@@ -8,8 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_wait_press_wrist_state import hsr_WaitWristPressedState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -17,19 +17,18 @@ from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 
 
 '''
-Created on Sat Jun 08 2019
+Created on Wed Jun 26 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRMoveToSM(Behavior):
+class HSRTestStartButtonSM(Behavior):
 	'''
-	A behavior to navigate the robot to a place designated by tf name.
-This is the combination of hsr_SetBasePoseByTfNameState and hsr_MoveBaseState.
+	Test code of hsr_WaitWristPressedState
 	'''
 
 
 	def __init__(self):
-		super(HSRMoveToSM, self).__init__()
-		self.name = 'HSR Move To'
+		super(HSRTestStartButtonSM, self).__init__()
+		self.name = 'HSR Test Start Button'
 
 		# parameters of this behavior
 
@@ -45,9 +44,8 @@ This is the combination of hsr_SetBasePoseByTfNameState and hsr_MoveBaseState.
 
 
 	def create(self):
-		# x:30 y:365, x:298 y:383
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['tf_name'])
-		_state_machine.userdata.tf_name = ''
+		# x:30 y:365, x:130 y:365
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -57,18 +55,16 @@ This is the combination of hsr_SetBasePoseByTfNameState and hsr_MoveBaseState.
 
 		with _state_machine:
 			# x:30 y:40
-			OperatableStateMachine.add('SetPose1',
-										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveBase1'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
+			OperatableStateMachine.add('Start',
+										hsr_WaitWristPressedState(),
+										transitions={'succeeded': 'Speak'},
+										autonomy={'succeeded': Autonomy.Off})
 
-			# x:145 y:186
-			OperatableStateMachine.add('MoveBase1',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'finished', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
+			# x:136 y:189
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakState(sentence='The button pressed', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'finished'},
+										autonomy={'done': Autonomy.Off})
 
 
 		return _state_machine
