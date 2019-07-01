@@ -37,12 +37,11 @@ class hsr_SearchObjectState(EventState):
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
         self._service_name = service_name
-        self._centroid_x_max = centroid_x_max
-        self._centroid_y_max = centroid_y_max
-        self._centroid_y_min = centroid_y_min
-        self._centroid_z_max = centroid_z_max
-        self._centroid_z_min = centroid_z_min
-
+        rospy.set_param("/ork_tf_broadcaster/centroid_x_max", centroid_x_max)
+        rospy.set_param("/ork_tf_broadcaster/centroid_y_max", centroid_y_max)
+        rospy.set_param("/ork_tf_broadcaster/centroid_y_min", centroid_y_min)
+        rospy.set_param("/ork_tf_broadcaster/centroid_z_max", centroid_z_max)
+        rospy.set_param("/ork_tf_broadcaster/centroid_z_min", centroid_z_min)
         self._search_object_server = ProxyServiceCaller({self._service_name : search_object_srv})
 
     def execute(self, userdata):

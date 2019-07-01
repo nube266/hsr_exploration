@@ -1,3 +1,9 @@
-string word
+string obj
+string loc
+float32 waiting_time
+string sweep_mode
+float32 sweep_angular
+float32 sweep_distance
+float32 sweep_height
 ---
-string words
+bool is_succeeded

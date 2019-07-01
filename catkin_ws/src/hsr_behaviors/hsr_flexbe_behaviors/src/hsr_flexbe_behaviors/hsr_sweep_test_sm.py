@@ -8,8 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_sweep_object_state import hsr_SweepObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -22,8 +22,7 @@ Created on Wed Jun 19 2019
 '''
 class HSRsweeptestSM(Behavior):
 	'''
-	Move to the destination.
-Sweep if there is an obstacle at the destination.
+	Sweep "cloest" object.
 	'''
 
 
@@ -32,6 +31,7 @@ Sweep if there is an obstacle at the destination.
 		self.name = 'HSR sweep test'
 
 		# parameters of this behavior
+		self.add_parameter('searching_point', 'searching_point_0')
 
 		# references to used behaviors
 
@@ -45,7 +45,7 @@ Sweep if there is an obstacle at the destination.
 
 
 	def create(self):
-		# x:410 y:393, x:247 y:398
+		# x:594 y:136, x:108 y:423
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -55,19 +55,17 @@ Sweep if there is an obstacle at the destination.
 
 
 		with _state_machine:
-			# x:43 y:108
-			OperatableStateMachine.add('SetPoseDestination',
-										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToDestination'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
+			# x:78 y:129
+			OperatableStateMachine.add('SearchClosestObject',
+										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0),
+										transitions={'succeeded': 'SweepClosestObject', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:283 y:226
-			OperatableStateMachine.add('MoveToDestination',
-										hsr_MoveBaseState(),
+			# x:325 y:124
+			OperatableStateMachine.add('SweepClosestObject',
+										hsr_SweepObjectState(target_name='closest', sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=0, sweep_mode='push', sweep_angular=1, sweep_distance=0.25, sweep_height=0.0, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 
 		return _state_machine

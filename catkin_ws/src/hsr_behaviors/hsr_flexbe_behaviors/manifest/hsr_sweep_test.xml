@@ -7,13 +7,18 @@
 	<author>YusukeMiake</author>
 	<date>Wed Jun 19 2019</date>
 	<description>
-		Move to the destination.
-Sweep if there is an obstacle at the destination.
+		Sweep "cloest" object.
 	</description>
 
 
 	<!-- Contained Behaviors -->
 
 	<!-- Available Parameters -->
+	<params>
+
+		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
+
+	</params>
+
 
 </behavior>
