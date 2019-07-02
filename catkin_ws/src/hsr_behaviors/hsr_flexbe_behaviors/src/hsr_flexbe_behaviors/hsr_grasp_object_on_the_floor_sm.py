@@ -81,7 +81,7 @@ class HSRgraspobjectonthefloorSM(Behavior):
 										transitions={'succeeded': 'finished', 'failed': 'MoveToNeutralError'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:237 y:53
+			# x:246 y:17
 			OperatableStateMachine.add('SearchObject',
 										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0),
 										transitions={'succeeded': 'FetchObject', 'failed': 'MoveToNeutralError'},
