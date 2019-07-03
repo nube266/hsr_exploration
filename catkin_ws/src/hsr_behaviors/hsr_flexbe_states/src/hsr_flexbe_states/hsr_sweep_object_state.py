@@ -73,12 +73,15 @@ class hsr_SweepObjectState(EventState):
             self._failed = True
     
     def on_exit(self, userdata):
+        pass
+        '''
         req = EmptyRequest()
         try:
             self._srv_result = self._stop_tf_server.call(self._stop_tf_srv_name, req)
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
+        '''
     
     def on_start(self):
         pass

@@ -15,6 +15,8 @@ from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
+from hsr_flexbe_states.hsr_wait_press_wrist_state import hsr_WaitWristPressedState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -40,6 +42,7 @@ class HSRTidyUpHere401SM(Behavior):
 		self.add_parameter('putting_point', 'rubbishbin')
 
 		# references to used behaviors
+		self.add_behavior(HSRsweeptestSM, 'HSR sweep test')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -51,7 +54,7 @@ class HSRTidyUpHere401SM(Behavior):
 
 
 	def create(self):
-		# x:87 y:660, x:805 y:508
+		# x:87 y:660, x:1100 y:375
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -66,6 +69,11 @@ class HSRTidyUpHere401SM(Behavior):
 										hsr_SpeakState(sentence='I am going to tidy up here', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'SetPoseSearchingPoint'},
 										autonomy={'done': Autonomy.Off})
+			# x:39 y:33
+			OperatableStateMachine.add('Start',
+										hsr_WaitWristPressedState(),
+										transitions={'succeeded': 'Speak'},
+										autonomy={'succeeded': Autonomy.Off})
 
 			# x:204 y:390
 			OperatableStateMachine.add('FetchObject',
@@ -73,17 +81,16 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'succeeded': 'SetPosePuttingPoint', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:362 y:469
+			# x:327 y:474
 			OperatableStateMachine.add('SetPosePuttingPoint',
 										hsr_SetBasePoseByTfNameState(tf_name='toyshelf', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToPuttingPoint'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
-
-			# x:604 y:643
+			# x:540 y:571
 			OperatableStateMachine.add('MoveToPuttingPoint',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'PutObject', 'failed': 'failed'},
+										transitions={'succeeded': 'PutObject', 'failed': 'SetPoseRecoveryPoint'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
@@ -124,8 +131,31 @@ class HSRTidyUpHere401SM(Behavior):
 										hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=2.0, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=3.0),
 										transitions={'found': 'FetchObject', 'notfound': 'finished', 'failed': 'failed'},
 										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off})
+			# x:703 y:568
+			OperatableStateMachine.add('SetPoseRecoveryPoint',
+										hsr_SetBasePoseByTfNameState(tf_name='recovery_point', service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveToRecoveryPoint'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
 
+			# x:798 y:657
+			OperatableStateMachine.add('MoveToRecoveryPoint',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'HSR sweep test', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
 
+			# x:915 y:778
+			OperatableStateMachine.add('HSR sweep test',
+										self.use_behavior(HSRsweeptestSM, 'HSR sweep test'),
+										transitions={'finished': 'SetPosePuttingPoint', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:75 y:111
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakState(sentence='I am going to tidy up here', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'SetPoseSearchingPoint'},
+										autonomy={'done': Autonomy.Off})
 		return _state_machine
 
 
