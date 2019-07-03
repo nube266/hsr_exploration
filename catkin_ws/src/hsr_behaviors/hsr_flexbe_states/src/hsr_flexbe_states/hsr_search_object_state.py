@@ -25,14 +25,15 @@ class hsr_SearchObjectState(EventState):
     -- centroid_z_max          float     Threshold of tf to publish
     -- centroid_z_min          float     Threshold of tf to publish
 
-    <= succeeded                       An object was found.
-    <= failed                          No object was found.
+    <= found                          An object was found.
+    <= notfound                       An object was found.
+    <= failed                         Failed to process necessary programs.
     '''
 
     def __init__(self, search_point, search_place_type, service_name='/search_object/search_floor',
                  centroid_x_max = 1.5, centroid_y_max = 1.0, centroid_y_min = -1.0,
-                 centroid_z_max  = 0.1, centroid_z_min = 0.0):
-        super(hsr_SearchObjectState,self).__init__(outcomes=['succeeded', 'failed'])
+                 centroid_z_max  = 0.1, centroid_z_min = 0.0, sleep_time = 5.0):
+        super(hsr_SearchObjectState,self).__init__(outcomes=['found', 'notfound', 'failed'])
 
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
@@ -42,39 +43,34 @@ class hsr_SearchObjectState(EventState):
         rospy.set_param("/ork_tf_broadcaster/centroid_y_min", centroid_y_min)
         rospy.set_param("/ork_tf_broadcaster/centroid_z_max", centroid_z_max)
         rospy.set_param("/ork_tf_broadcaster/centroid_z_min", centroid_z_min)
+        rospy.set_param("/search_object/sleep_time", sleep_time)
+
         self._search_object_server = ProxyServiceCaller({self._service_name : search_object_srv})
+
 
     def execute(self, userdata):
         '''
         Execute the state
         '''
-        rospy.loginfo('Let\'s search')
-
-        # Wait for a second
-        rospy.sleep(1)
-        # If an object is found, return 'succeeded'
-        if not  self._failed:
-            rospy.loginfo('I found an object')
-            return 'succeeded'
-        else:
-            rospy.loginfo('I could\'nt find any objects')
-            return 'failed'
+        return self._outcome
 
 
     def on_enter(self, userdata):
-        pass
         #
         # Execute the searching motion
         #
+        rospy.loginfo('Let\'s search')
+
         req = search_object_srvRequest('', self._search_place_type, self._search_point)
 
-        self._failed = False
+        self._outcome = 'found'
         try:
             self._srv_result = self._search_object_server.call(self._service_name, req)
-            rospy.loginfo(self._srv_result)
+            if not self._srv_result.is_succeeded:
+                self._outcome = 'notfound'
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
-            self._failed = True
+            self._outcome = 'failed'
     
     def on_exit(self, userdata):
         pass
