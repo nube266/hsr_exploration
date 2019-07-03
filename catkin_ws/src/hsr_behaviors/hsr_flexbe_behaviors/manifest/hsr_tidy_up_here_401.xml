@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Tidy Up Here 401">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_401_sm" class="HSRTidyUpHere401SM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Wed July 02 2019</date>
+	<description>
+		Demo code of the entire flow of Tidy Up Here in Sokento 401
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
+
+		<param type="text" name="putting_point" default="rubbishbin" label="putting_point" hint="Sets the putting_point" />
+
+	</params>
+
+
+</behavior>
