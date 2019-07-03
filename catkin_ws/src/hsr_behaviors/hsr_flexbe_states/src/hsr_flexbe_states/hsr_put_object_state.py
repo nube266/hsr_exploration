@@ -55,7 +55,7 @@ class hsr_PutObjectState(EventState):
             self._srv_result = self._put_server.call(self._service_name, req)
             rospy.loginfo(self._srv_result.is_succeeded)
             if not self._srv_result.is_succeeded:
-                self._failed = False
+                self._failed = True
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
