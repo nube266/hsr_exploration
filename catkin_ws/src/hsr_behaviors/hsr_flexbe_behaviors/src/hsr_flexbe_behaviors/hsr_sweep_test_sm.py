@@ -57,9 +57,9 @@ class HSRsweeptestSM(Behavior):
 		with _state_machine:
 			# x:78 y:129
 			OperatableStateMachine.add('SearchClosestObject',
-										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0),
-										transitions={'succeeded': 'SweepClosestObject', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
+										transitions={'found': 'SweepClosestObject', 'notfound': 'finished', 'failed': 'failed'},
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:341 y:247
 			OperatableStateMachine.add('SweepClosestObject',

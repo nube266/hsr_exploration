@@ -92,10 +92,10 @@ class HSRmoveandsweepSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:385 y:495
+			# x:639 y:376
 			OperatableStateMachine.add('HSR sweep test',
 										self.use_behavior(HSRsweeptestSM, 'HSR sweep test'),
-										transitions={'finished': 'SetPoseSearchPoint', 'failed': 'failed'},
+										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
