@@ -62,15 +62,6 @@ class hsr_FetchObjectState(EventState):
     
     def on_exit(self, userdata):
         pass
-        #
-        # Stop publishing the tf
-        #
-        req = EmptyRequest()
-        try:
-            self._srv_result = self._grasp_server.call(self._stop_tf_srv_name, req)
-        except Exception as e:
-            rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
-            self._failed = True
     
     def on_start(self):
         pass

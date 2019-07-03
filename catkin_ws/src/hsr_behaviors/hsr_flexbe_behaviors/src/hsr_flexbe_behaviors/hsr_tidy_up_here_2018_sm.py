@@ -10,7 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
-from hsr_flexbe_states.hsr_pass_object_state import hsr_SearchObjectState as hsr_flexbe_states__hsr_SearchObjectState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
@@ -82,9 +82,9 @@ class HSRTidyUpHere2018SM(Behavior):
 
 			# x:50 y:244
 			OperatableStateMachine.add('SearchObject',
-										hsr_flexbe_states__hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.1, centroid_z_min=0.0),
-										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.1, centroid_z_min=0.0, sleep_time=5.0),
+										transitions={'found': 'FetchObject', 'notfound': 'finished', 'failed': 'failed'},
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:719 y:560
 			OperatableStateMachine.add('PutObject',
