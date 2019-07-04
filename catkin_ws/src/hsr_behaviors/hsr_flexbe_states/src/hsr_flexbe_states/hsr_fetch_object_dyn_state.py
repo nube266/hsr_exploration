@@ -65,7 +65,8 @@ class hsr_FetchObjectDynState(EventState):
         self._failed = False
         try:
             self._srv_result = self._grasp_server.call(self._grasp_srv_name, req)
-            rospy.loginfo(self._srv_result)
+            if not self._srv_result.is_succeeded:
+                self._failed = True
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True
