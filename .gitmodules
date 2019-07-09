@@ -54,3 +54,6 @@
 [submodule "catkin_ws/src/color_histogram_search"]
 	path = catkin_ws/src/color_histogram_search
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/liu/color_histogram_search.git
+[submodule "catkin_ws/src/object_recognition_integrator"]
+	path = catkin_ws/src/object_recognition_integrator
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_recognition_integrator
