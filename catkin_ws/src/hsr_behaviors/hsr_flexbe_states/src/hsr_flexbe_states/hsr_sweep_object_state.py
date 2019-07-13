@@ -31,7 +31,7 @@ class hsr_SweepObjectState(EventState):
     '''
 
     def __init__(self, target_name, sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=3.0, sweep_mode = 'push',
-                 sweep_angular=1.0, sweep_distance=0.25, sweep_height=0.0, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'):
+                 sweep_angular=1.0, sweep_distance=0.25, sweep_height=0.05, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'):
         super(hsr_SweepObjectState, self).__init__(outcomes=['succeeded', 'failed'])
 
         self._target_name      = target_name

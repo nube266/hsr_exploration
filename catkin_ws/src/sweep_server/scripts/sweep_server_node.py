@@ -98,10 +98,10 @@ class Sweep:
             self._whole_body.move_to_joint_positions({'arm_lift_joint': 0.3})
             rospy.sleep(self._waiting_time)
             print 'Sweep operation[2]'
-            self._whole_body.move_to_joint_positions({'arm_flex_joint': -2.45,
-                                                      'arm_roll_joint': 0.0,
-                                                      'wrist_flex_joint': 0.90,
-                                                      'wrist_roll_joint': 0.0})
+            self._whole_body.move_to_joint_positions({'arm_flex_joint': -1.86,
+                                                      'arm_roll_joint': 0,
+                                                      'wrist_flex_joint': -1.33,
+                                                      'wrist_roll_joint': 1.53})
             rospy.sleep(self._waiting_time)
             print 'Sweep operation[3]'
             self._omni_base.go_rel(0.0, 0.0, -self._sweep_angular, 100)

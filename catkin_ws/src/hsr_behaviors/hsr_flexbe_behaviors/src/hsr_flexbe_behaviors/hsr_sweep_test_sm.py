@@ -8,8 +8,9 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_sweep_object_state import hsr_SweepObjectState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -45,7 +46,7 @@ class HSRsweeptestSM(Behavior):
 
 
 	def create(self):
-		# x:594 y:136, x:108 y:423
+		# x:828 y:268, x:87 y:428
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -55,15 +56,27 @@ class HSRsweeptestSM(Behavior):
 
 
 		with _state_machine:
-			# x:78 y:129
+			# x:108 y:102
+			OperatableStateMachine.add('MoveToNeutral',
+										hsr_MoveToNeutralState(),
+										transitions={'succeeded': 'SearchClosestObject', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:441 y:382
+			OperatableStateMachine.add('SweepClosestObject',
+										hsr_SweepObjectState(target_name='closest', sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=0, sweep_mode='rotate', sweep_angular=1, sweep_distance=0.25, sweep_height=0.05, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'),
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:438 y:98
 			OperatableStateMachine.add('SearchClosestObject',
 										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
-										transitions={'found': 'SweepClosestObject', 'notfound': 'finished', 'failed': 'failed'},
+										transitions={'found': 'SweepClosestObject', 'notfound': 'NotFoundMoveToNeutral', 'failed': 'failed'},
 										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:341 y:247
-			OperatableStateMachine.add('SweepClosestObject',
-										hsr_SweepObjectState(target_name='closest', sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=0, sweep_mode='push', sweep_angular=1, sweep_distance=0.25, sweep_height=0.0, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'),
+			# x:759 y:97
+			OperatableStateMachine.add('NotFoundMoveToNeutral',
+										hsr_MoveToNeutralState(),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
