@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Search Object on the table">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_search_object_on_the_table_sm" class="HSRSearchObjectonthetableSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Fri Jul 12 2019</date>
+	<description>
+		Test 'search_object' on a short table
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

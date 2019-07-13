@@ -15,13 +15,5 @@
 	<contains name="HSR sweep test" />
 
 	<!-- Available Parameters -->
-	<params>
-
-		<param type="text" name="searching_point" default="searching_point_0" label="searching_point" hint="Sets the searching_point" />
-
-		<param type="text" name="putting_point" default="rubbishbin" label="putting_point" hint="Sets the putting_point" />
-
-	</params>
-
 
 </behavior>

@@ -14,10 +14,10 @@ from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePose
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
-from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
 from hsr_flexbe_states.hsr_put_object_dyn_state import hsr_PutObjectDynState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
+from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
+from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -39,8 +39,6 @@ class HSRTidyUpHere401SM(Behavior):
 		self.name = 'HSR Tidy Up Here 401'
 
 		# parameters of this behavior
-		self.add_parameter('searching_point', 'searching_point_0')
-		self.add_parameter('putting_point', 'rubbishbin')
 
 		# references to used behaviors
 		self.add_behavior(HSRsweeptestSM, 'HSR sweep test')
@@ -71,7 +69,7 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'done': 'SetPoseSearchingPoint'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:561 y:505
+			# x:560 y:535
 			OperatableStateMachine.add('MoveToPuttingPoint',
 										hsr_MoveBaseState(),
 										transitions={'succeeded': 'PutDyn', 'failed': 'SetPoseRecoveryPoint'},
@@ -108,7 +106,8 @@ class HSRTidyUpHere401SM(Behavior):
 			OperatableStateMachine.add('SearchObject',
 										hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', centroid_x_max=2.0, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=3.0),
 										transitions={'found': 'FetchObject', 'notfound': 'finished', 'failed': 'failed'},
-										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off})
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'object_name': 'object_name'})
 
 			# x:724 y:468
 			OperatableStateMachine.add('SetPoseRecoveryPoint',
@@ -130,21 +129,7 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'finished': 'SetPosePutPoint', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:330 y:298
-			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
-										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
-
-			# x:269 y:475
-			OperatableStateMachine.add('SetPosePutPoint',
-										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToPuttingPoint'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'tf_name': 'location_name', 'pose': 'pose'})
-
-			# x:257 y:581
+			# x:203 y:556
 			OperatableStateMachine.add('PutDyn',
 										hsr_PutObjectDynState(put_place_type='shelf', service_name='/grasp/put'),
 										transitions={'succeeded': 'MoveToNeutral2', 'failed': 'MoveToNeutral3'},
@@ -160,8 +145,22 @@ class HSRTidyUpHere401SM(Behavior):
 			# x:204 y:390
 			OperatableStateMachine.add('FetchObject',
 										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
-										transitions={'succeeded': 'SetPosePutPoint', 'failed': 'failed'},
+										transitions={'succeeded': 'Analyse', 'failed': 'SetPoseSearchingPoint'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:402 y:330
+			OperatableStateMachine.add('Analyse',
+										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
+										transitions={'succeeded': 'SetPosePutPoint', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
+
+			# x:394 y:449
+			OperatableStateMachine.add('SetPosePutPoint',
+										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveToPuttingPoint'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'tf_name': 'location_name', 'pose': 'pose'})
 
 
 		return _state_machine
