@@ -21,17 +21,20 @@ class hsr_AnalyseCommandState(EventState):
 
     #> object_name             String    An object name
     #> object_location         String    A place where the object is located
+    #> location_to_put         String    A exact spot to put the object
 
     <= succeeded                       Analysis succeeded.
     <= failed                          Analysis failed.
     '''
 
-    def __init__(self, service_name='/wrs_semantics/bring_me_instruction'):
-        super(hsr_AnalyseCommandState,self).__init__(input_keys=['command'], output_keys=['object_name', 'location_name'], outcomes=['succeeded', 'failed'])
+    def __init__(self, default_location, service_name='/wrs_semantics/bring_me_instruction'):
+        super(hsr_AnalyseCommandState,self).__init__(input_keys=['command'], output_keys=['object_name', 'location_name', 'location_to_put'], outcomes=['succeeded', 'failed'])
 
         self._service_name = service_name
 
         self._get_object_location_srv = ProxyServiceCaller({self._service_name : Object_and_location})
+
+        self._default_location = default_location
 
     def execute(self, userdata):
         '''
@@ -49,15 +52,24 @@ class hsr_AnalyseCommandState(EventState):
         #
         # Analyse the command
         #
-        req = Object_and_locationRequest(userdata.command.message)
+        if type(userdata.command) is str:
+            req = Object_and_locationRequest(userdata.command)
+        else :
+            req = Object_and_locationRequest(userdata.command.message)
 
         self._failed = False
         try:
             self._srv_result = self._get_object_location_srv.call(self._service_name, req)
             userdata.object_name = self._srv_result.object_name
-            userdata.location_name = self._srv_result.location_name
+
+            if self._srv_result.location_name == '':
+                userdata.location_name = self._default_location
+                userdata.location_to_put = self._default_location + '_0'
+            else :
+                userdata.location_name = self._srv_result.location_name
+                userdata.location_to_put = self._srv_result.location_name + '_' + str(self._srv_result.theId)
 #
-            rospy.loginfo(self._srv_result.object_name + ' ' + self._srv_result.location_name)
+            rospy.loginfo(self._srv_result.object_name + ' ' + self._srv_result.location_name + ' ' + self._srv_result.location_name + '_' + str(self._srv_result.theId))
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._failed = True

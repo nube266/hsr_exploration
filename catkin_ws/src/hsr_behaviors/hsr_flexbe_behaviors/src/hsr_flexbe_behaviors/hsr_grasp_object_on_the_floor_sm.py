@@ -10,8 +10,10 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
-from hsr_flexbe_states.hsr_pass_object_state import hsr_PassObjectState
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
+from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
+from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -63,29 +65,45 @@ class HSRgraspobjectonthefloorSM(Behavior):
 										transitions={'succeeded': 'SearchObject', 'failed': 'finished'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:454 y:78
+			# x:504 y:243
 			OperatableStateMachine.add('FetchObject',
 										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
-										transitions={'succeeded': 'Pass', 'failed': 'MoveToNeutralError'},
+										transitions={'succeeded': 'SetPosePutPoint', 'failed': 'MoveToNeutralError'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:289 y:461
+			# x:355 y:349
 			OperatableStateMachine.add('MoveToNeutralError',
 										hsr_MoveToNeutralState(),
 										transitions={'succeeded': 'failed', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:549 y:301
-			OperatableStateMachine.add('Pass',
-										hsr_PassObjectState(service_name='/kinesthetic/wait_open'),
-										transitions={'succeeded': 'finished', 'failed': 'MoveToNeutralError'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
 			# x:246 y:17
 			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0),
-										transitions={'succeeded': 'FetchObject', 'failed': 'MoveToNeutralError'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
+										transitions={'found': 'Analize', 'notfound': 'SearchObject', 'failed': 'MoveToNeutralError'},
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'object_name': 'object_name'})
+
+			# x:530 y:67
+			OperatableStateMachine.add('Analize',
+										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
+										transitions={'succeeded': 'FetchObject', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
+
+			# x:578 y:395
+			OperatableStateMachine.add('SetPosePutPoint',
+										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveToPutPoint'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'tf_name': 'location_name', 'pose': 'pose'})
+
+			# x:576 y:516
+			OperatableStateMachine.add('MoveToPutPoint',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
 
 
 		return _state_machine

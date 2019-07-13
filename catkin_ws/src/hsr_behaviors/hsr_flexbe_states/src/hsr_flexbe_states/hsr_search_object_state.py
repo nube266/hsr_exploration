@@ -35,7 +35,7 @@ class hsr_SearchObjectState(EventState):
     def __init__(self, search_point, search_place_type, service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold',
                  centroid_x_max = 1.5, centroid_y_max = 1.0, centroid_y_min = -1.0,
                  centroid_z_max  = 0.1, centroid_z_min = 0.0, sleep_time = 5.0):
-        super(hsr_SearchObjectState,self).__init__(outcomes=['found', 'notfound', 'failed'])
+        super(hsr_SearchObjectState,self).__init__(outcomes=['found', 'notfound', 'failed'], output_keys=['object_name'])
 
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
@@ -79,6 +79,8 @@ class hsr_SearchObjectState(EventState):
         self._outcome = 'found'
         try:
             self._srv_result = self._search_object_server.call(self._service_search_floor, req)
+            userdata.object_name = self._srv_result.object_name
+
             if not self._srv_result.is_succeeded:
                 self._outcome = 'notfound'
         except Exception as e:
