@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Test Timer">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_test_timer_sm" class="HSRTestTimerSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Sun Jul 14 2019</date>
+	<description>
+		Test behavior to check 'hsr_CheckElapsedTimeState'
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="time_limit" default="1.0" label="time_limit" hint="Sets the time_limit">
+			<min value="0" />
+			<max value="999" />
+		</param>
+
+	</params>
+
+
+</behavior>
