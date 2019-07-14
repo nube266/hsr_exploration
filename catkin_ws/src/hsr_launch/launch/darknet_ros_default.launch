@@ -8,7 +8,7 @@
   <arg name="yolo_weights_path" default="$(find hsr_launch)/config/darknet_ros/weights"/>
   <arg name="yolo_config_path" default="$(find hsr_launch)/config/darknet_ros/cfg"/>
   <arg name="ros_param_file" default="$(find hsr_launch)/config/darknet_ros/yaml/ros.yaml"/>
-  <arg name="network_param_file" default="$(find hsr_launch)/config/darknet_ros/yaml/wrs.yaml"/>
+  <arg name="network_param_file" default="$(find hsr_launch)/config/darknet_ros/yaml/yolov3_verification.yaml"/>
 
   <!-- Load parameters. -->
   <rosparam command="load" ns="darknet_ros" file="$(arg ros_param_file)"/>
