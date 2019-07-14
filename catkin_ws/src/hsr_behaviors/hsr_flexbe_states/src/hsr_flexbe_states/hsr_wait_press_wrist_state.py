@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import actionlib
+import time
 from flexbe_core import EventState, Logger
 from hsrb_interface import Robot, ItemTypes
 
@@ -14,7 +15,7 @@ class hsr_WaitWristPressedState(EventState):
 	'''
 
 	def __init__(self):
-		super(hsr_WaitWristPressedState,self).__init__(outcomes=['succeeded'])
+		super(hsr_WaitWristPressedState,self).__init__(output_keys=['start_time'], outcomes=['succeeded'])
                 self._robot = Robot()
 
 	def execute(self, userdata):
@@ -26,6 +27,8 @@ class hsr_WaitWristPressedState(EventState):
                 wrench = self._robot.get('wrist_wrench',ItemTypes.FORCE_TORQUE).wrench
                 if wrench[0][0] > 20.0:
                     break
+            
+            userdata.start_time = time.time()
 
 	def on_exit(self, userdata):
 		pass
