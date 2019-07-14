@@ -64,7 +64,7 @@ class HSRsweeptestSM(Behavior):
 
 			# x:441 y:382
 			OperatableStateMachine.add('SweepClosestObject',
-										hsr_SweepObjectState(target_name='closest', sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=0, sweep_mode='rotate', sweep_angular=1, sweep_distance=0.25, sweep_height=0.05, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'),
+										hsr_SweepObjectState(target_name='closest', sweep_place_type='floor', sweep_srv_name='/sweep', waiting_time=0, sweep_mode='lateral', sweep_angular=1, sweep_distance=0.25, sweep_height=0.05, is_right_move=False, stop_tf_srv_name='/ork_tf_broadcaster/stop_publish'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
