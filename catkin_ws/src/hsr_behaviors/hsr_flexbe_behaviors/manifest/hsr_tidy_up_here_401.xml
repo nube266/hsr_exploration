@@ -15,5 +15,14 @@
 	<contains name="HSR sweep test" />
 
 	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="time_limit" default="5.0" label="time_limit" hint="Sets the time_limit">
+			<min value="0" />
+			<max value="20" />
+		</param>
+
+	</params>
+
 
 </behavior>

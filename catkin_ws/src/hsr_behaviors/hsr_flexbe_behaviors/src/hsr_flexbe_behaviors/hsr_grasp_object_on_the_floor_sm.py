@@ -79,7 +79,7 @@ class HSRgraspobjectonthefloorSM(Behavior):
 
 			# x:246 y:17
 			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point=self.searching_point, search_place_type='floor', service_name='/search_object/search_floor', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
+										hsr_SearchObjectState(search_point='hoge', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
 										transitions={'found': 'Analize', 'notfound': 'SearchObject', 'failed': 'MoveToNeutralError'},
 										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'object_name': 'object_name'})

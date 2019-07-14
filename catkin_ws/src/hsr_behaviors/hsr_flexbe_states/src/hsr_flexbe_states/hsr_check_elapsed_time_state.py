@@ -17,6 +17,7 @@ class hsr_CheckElapsedTimeState(EventState):
     -- time_limit      float      (minutes)
 
     ># start_time      float      System time that indicates the time of starting the behavior [seconds] (expected to be set by the initial state)
+    #> offset          float      Remaining time to the time limit
 
     <= time_remains               Outcome that indicates time still remains
     <= time_up                    Outcome that indicates time is up
@@ -26,7 +27,7 @@ class hsr_CheckElapsedTimeState(EventState):
         '''
         Constructor
         '''
-        super(hsr_CheckElapsedTimeState, self).__init__(input_keys=['start_time'], outcomes=['time_remains', 'time_up'])
+        super(hsr_CheckElapsedTimeState, self).__init__(input_keys=['start_time'], output_keys=['offset'], outcomes=['time_remains', 'time_up'])
 
         self._time_limit = time_limit
 
@@ -35,6 +36,7 @@ class hsr_CheckElapsedTimeState(EventState):
         start_time = userdata.start_time
         now = time.time()
         elapsed_time = (now - start_time) / 60.0
+        userdata.offset = self._time_limit - elapsed_time
 
         rospy.loginfo('elapsed_time' + str(elapsed_time))
 
