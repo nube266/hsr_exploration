@@ -32,7 +32,8 @@ class hsr_SearchObjectState(EventState):
     <= failed                         Failed to process necessary programs.
     '''
 
-    def __init__(self, search_point, search_place_type, service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold',
+    def __init__(self, search_point, search_place_type, service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', 
+                 service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish',
                  centroid_x_max = 1.5, centroid_y_max = 1.0, centroid_y_min = -1.0,
                  centroid_z_max  = 0.1, centroid_z_min = 0.0, sleep_time = 5.0):
         super(hsr_SearchObjectState,self).__init__(outcomes=['found', 'notfound', 'failed'], output_keys=['object_name'])
@@ -40,6 +41,8 @@ class hsr_SearchObjectState(EventState):
         self._search_point = search_point # The locations to be checked
         self._search_place_type = search_place_type
         self._service_search_floor = service_search_floor
+        self._service_publish_tf = service_publish_tf
+        self._service_stop_tf = service_stop_tf
         self._service_update_threshold = service_update_threshold
         rospy.set_param("/ork_tf_broadcaster/centroid_x_max", centroid_x_max)
         rospy.set_param("/ork_tf_broadcaster/centroid_y_max", centroid_y_max)
@@ -49,6 +52,8 @@ class hsr_SearchObjectState(EventState):
         rospy.set_param("/search_object/sleep_time", sleep_time)
 
         self._search_object_server = ProxyServiceCaller({self._service_search_floor : search_object_srv})
+        self._publish_tf = ProxyServiceCaller({self._service_publish_tf : Empty})
+        self._stop_tf = ProxyServiceCaller({self._service_stop_tf : Empty})
         self._update_threshold_server = ProxyServiceCaller({self._service_update_threshold : Empty})
 
 
@@ -68,6 +73,12 @@ class hsr_SearchObjectState(EventState):
         except Exception as e:
             rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
             self._outcome = 'failed'
+
+#        try:
+#            result = self._publish_tf.call(self._service_publish_tf, req)
+#        except Exception as e:
+#            rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
+#            self._outcome = 'failed'
 
         #
         # Execute the searching motion
@@ -89,9 +100,13 @@ class hsr_SearchObjectState(EventState):
     
     def on_exit(self, userdata):
         pass
-    
-    def on_start(self):
-        pass
+#        req = EmptyRequest()
+#
+#        try:
+#            result = self._stop_tf.call(self._service_stop_tf, req)
+#        except Exception as e:
+#            rospy.logwarn('Failed to call object recognizer:\n\r%s' % str(e))
+#            self._outcome = 'failed'
     
     def on_stop(self):
         pass
