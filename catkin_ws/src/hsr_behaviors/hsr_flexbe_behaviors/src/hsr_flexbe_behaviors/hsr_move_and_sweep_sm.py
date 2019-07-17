@@ -60,7 +60,7 @@ class HSRmoveandsweepSM(Behavior):
 		with _state_machine:
 			# x:30 y:40
 			OperatableStateMachine.add('SetPoseSearchPoint',
-										hsr_SetBasePoseByTfNameState(tf_name='searching_point_1', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='shorttable', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveBase'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
@@ -72,25 +72,11 @@ class HSRmoveandsweepSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:222 y:203
+			# x:295 y:219
 			OperatableStateMachine.add('Speak',
 										hsr_SpeakState(sentence='failed to move. Lets recover', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'SetPoseRecoveryPoint'},
+										transitions={'done': 'HSR sweep test'},
 										autonomy={'done': Autonomy.Off})
-
-			# x:376 y:204
-			OperatableStateMachine.add('SetPoseRecoveryPoint',
-										hsr_SetBasePoseByTfNameState(tf_name='recovery_point', service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToRecoveryPoint'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
-
-			# x:468 y:322
-			OperatableStateMachine.add('MoveToRecoveryPoint',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'HSR sweep test', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
 
 			# x:639 y:376
 			OperatableStateMachine.add('HSR sweep test',
