@@ -13,13 +13,14 @@ from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
-from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
 from hsr_flexbe_states.hsr_put_object_dyn_state import hsr_PutObjectDynState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
 from hsr_flexbe_states.hsr_check_elapsed_time_state import hsr_CheckElapsedTimeState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
+from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -76,13 +77,13 @@ class HSRTidyUpHere401SM(Behavior):
 			# x:560 y:535
 			OperatableStateMachine.add('MoveToPuttingPoint',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'CheckElapsedTime2', 'failed': 'SetPoseRecoveryPoint'},
+										transitions={'succeeded': 'CheckElapsedTime2', 'failed': 'HSR sweep test'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
 			# x:371 y:19
 			OperatableStateMachine.add('SetPoseSearchingPoint',
-										hsr_SetBasePoseByTfNameState(tf_name='searching_point_1', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchingPoint'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
@@ -106,33 +107,6 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'succeeded': 'SetPoseSearchingPoint', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:268 y:166
-			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', centroid_x_max=3.0, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=3.0),
-										transitions={'found': 'FetchObject', 'notfound': 'finished', 'failed': 'failed'},
-										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'object_name': 'object_name'})
-
-			# x:724 y:468
-			OperatableStateMachine.add('SetPoseRecoveryPoint',
-										hsr_SetBasePoseByTfNameState(tf_name='recovery_point', service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToRecoveryPoint'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
-
-			# x:787 y:579
-			OperatableStateMachine.add('MoveToRecoveryPoint',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'HSR sweep test', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
-
-			# x:855 y:783
-			OperatableStateMachine.add('HSR sweep test',
-										self.use_behavior(HSRsweeptestSM, 'HSR sweep test'),
-										transitions={'finished': 'SetPosePutPoint', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
-
 			# x:189 y:439
 			OperatableStateMachine.add('PutDyn',
 										hsr_PutObjectDynState(put_place_type='shelf', service_name='/grasp/put'),
@@ -140,26 +114,26 @@ class HSRTidyUpHere401SM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'target_name': 'location_to_put'})
 
-			# x:269 y:704
+			# x:194 y:704
 			OperatableStateMachine.add('MoveToNeutral3',
 										hsr_MoveToNeutralState(),
 										transitions={'succeeded': 'SetPosePutPoint', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:219 y:296
+			# x:295 y:288
 			OperatableStateMachine.add('FetchObject',
 										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
-										transitions={'succeeded': 'Analyse', 'failed': 'SetPoseSearchingPoint'},
+										transitions={'succeeded': 'Analyse', 'failed': 'MoveToNeutral2'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:402 y:330
+			# x:523 y:289
 			OperatableStateMachine.add('Analyse',
 										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
-										transitions={'succeeded': 'SetPosePutPoint', 'failed': 'failed'},
+										transitions={'succeeded': 'SpeakObjectName', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
-			# x:394 y:449
+			# x:422 y:453
 			OperatableStateMachine.add('SetPosePutPoint',
 										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToPuttingPoint'},
@@ -191,6 +165,26 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'time_remains': 'PutDyn', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
+
+			# x:299 y:199
+			OperatableStateMachine.add('SearchObject',
+										hsr_SearchObjectState(search_point='searching_point_0', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.2, centroid_z_min=0.0, sleep_time=5.0, is_floor=False),
+										transitions={'found': 'FetchObject', 'notfound': 'finished', 'failed': 'failed'},
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'object_name': 'object_name'})
+
+			# x:721 y:609
+			OperatableStateMachine.add('HSR sweep test',
+										self.use_behavior(HSRsweeptestSM, 'HSR sweep test'),
+										transitions={'finished': 'SetPosePutPoint', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:418 y:378
+			OperatableStateMachine.add('SpeakObjectName',
+										hsr_SpeakDynState(sentence="It's +", sentence_when_empty="I couldn't recognizeit", topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'SetPosePutPoint'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'variable': 'object_name'})
 
 
 		return _state_machine

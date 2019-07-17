@@ -10,10 +10,10 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -77,13 +77,6 @@ class HSRgraspobjectonthefloorSM(Behavior):
 										transitions={'succeeded': 'failed', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:246 y:17
-			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectState(search_point='hoge', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0),
-										transitions={'found': 'Analize', 'notfound': 'SearchObject', 'failed': 'MoveToNeutralError'},
-										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'object_name': 'object_name'})
-
 			# x:530 y:67
 			OperatableStateMachine.add('Analize',
 										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
@@ -104,6 +97,13 @@ class HSRgraspobjectonthefloorSM(Behavior):
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
+
+			# x:283 y:59
+			OperatableStateMachine.add('SearchObject',
+										hsr_SearchObjectState(search_point='search_point_0', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish', centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.2, centroid_z_min=0.0, sleep_time=5.0, is_floor=False),
+										transitions={'found': 'Analize', 'notfound': 'finished', 'failed': 'failed'},
+										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'object_name': 'object_name'})
 
 
 		return _state_machine

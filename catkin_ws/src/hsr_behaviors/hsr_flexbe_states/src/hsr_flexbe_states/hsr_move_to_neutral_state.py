@@ -51,7 +51,7 @@ class hsr_MoveToNeutralState(EventState):
             self._whole_body.move_to_neutral()
             self._failed = False
         except Exception as e:
-            rospy.logerror(e)
+            rospy.logerr(e)
             self._failed = True
 
     def on_exit(self, userdata):
