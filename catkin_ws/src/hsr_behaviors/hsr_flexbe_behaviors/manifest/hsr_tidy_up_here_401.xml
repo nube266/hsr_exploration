@@ -13,6 +13,7 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="HSR sweep test" />
+	<contains name="HSR Drawer Open Test" />
 
 	<!-- Available Parameters -->
 	<params>

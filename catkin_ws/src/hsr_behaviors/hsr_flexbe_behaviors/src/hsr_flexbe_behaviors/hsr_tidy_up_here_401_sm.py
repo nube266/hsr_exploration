@@ -21,6 +21,7 @@ from hsr_flexbe_states.hsr_check_elapsed_time_state import hsr_CheckElapsedTimeS
 from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
+from hsr_flexbe_behaviors.hsr_drawer_open_test_sm import HSRDrawerOpenTestSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -46,6 +47,7 @@ class HSRTidyUpHere401SM(Behavior):
 
 		# references to used behaviors
 		self.add_behavior(HSRsweeptestSM, 'HSR sweep test')
+		self.add_behavior(HSRDrawerOpenTestSM, 'HSR Drawer Open Test')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -67,7 +69,7 @@ class HSRTidyUpHere401SM(Behavior):
 
 
 		with _state_machine:
-			# x:57 y:23
+			# x:30 y:28
 			OperatableStateMachine.add('Start',
 										hsr_SetStartTimeState(),
 										transitions={'succeeded': 'Speak'},
@@ -81,7 +83,7 @@ class HSRTidyUpHere401SM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:371 y:19
+			# x:477 y:31
 			OperatableStateMachine.add('SetPoseSearchingPoint',
 										hsr_SetBasePoseByTfNameState(tf_name='searching_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchingPoint'},
@@ -101,7 +103,7 @@ class HSRTidyUpHere401SM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:62 y:118
+			# x:17 y:173
 			OperatableStateMachine.add('MoveToNeutral2',
 										hsr_MoveToNeutralState(),
 										transitions={'succeeded': 'SetPoseSearchingPoint', 'failed': 'failed'},
@@ -153,10 +155,10 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:241 y:18
+			# x:191 y:27
 			OperatableStateMachine.add('Speak',
 										hsr_SpeakState(sentence='I am going to tidy up here', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'SetPoseSearchingPoint'},
+										transitions={'done': 'HSR Drawer Open Test'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:366 y:531
@@ -185,6 +187,12 @@ class HSRTidyUpHere401SM(Behavior):
 										transitions={'done': 'SetPosePutPoint'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'variable': 'object_name'})
+
+			# x:263 y:89
+			OperatableStateMachine.add('HSR Drawer Open Test',
+										self.use_behavior(HSRDrawerOpenTestSM, 'HSR Drawer Open Test'),
+										transitions={'finished': 'SetPoseSearchingPoint', 'failed': 'SetPoseSearchingPoint'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine
