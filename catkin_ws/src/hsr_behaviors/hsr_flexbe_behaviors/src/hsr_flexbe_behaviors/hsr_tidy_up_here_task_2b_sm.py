@@ -21,18 +21,18 @@ from hsr_flexbe_states.hsr_fetch_object_dyn_state import hsr_FetchObjectDynState
 
 
 '''
-Created on Tue Jun 12 2019
+Created on Tue Jul 22 2019
 @author: Shigemichi Matsuzaki
 '''
-class HSRBringMeC2502SM(Behavior):
+class HSRTidyUpHereTask2bSM(Behavior):
 	'''
-	Demo code of the entire flow of Bring Me in C2-502
+	Behavior for Tidy Up Here Task 2b (bringing a designated object from the shelf)
 	'''
 
 
 	def __init__(self):
-		super(HSRBringMeC2502SM, self).__init__()
-		self.name = 'HSR Bring Me C2-502'
+		super(HSRTidyUpHereTask2bSM, self).__init__()
+		self.name = 'HSR Tidy Up Here Task 2b'
 
 		# parameters of this behavior
 
@@ -50,7 +50,7 @@ class HSRBringMeC2502SM(Behavior):
 	def create(self):
 		# x:30 y:365, x:130 y:365
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['target_name'])
-		_state_machine.userdata.target_name = 'oolongtea'
+		_state_machine.userdata.target_name = 'orangecookies'
 		_state_machine.userdata.location_name = 'shelf'
 
 		# Additional creation code can be added inside the following tags

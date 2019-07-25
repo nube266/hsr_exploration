@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Tidy Up Here Open Drawers">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_open_drawers_sm" class="HSRTidyUpHereOpenDrawersSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Thu Jul 25 2019</date>
+	<description>
+		Behavior to open the three drawers
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
