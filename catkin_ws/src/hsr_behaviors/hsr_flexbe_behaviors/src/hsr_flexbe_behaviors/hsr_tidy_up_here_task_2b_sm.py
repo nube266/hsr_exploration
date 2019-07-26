@@ -50,7 +50,7 @@ class HSRTidyUpHereTask2bSM(Behavior):
 	def create(self):
 		# x:30 y:365, x:130 y:365
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['target_name'])
-		_state_machine.userdata.target_name = 'orangecookies'
+		_state_machine.userdata.target_name = 'oolongtea'
 		_state_machine.userdata.location_name = 'shelf'
 
 		# Additional creation code can be added inside the following tags

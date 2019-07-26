@@ -83,7 +83,7 @@ Search -> Fetch -> Analyse
 
 			# x:546 y:99
 			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='toyshelf', service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
+										hsr_AnalyseCommandState(default_location='bin', default_id=0, service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
 										transitions={'succeeded': 'SpeakObjectName', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})

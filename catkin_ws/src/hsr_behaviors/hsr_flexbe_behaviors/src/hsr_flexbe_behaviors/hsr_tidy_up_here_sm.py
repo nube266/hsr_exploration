@@ -57,7 +57,7 @@ class HSRTidyUpHereSM(Behavior):
 
 
 		with _state_machine:
-			# x:220 y:212
+			# x:177 y:170
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
 										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
 										transitions={'finished': 'HSR Tidy Up Here Task 2b', 'failed': 'failed'},

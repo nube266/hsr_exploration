@@ -180,7 +180,7 @@ class HSRTidyUpHereTask1SM(Behavior):
 
 			# x:15 y:538
 			OperatableStateMachine.add('SetPoseSearchingPointCoffeeTable',
-										hsr_SetBasePoseByTfNameState(tf_name='coffeetable_tidyup', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='longtableb', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchingPointCoffeeTable'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
@@ -201,7 +201,7 @@ class HSRTidyUpHereTask1SM(Behavior):
 
 			# x:507 y:526
 			OperatableStateMachine.add('FetchObjectInterface2',
-										hsr_FetchObjectInterfaceState(centroid_x_max=1.5, centroid_y_max=0.6, centroid_y_min=-0.6, centroid_z_max=0.6, centroid_z_min=0.4, sleep_time=5.0, is_floor=False),
+										hsr_FetchObjectInterfaceState(centroid_x_max=1.5, centroid_y_max=0.6, centroid_y_min=-0.6, centroid_z_max=0.6, centroid_z_min=0.42, sleep_time=5.0, is_floor=False),
 										transitions={'done': 'HSR FetchObject'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'centroid_x_max': 'search_centroid_x_max', 'centroid_y_max': 'search_centroid_y_max', 'centroid_y_min': 'search_centroid_y_min', 'centroid_z_max': 'search_centroid_z_max', 'centroid_z_min': 'search_centroid_z_min', 'sleep_time': 'search_sleep_time', 'is_floor': 'search_is_floor'})
