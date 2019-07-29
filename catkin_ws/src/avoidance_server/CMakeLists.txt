@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(dijkstra_path_server)
+project(avoidance_server)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -7,15 +7,14 @@ project(dijkstra_path_server)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+  message_generation
+)
 
 ## System dependencies are found with CMake's conventions
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  roscpp
-  message_generation
-  std_msgs
-)
+# find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -57,7 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  dijkstra_path_server.srv
+  avoidance_server.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -103,10 +102,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES dijkstra_path_server
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+# INCLUDE_DIRS include
+# LIBRARIES avoidance_server
+# CATKIN_DEPENDS std_msgs roscpp
+# DEPENDS system_lib
 )
 
 ###########
@@ -122,7 +121,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/dijkstra_path_server.cpp
+#   src/${PROJECT_NAME}/avoidance_server.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -133,7 +132,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/dijkstra_path_server_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/avoidance_server_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -190,10 +189,18 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_dijkstra_path_server.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_avoidance_server.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(
+    avoidance_server
+    src/main.cpp
+    src/avoidance_server.cpp
+    include/avoidance_server.h
+)
+target_link_libraries(avoidance_server ${catkin_LIBRARIES})
