@@ -38,8 +38,14 @@ class ObstacleMap:
     def set_start_point(self, point):
         self._start_point = point
 
+    def print_start_point(self):
+        self._start_point.print_data()
+
     def set_goal_point(self, point):
         self._goal_point = point
+
+    def print_goal_point(self):
+        self._goal_point.print_data()
 
     def set_obstacle_area_size(self, obstacle_area_size):
         self._obstacle_area_size = obstacle_area_size
@@ -49,6 +55,10 @@ class ObstacleMap:
 
     def add_obstacle_point(self, point):
         self._obstacle_points.append(point)
+
+    def print_obstacle_point(self):
+        for point in self._obstacle_points:
+            point.print_data()
 
     def create_line_connecting_all_points(self):
         self._connect_lines = []
@@ -145,7 +155,7 @@ class ObstacleMap:
         self.create_middle_point()
         self.calculate_shortest_path()
 
-    def get_shortest_path_point(self):
+    def get_shortest_path_points(self):
         all_points = self._middle_points[:]
         all_points.insert(0, self._start_point)
         all_points.append(self._goal_point)
@@ -153,6 +163,11 @@ class ObstacleMap:
         for index in self._shortest_path:
             shortest_path_points.append(all_points[index])
         return shortest_path_points
+
+    def print_shortest_path_point(self):
+        shortest_path_points = self.get_shortest_path_points()
+        for point in shortest_path_points:
+            point.print_data()
 
 
 if __name__ == "__main__":
@@ -167,7 +182,5 @@ if __name__ == "__main__":
     map.add_obstacle_point(Point(x=520, y=600))
     map.add_obstacle_point(Point(x=500, y=400))
     map.create_shortest_path()
-    shortest_path_points = map.get_shortest_path_point()
-    for point in shortest_path_points:
-        point.print_data()
+    map.print_shortest_path_point()
     map.show(mode="FULL", window_width=1000, window_height=1000)
