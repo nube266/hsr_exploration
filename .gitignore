@@ -34,3 +34,7 @@ catkin_ws/src/hsr_launch/config/darknet_ros/weights/
 
 # bin
 *.bin
+
+# vscode
+*.vscode
+.vscode/settings.json 

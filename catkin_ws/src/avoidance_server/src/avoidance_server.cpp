@@ -16,8 +16,8 @@ AvoidanceServer::AvoidanceServer(ros::NodeHandlePtr node_handle) {
     ROS_INFO("Ready to avoidance_server");
 }
 
-/*
-void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayConstPtr& clusters_msg) {
+void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayConstPtr &clusters_msg) {
+    /*
     try{
         // Listen ot a transform from base_link to camera frame to fix the X-Y plane parallel to the floor
         transformStamped_ = tf_buffer_.lookupTransform("base_link", "head_rgbd_sensor_rgb_frame", ros::Time(0));
@@ -28,8 +28,8 @@ void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayCo
         ros::Duration(1.0).sleep();
         return;
     }
+    */
 }
-*/
 
 bool AvoidanceServer::serviceCallback(avoidance_server::Request &req, avoidance_server::Response &res) {
     ROS_INFO("Move Start");
