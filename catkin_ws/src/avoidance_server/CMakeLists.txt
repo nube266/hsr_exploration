@@ -21,7 +21,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(PCL REQUIRED
+  common
+)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -124,6 +126,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -204,10 +207,15 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
+link_directories(${PCL_LIBRARY_DIRS})
+
 add_executable(
     avoidance_server
     src/main.cpp
     src/avoidance_server.cpp
     include/avoidance_server.h
 )
-target_link_libraries(avoidance_server ${catkin_LIBRARIES})
+target_link_libraries(avoidance_server
+    ${catkin_LIBRARIES}
+    ${PCL_COMMON_LIBRARIES}
+)
