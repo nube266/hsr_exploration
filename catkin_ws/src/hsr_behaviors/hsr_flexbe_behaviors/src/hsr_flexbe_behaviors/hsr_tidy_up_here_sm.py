@@ -8,8 +8,9 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_sm import HSRTidyUpHereTask1SM
+from hsr_flexbe_behaviors.hsr_tidy_up_here_listen_sm import HSRTidyUpHereListenSM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2b_sm import HSRTidyUpHereTask2bSM
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_sm import HSRTidyUpHereTask1SM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -33,8 +34,9 @@ class HSRTidyUpHereSM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
-		self.add_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1')
+		self.add_behavior(HSRTidyUpHereListenSM, 'HSR Tidy Up Here Listen')
 		self.add_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b')
+		self.add_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -57,18 +59,25 @@ class HSRTidyUpHereSM(Behavior):
 
 
 		with _state_machine:
-			# x:177 y:170
-			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
-										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
-										transitions={'finished': 'HSR Tidy Up Here Task 2b', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+			# x:102 y:57
+			OperatableStateMachine.add('HSR Tidy Up Here Listen',
+										self.use_behavior(HSRTidyUpHereListenSM, 'HSR Tidy Up Here Listen'),
+										transitions={'finished': 'HSR Tidy Up Here Task 1', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'object_name': 'object_name'})
 
-			# x:228 y:319
+			# x:215 y:332
 			OperatableStateMachine.add('HSR Tidy Up Here Task 2b',
 										self.use_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'target_name': 'target_name'})
+										remapping={'target_name': 'object_name'})
+
+			# x:187 y:182
+			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
+										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
+										transitions={'finished': 'HSR Tidy Up Here Task 2b', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

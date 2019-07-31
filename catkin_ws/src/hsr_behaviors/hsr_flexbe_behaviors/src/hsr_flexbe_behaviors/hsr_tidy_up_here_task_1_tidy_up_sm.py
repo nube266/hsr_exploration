@@ -59,7 +59,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 
 
 	def create(self):
-		# x:1641 y:568, x:1376 y:171
+		# x:1262 y:668, x:1376 y:171
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['start_time'])
 		_state_machine.userdata.start_time = 5.0
 
@@ -90,9 +90,9 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:1538 y:289
+			# x:1247 y:348
 			OperatableStateMachine.add('MoveToNeutral2',
-										hsr_MoveToNeutralState(),
+										hsr_MoveToNeutralState(open_hand=False),
 										transitions={'succeeded': 'SetPoseSearchingPoint', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -105,24 +105,24 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 
 			# x:951 y:386
 			OperatableStateMachine.add('MoveToNeutral3',
-										hsr_MoveToNeutralState(),
+										hsr_MoveToNeutralState(open_hand=False),
 										transitions={'succeeded': 'HSR Move', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:940 y:26
+			# x:987 y:20
 			OperatableStateMachine.add('CheckElapsedTime1',
 										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
 										transitions={'time_remains': 'FetchObjectInterface1', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
-			# x:1555 y:392
+			# x:1271 y:464
 			OperatableStateMachine.add('SpeakTimeUp',
 										hsr_SpeakState(sentence='Time is up. Move on to the next task', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'finished'},
+										transitions={'done': 'MoveToNeutralTimeUp'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:549 y:263
+			# x:538 y:268
 			OperatableStateMachine.add('CheckElapsedTime2',
 										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
 										transitions={'time_remains': 'PutDyn', 'time_up': 'SpeakTimeUp'},
@@ -135,7 +135,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										transitions={'finished': 'HSR Move', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:740 y:142
+			# x:765 y:144
 			OperatableStateMachine.add('SpeakObjectName',
 										hsr_SpeakDynState(sentence="It's +", sentence_when_empty="I couldn't recognize it", topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'HSR Move', 'empty': 'HSR Move'},
@@ -156,7 +156,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
-			# x:121 y:287
+			# x:324 y:258
 			OperatableStateMachine.add('HSR Move',
 										self.use_behavior(HSRMoveSM, 'HSR Move'),
 										transitions={'succeeded': 'CheckElapsedTime2', 'failed': 'SpeakBeforeSweep'},
@@ -173,7 +173,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 			# x:258 y:497
 			OperatableStateMachine.add('MoveToSearchingPointCoffeeTable',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'FetchObjectInterface2', 'failed': 'MoveToSearchingPointCoffeeTable'},
+										transitions={'succeeded': 'CheckElapsedTime3', 'failed': 'MoveToSearchingPointCoffeeTable'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
@@ -184,7 +184,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
-			# x:595 y:485
+			# x:764 y:488
 			OperatableStateMachine.add('FetchObjectInterface2',
 										hsr_FetchObjectInterfaceState(centroid_x_max=1.0, centroid_y_max=0.6, centroid_y_min=-0.6, centroid_z_max=0.6, centroid_z_min=0.42, sleep_time=5.0, is_floor=False),
 										transitions={'done': 'HSR FetchObject'},
@@ -198,7 +198,7 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
 										remapping={'variable': 'object_name'})
 
-			# x:78 y:659
+			# x:80 y:703
 			OperatableStateMachine.add('HSR Move_2',
 										self.use_behavior(HSRMoveSM, 'HSR Move_2'),
 										transitions={'succeeded': 'Put2', 'failed': 'HSR Move_2'},
@@ -223,6 +223,19 @@ class HSRTidyUpHereTask1TidyUpSM(Behavior):
 										hsr_SpeakState(sentence='Im sweeping the obstacle', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'HSR sweep test'},
 										autonomy={'done': Autonomy.Off})
+
+			# x:555 y:487
+			OperatableStateMachine.add('CheckElapsedTime3',
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
+										transitions={'time_remains': 'FetchObjectInterface2', 'time_up': 'SpeakTimeUp'},
+										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
+										remapping={'start_time': 'start_time', 'offset': 'offset'})
+
+			# x:1197 y:557
+			OperatableStateMachine.add('MoveToNeutralTimeUp',
+										hsr_MoveToNeutralState(open_hand=True),
+										transitions={'succeeded': 'finished', 'failed': 'finished'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 
 		return _state_machine

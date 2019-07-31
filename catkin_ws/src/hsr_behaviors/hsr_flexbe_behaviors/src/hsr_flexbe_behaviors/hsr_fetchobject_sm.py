@@ -11,7 +11,6 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_search_object_dyn_state import hsr_SearchObjectDynState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
-from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -84,16 +83,9 @@ Search -> Fetch -> Analyse
 			# x:546 y:99
 			OperatableStateMachine.add('Analyse',
 										hsr_AnalyseCommandState(default_location='bin', default_id=0, service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
-										transitions={'succeeded': 'SpeakObjectName', 'failed': 'failed'},
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
-
-			# x:783 y:105
-			OperatableStateMachine.add('SpeakObjectName',
-										hsr_SpeakDynState(sentence="It's +", sentence_when_empty="I couldn't recognizeit", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'finished'},
-										autonomy={'done': Autonomy.Off},
-										remapping={'variable': 'object_name'})
 
 
 		return _state_machine

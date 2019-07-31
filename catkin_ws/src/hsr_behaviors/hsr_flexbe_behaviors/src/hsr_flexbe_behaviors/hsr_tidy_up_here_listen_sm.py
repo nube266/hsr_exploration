@@ -47,7 +47,7 @@ class HSRTidyUpHereListenSM(Behavior):
 
 
 	def create(self):
-		# x:143 y:541, x:406 y:335
+		# x:143 y:541, x:467 y:343
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], output_keys=['object_name'])
 		_state_machine.userdata.object_name = ''
 
@@ -71,14 +71,14 @@ class HSRTidyUpHereListenSM(Behavior):
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'message'})
 
-			# x:202 y:199
+			# x:209 y:217
 			OperatableStateMachine.add('SpeakObject',
-										hsr_SpeakDynState(sentence="I'll bring +", sentence_when_empty="", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'ListenTidyUp'},
-										autonomy={'done': Autonomy.Off},
+										hsr_SpeakDynState(sentence="I'll bring +", sentence_when_empty="Could you say that again?", topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'Wait2', 'empty': 'Wait1'},
+										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
 										remapping={'variable': 'object_name'})
 
-			# x:148 y:295
+			# x:100 y:409
 			OperatableStateMachine.add('ListenTidyUp',
 										SubscriberState(topic='/sr_res', blocking=True, clear=True),
 										transitions={'received': 'finished', 'unavailable': 'failed'},
@@ -87,15 +87,21 @@ class HSRTidyUpHereListenSM(Behavior):
 
 			# x:441 y:102
 			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='shelf', default_id='0', service_name='/wrs_semantics/bring_me_instruction'),
+										hsr_AnalyseCommandState(default_location='shelf', default_id='0', service_name='/wrs_semantics_bring/bring_me_instruction'),
 										transitions={'succeeded': 'SpeakObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'message', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
 			# x:119 y:102
 			OperatableStateMachine.add('Wait1',
-										WaitState(wait_time=3.0),
+										WaitState(wait_time=1.5),
 										transitions={'done': 'ListenObject'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:122 y:285
+			OperatableStateMachine.add('Wait2',
+										WaitState(wait_time=1.5),
+										transitions={'done': 'ListenTidyUp'},
 										autonomy={'done': Autonomy.Off})
 
 
