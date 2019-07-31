@@ -31,6 +31,7 @@ void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayCo
 
     tf::TransformListener listener;
     std::vector<cluster_tuple> cluster_tuples;
+    setCentroidThreshold();
     for(auto cluster_it = clusters_msg->markers.begin(); cluster_it != clusters_msg->markers.end(); cluster_it++) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cluster_pc(new pcl::PointCloud<pcl::PointXYZ>);
         marker2PointCloud(*cluster_it, cluster_pc);
@@ -49,7 +50,6 @@ void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayCo
         centroid[2] = centroid3d[2];
 
         // Check the thresholds
-        setCentroidThreshold();
         if(centroid(0) < centroid_x_max_ || (centroid(1) < centroid_y_max_ || centroid(1) > centroid_y_min_) || (centroid(2) < centroid_z_max_ || centroid(2) > centroid_z_min_)) {
             std::cout << "cluster x:\t" << centroid(0) << "y:\t" << centroid(1) << std::endl;
         }

@@ -210,12 +210,12 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 
 add_executable(
-    avoidance_server
-    src/main.cpp
+    avoidance_server_node
+    src/avoidance_server_node.cpp
     src/avoidance_server.cpp
     include/avoidance_server.h
 )
-target_link_libraries(avoidance_server
+target_link_libraries(avoidance_server_node
     ${catkin_LIBRARIES}
     ${PCL_COMMON_LIBRARIES}
 )
