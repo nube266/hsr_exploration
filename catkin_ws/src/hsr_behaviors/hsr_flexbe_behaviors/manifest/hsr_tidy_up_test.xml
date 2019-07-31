@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Tidy Up Test">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_test_sm" class="HSRTidyUpTestSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Tue Jul 30 2019</date>
+	<description>
+		Behavior to test only tidy up process in Tidy Up Here Task 1
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="HSR Tidy Up Here Task 1 Tidy Up" />
+
+	<!-- Available Parameters -->
+
+</behavior>
