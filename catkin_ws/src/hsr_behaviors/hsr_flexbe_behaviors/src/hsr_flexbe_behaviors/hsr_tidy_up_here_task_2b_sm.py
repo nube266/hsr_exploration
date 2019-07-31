@@ -48,9 +48,9 @@ class HSRTidyUpHereTask2bSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:130 y:365
+		# x:56 y:657, x:189 y:544
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['target_name'])
-		_state_machine.userdata.target_name = 'oolongtea'
+		_state_machine.userdata.target_name = 'orangecookies'
 		_state_machine.userdata.location_name = 'shelf'
 
 		# Additional creation code can be added inside the following tags
@@ -61,27 +61,27 @@ class HSRTidyUpHereTask2bSM(Behavior):
 
 		with _state_machine:
 			# x:30 y:32
-			OperatableStateMachine.add('SetPoseSearchPersonPoint',
+			OperatableStateMachine.add('SetPose0',
 										hsr_SetBasePoseByTfNameState(tf_name='shelf', service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToSearchPersonPoint'},
+										transitions={'completed': 'Move0'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:357 y:121
+			# x:456 y:30
 			OperatableStateMachine.add('PublishYoloTargetName',
 										PublisherStringState(topic='/target_name'),
-										transitions={'done': 'FetchObject'},
+										transitions={'done': 'FetchObject0'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'value': 'target_name'})
 
 			# x:266 y:34
-			OperatableStateMachine.add('MoveToSearchPersonPoint',
+			OperatableStateMachine.add('Move0',
 										hsr_MoveBaseState(),
 										transitions={'succeeded': 'PublishYoloTargetName', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:613 y:227
+			# x:727 y:240
 			OperatableStateMachine.add('SetPoseSearchPersonPoint2',
 										hsr_SetBasePoseByTfNameState(tf_name='search_person_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchPersonPoint2'},
@@ -95,22 +95,106 @@ class HSRTidyUpHereTask2bSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:544 y:384
+			# x:690 y:514
 			OperatableStateMachine.add('HereYouAre',
 										hsr_SpeakState(sentence='Here you are', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'PassObject'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:494 y:497
+			# x:502 y:613
 			OperatableStateMachine.add('PassObject',
 										hsr_PassObjectState(service_name='/kinesthetic/wait_open'),
 										transitions={'succeeded': 'finished', 'failed': 'PassObject'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:372 y:212
-			OperatableStateMachine.add('FetchObject',
+			# x:645 y:33
+			OperatableStateMachine.add('FetchObject0',
 										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
-										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPoseSearchPersonPoint'},
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPose1'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
+
+			# x:30 y:94
+			OperatableStateMachine.add('SetPose1',
+										hsr_SetBasePoseByTfNameState(tf_name='shelf_1', service_name='/pose_server/getPose'),
+										transitions={'completed': 'Move1'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:284 y:111
+			OperatableStateMachine.add('Move1',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'FetchObject1', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
+
+			# x:23 y:174
+			OperatableStateMachine.add('SetPose2',
+										hsr_SetBasePoseByTfNameState(tf_name='shelf_2', service_name='/pose_server/getPose'),
+										transitions={'completed': 'Move2'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:252 y:191
+			OperatableStateMachine.add('Move2',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'FetchObject2', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
+
+			# x:38 y:278
+			OperatableStateMachine.add('SetPose3',
+										hsr_SetBasePoseByTfNameState(tf_name='shelf_3', service_name='/pose_server/getPose'),
+										transitions={'completed': 'Move3'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:278 y:291
+			OperatableStateMachine.add('Move3',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'FetchObject3', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
+
+			# x:22 y:391
+			OperatableStateMachine.add('SetPose4',
+										hsr_SetBasePoseByTfNameState(tf_name='shelf_4', service_name='/pose_server/getPose'),
+										transitions={'completed': 'Move4'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:290 y:382
+			OperatableStateMachine.add('Move4',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'FetchObject4', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
+
+			# x:465 y:113
+			OperatableStateMachine.add('FetchObject1',
+										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPose2'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
+
+			# x:430 y:196
+			OperatableStateMachine.add('FetchObject2',
+										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPose3'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
+
+			# x:467 y:288
+			OperatableStateMachine.add('FetchObject3',
+										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPose4'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
+
+			# x:463 y:372
+			OperatableStateMachine.add('FetchObject4',
+										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
 
