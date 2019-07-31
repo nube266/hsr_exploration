@@ -27,7 +27,7 @@ class hsr_AnalyseCommandState(EventState):
     <= failed                          Analysis failed.
     '''
 
-    def __init__(self, default_location, service_name='/wrs_semantics/bring_me_instruction'):
+    def __init__(self, default_location, default_id, service_name='/wrs_semantics/bring_me_instruction'):
         super(hsr_AnalyseCommandState,self).__init__(input_keys=['command'], output_keys=['object_name', 'location_name', 'location_to_put'], outcomes=['succeeded', 'failed'])
 
         self._service_name = service_name
@@ -35,6 +35,7 @@ class hsr_AnalyseCommandState(EventState):
         self._get_object_location_srv = ProxyServiceCaller({self._service_name : Object_and_location})
 
         self._default_location = default_location
+        self._default_id = default_id
 
     def execute(self, userdata):
         '''
@@ -64,7 +65,7 @@ class hsr_AnalyseCommandState(EventState):
 
             if self._srv_result.location_name == '':
                 userdata.location_name = self._default_location
-                userdata.location_to_put = self._default_location + '_0'
+                userdata.location_to_put = self._default_location + '_' + str(self._default_id)
             else :
                 userdata.location_name = self._srv_result.location_name
                 userdata.location_to_put = self._srv_result.location_name + '_' + str(self._srv_result.theId)
