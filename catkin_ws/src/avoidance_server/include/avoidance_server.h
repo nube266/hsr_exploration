@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
 
 namespace avoidance_server {
 class AvoidanceServer {
@@ -38,6 +39,7 @@ class AvoidanceServer {
     ros::ServiceServer srv_; // Move to destination
     // TF
     tf2_ros::Buffer tf_buffer_;
+    tf2_ros::TransformListener * tf_listener_;
     // geometry_msgs
     geometry_msgs::TransformStamped transformStamped_;
     geometry_msgs::TransformStamped transformStampedInverse_;
@@ -48,11 +50,19 @@ class AvoidanceServer {
     double centroid_y_min_; //     |
     double centroid_z_max_; //     |
     double centroid_z_min_; //     |
+    // for path_server
+    struct Point {
+        double x;
+        double y;
+    };
+    std::vector<Point> obstacle_points_;
 
     // Convert marker to PointCloud
     void marker2PointCloud(const visualization_msgs::Marker &input_marker, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_pc);
     // Set the threshold using getParam
     void setCentroidThreshold(void);
+    // Set Obstacle points for path_server
+    void setObstaclePoints(const visualization_msgs::MarkerArrayConstPtr &clusters_msg);
 
   public:
     // Initialize service and subscriber

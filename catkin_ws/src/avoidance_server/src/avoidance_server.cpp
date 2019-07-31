@@ -14,6 +14,7 @@ AvoidanceServer::AvoidanceServer(ros::NodeHandlePtr node_handle) {
     nh_ = node_handle;
     sub_ = nh_->subscribe<visualization_msgs::MarkerArray>("clusters", 1, &AvoidanceServer::subscriberCallback, this);
     srv_ = nh_->advertiseService("/avoidance_server", &AvoidanceServer::serviceCallback, this);
+    tf_listener_ = new tf2_ros::TransformListener(tf_buffer_);
     ROS_INFO("Ready to avoidance_server");
 }
 
@@ -29,31 +30,8 @@ void AvoidanceServer::subscriberCallback(const visualization_msgs::MarkerArrayCo
         return;
     }
 
-    tf::TransformListener listener;
-    std::vector<cluster_tuple> cluster_tuples;
     setCentroidThreshold();
-    for(auto cluster_it = clusters_msg->markers.begin(); cluster_it != clusters_msg->markers.end(); cluster_it++) {
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cluster_pc(new pcl::PointCloud<pcl::PointXYZ>);
-        marker2PointCloud(*cluster_it, cluster_pc);
-
-        Eigen::Vector4f centroid;
-        Eigen::Vector3d centroid3d;
-
-        pcl::compute3DCentroid(*cluster_pc, centroid);
-
-        centroid3d << centroid[0], centroid[1], centroid[2];
-        // Transform
-        tf2::doTransform(centroid3d, centroid3d, transformStamped_);
-
-        centroid[0] = centroid3d[0];
-        centroid[1] = centroid3d[1];
-        centroid[2] = centroid3d[2];
-
-        // Check the thresholds
-        if(centroid(0) < centroid_x_max_ || (centroid(1) < centroid_y_max_ || centroid(1) > centroid_y_min_) || (centroid(2) < centroid_z_max_ || centroid(2) > centroid_z_min_)) {
-            std::cout << "cluster x:\t" << centroid(0) << "y:\t" << centroid(1) << std::endl;
-        }
-    }
+    setObstaclePoints(clusters_msg);
 }
 
 // Move while avoiding small obstacles
@@ -82,6 +60,40 @@ void AvoidanceServer::setCentroidThreshold(void) {
     nh_->getParam("/avoidance_server/centroid_y_min", centroid_y_min_);
     nh_->getParam("/avoidance_server/centroid_z_max", centroid_z_max_);
     nh_->getParam("/avoidance_server/centroid_z_min", centroid_z_min_);
+}
+
+void AvoidanceServer::setObstaclePoints(const visualization_msgs::MarkerArrayConstPtr &clusters_msg) {
+    std::vector<Point> result;
+    for(auto cluster_it = clusters_msg->markers.begin(); cluster_it != clusters_msg->markers.end(); cluster_it++) {
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cluster_pc(new pcl::PointCloud<pcl::PointXYZ>);
+        marker2PointCloud(*cluster_it, cluster_pc);
+
+        Eigen::Vector4f centroid;
+        Eigen::Vector3d centroid3d;
+
+        pcl::compute3DCentroid(*cluster_pc, centroid);
+
+        centroid3d << centroid[0], centroid[1], centroid[2];
+        // Transform
+        tf2::doTransform(centroid3d, centroid3d, transformStamped_);
+
+        centroid[0] = centroid3d[0];
+        centroid[1] = centroid3d[1];
+        centroid[2] = centroid3d[2];
+
+        // Check the thresholds
+        if(centroid(0) < centroid_x_max_ || (centroid(1) < centroid_y_max_ || centroid(1) > centroid_y_min_) || (centroid(2) < centroid_z_max_ || centroid(2) > centroid_z_min_)) {
+            result.push_back({centroid(0), centroid(1)});
+        }
+    }
+    std::vector<Point>().swap(obstacle_points_);
+    obstacle_points_ = result;
+    std::vector<Point>().swap(result);
+    std::cout << "------------------------------------" << std::endl;
+    for (const auto& point: obstacle_points_) {
+        std::cout << "x:\t" << point.x << "\ty:\t" << point.y << std::endl;
+    }
+    std::cout << "------------------------------------" << std::endl;
 }
 
 } // namespace avoidance_server
