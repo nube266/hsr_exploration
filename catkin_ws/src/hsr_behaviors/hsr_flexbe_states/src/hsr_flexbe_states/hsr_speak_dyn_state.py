@@ -29,7 +29,7 @@ class hsr_SpeakDynState(EventState):
         '''
         Constructor
         '''
-        super(hsr_SpeakDynState, self).__init__(input_keys=['variable'], outcomes=['done'])
+        super(hsr_SpeakDynState, self).__init__(input_keys=['variable'], outcomes=['done', 'empty'])
 
         self._topic = topic
         self._sentence = sentence
@@ -42,10 +42,11 @@ class hsr_SpeakDynState(EventState):
         self._pub = ProxyPublisher({self._topic: Voice})
 
     def execute(self, userdata):
-        return 'done'
+        return self._outcome
 
     def on_enter(self, userdata):
         real_sentence  = ''
+        self._outcome = 'done'
         # If variable is not empty
         if userdata.variable != '':
             split_sentence = self._sentence.split('+')
@@ -55,6 +56,7 @@ class hsr_SpeakDynState(EventState):
         # If it's empty, say something else
         else:
             real_sentence = self._sentence_when_empty
+            self._outcome = 'empty'
 
         self._message.sentence = real_sentence
         self._pub.publish(self._topic, self._message)
