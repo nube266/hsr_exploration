@@ -9,7 +9,7 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_start_state import hsr_SetStartTimeState
-from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_sm import HSRTidyUpHereTask1TidyUpSM
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_sub_sm import HSRTidyUpHereTask1TidyUpSubSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -33,7 +33,7 @@ class HSRTidyUpTestSM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
-		self.add_behavior(HSRTidyUpHereTask1TidyUpSM, 'HSR Tidy Up Here Task 1 Tidy Up')
+		self.add_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -58,13 +58,13 @@ class HSRTidyUpTestSM(Behavior):
 			# x:30 y:40
 			OperatableStateMachine.add('Start',
 										hsr_SetStartTimeState(),
-										transitions={'succeeded': 'HSR Tidy Up Here Task 1 Tidy Up'},
+										transitions={'succeeded': 'HSR Tidy Up Here Task 1 Tidy Up Sub'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'start_time': 'start_time'})
 
-			# x:157 y:151
-			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up',
-										self.use_behavior(HSRTidyUpHereTask1TidyUpSM, 'HSR Tidy Up Here Task 1 Tidy Up'),
+			# x:73 y:226
+			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Sub',
+										self.use_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'start_time': 'start_time'})
