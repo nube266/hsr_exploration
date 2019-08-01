@@ -26,9 +26,9 @@
 
 // general
 #include <iostream>
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
 
 namespace avoidance_server {
 class AvoidanceServer {
@@ -39,12 +39,13 @@ class AvoidanceServer {
     ros::ServiceServer srv_; // Move to destination
     // TF
     tf2_ros::Buffer tf_buffer_;
-    tf2_ros::TransformListener * tf_listener_;
+    tf2_ros::TransformListener *tf_listener_;
     // geometry_msgs
     geometry_msgs::TransformStamped transformStamped_;
     geometry_msgs::TransformStamped transformStampedInverse_;
     // point_cloud
-    using cluster_tuple = std::tuple<Eigen::Vector4f, Eigen::Matrix3f, std::string, int, pcl::PointXYZ, pcl::PointCloud<pcl::PointXYZ>::Ptr>;
+    using cluster_tuple = std::tuple<Eigen::Vector4f, Eigen::Matrix3f, std::string, int,
+                                     pcl::PointXYZ, pcl::PointCloud<pcl::PointXYZ>::Ptr>;
     double centroid_x_max_; // CentroidThreshold
     double centroid_y_max_; //     |
     double centroid_y_min_; //     |
@@ -58,7 +59,8 @@ class AvoidanceServer {
     std::vector<Point> obstacle_points_;
 
     // Convert marker to PointCloud
-    void marker2PointCloud(const visualization_msgs::Marker &input_marker, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_pc);
+    void marker2PointCloud(const visualization_msgs::Marker &input_marker,
+                           pcl::PointCloud<pcl::PointXYZ>::Ptr &output_pc);
     // Set the threshold using getParam
     void setCentroidThreshold(void);
     // Set Obstacle points for path_server
@@ -67,9 +69,11 @@ class AvoidanceServer {
   public:
     // Initialize service and subscriber
     AvoidanceServer(ros::NodeHandlePtr node_handle);
+    // Destructor
+    ~AvoidanceServer();
     // Subscribe point cloud(MarkerArrayConstPtr)
     void subscriberCallback(const visualization_msgs::MarkerArrayConstPtr &clusters_msg);
-    // Move while avoiding small obstacles
+    // Get obstacle points
     bool serviceCallback(avoidance_server::Request &req, avoidance_server::Response &res);
 };
 } // namespace avoidance_server
