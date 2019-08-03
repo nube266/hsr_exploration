@@ -7,3 +7,4 @@ float32[] obstacle_point_y
 ---
 float32[] shortest_path_point_x
 float32[] shortest_path_point_y
+bool is_succeeded

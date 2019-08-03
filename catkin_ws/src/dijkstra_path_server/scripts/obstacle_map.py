@@ -50,6 +50,9 @@ class ObstacleMap:
     def set_obstacle_area_size(self, obstacle_area_size):
         self._obstacle_area_size = obstacle_area_size
 
+    def get_obstacle_area_size(self):
+        return self._obstacle_area_size
+
     def set_point_view_size(self, point_view_size):
         self._point_view_size = point_view_size
 

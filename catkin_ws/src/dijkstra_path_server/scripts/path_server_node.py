@@ -17,8 +17,7 @@ import rospy
 class path_server:
 
     def __init__(self):
-        self._shortest_path_point_x = []
-        self._shortest_path_point_y = []
+        self._is_succeeded = False
 
     def create_map(self, req):
         self._map = ObstacleMap()
@@ -41,16 +40,28 @@ class path_server:
         print("shortest_path")
         self._map.print_shortest_path_point()
         shortest_paht_points = self._map.get_shortest_path_points()
+        self._shortest_path_point_x = []
+        self._shortest_path_point_y = []
         for point in shortest_paht_points:
             self._shortest_path_point_x.append(point.x)
             self._shortest_path_point_y.append(point.y)
+        if len(shortest_paht_points) >= 2:  # can't create short path
+            self._is_succeeded = True
+        else:
+            self._is_succeeded = False
 
     def get_path(self, req):
         rospy.loginfo("Calculate shortest path")
         self.create_map(req)
-        self.calculate_short_path()
+        print(self._map.get_obstacle_area_size())
+        while not self._is_succeeded and self._map.get_obstacle_area_size() > 0:
+            self.calculate_short_path()
+            self._map.set_obstacle_area_size(self._map.get_obstacle_area_size() - 5)
+        print(self._map.get_obstacle_area_size())
+        print(self._is_succeeded)
         return dijkstra_path_serverResponse(self._shortest_path_point_x,
-                                            self._shortest_path_point_y)
+                                            self._shortest_path_point_y,
+                                            self._is_succeeded)
 
 
 if __name__ == "__main__":
