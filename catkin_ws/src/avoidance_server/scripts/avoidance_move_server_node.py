@@ -12,6 +12,7 @@ from avoidance_server.srv import *
 from dijkstra_path_server.srv import *
 import hsrb_interface
 import rospy
+import tf
 import actionlib
 from geometry_msgs.msg import Pose, PoseStamped
 from actionlib_msgs.msg import GoalStatus
@@ -23,7 +24,11 @@ class move_server:
     def __init__(self):
         self._robot = hsrb_interface.Robot()
         self._omni_base = self._robot.get('omni_base')
+        self._whole_body = self._robot.get('whole_body')
         self._cli = actionlib.SimpleActionClient('/move_base/move', MoveBaseAction)
+        self._listener = tf.TransformListener()
+        self._cli.wait_for_server()
+        self._listener.waitForTransform("map", "base_link", rospy.Time(), rospy.Duration(4.0))
 
     def set_robot_point(self):
         self._robot_point_x = self._omni_base.pose[0] * 100
@@ -77,9 +82,31 @@ class move_server:
                                 self._obstacle_points_y)
             self._shortest_path_point_x = res.shortest_path_point_x
             self._shortest_path_point_y = res.shortest_path_point_y
-            print(res.is_succeeded)
         except Exception as e:
             rospy.logerr(e)
+
+    def move_shortest_path(self):
+        self._whole_body.move_to_joint_positions({'arm_roll_joint': -1.57,
+                                        'head_tilt_joint': -0.8})
+        for i in range(1, len(self._shortest_path_point_x)):
+            next_goal = self.get_next_goal(self._shortest_path_point_x[i],
+                                           self._shortest_path_point_y[i])
+            self._cli.send_goal(next_goal)
+            is_succeeded = self._cli.wait_for_result(rospy.Duration(30))
+            if is_succeeded is False:
+                return False
+        return True
+
+    def get_next_goal(self, position_x, position_y):
+        goal_pose = MoveBaseGoal()
+        goal_pose.target_pose.header.frame_id = 'map'
+        goal_pose.target_pose.pose.position.x = position_x
+        goal_pose.target_pose.pose.position.y = position_y
+        goal_pose.target_pose.pose.position.z = 0.0
+        goal_pose.target_pose.pose.orientation.x = self._omni_base.get_pose().ori.x
+        goal_pose.target_pose.pose.orientation.y = self._omni_base.get_pose().ori.y
+        goal_pose.target_pose.pose.orientation.z = self._omni_base.get_pose().ori.z
+        goal_pose.target_pose.pose.orientation.w = self._omni_base.get_pose().ori.w
 
     def avoidance_move(self, req):
         print("Start /avoidance_move_server/move")
@@ -88,7 +115,8 @@ class move_server:
         self.set_obstacle_points()
         self.calculate_shortest_path()
         self.print_points()
-        return avoidance_move_serverResponse(True)
+        # is_succeeded = self.move_shortest_path()
+        return avoidance_move_serverResponse(is_succeeded)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ import rospy
 from geometry_msgs.msg import Pose, PoseStamped
 from avoidance_server.srv import *
 from flexbe_core import EventState, Logger
+from flexbe_core.proxy import ProxyServiceCaller
 
 
 class hsr_Task2aState(EventState):
