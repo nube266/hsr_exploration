@@ -76,7 +76,7 @@ Search -> Fetch -> Analyse
 
 			# x:372 y:84
 			OperatableStateMachine.add('FetchObject',
-										hsr_FetchObjectState(fetch_place_type='table', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
+										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
 										transitions={'succeeded': 'Analyse', 'failed': 'grasp_failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
