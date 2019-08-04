@@ -54,15 +54,15 @@ class HSRTask2aSM(Behavior):
 
 
 		with _state_machine:
-			# x:120 y:65
-			OperatableStateMachine.add('SetGoalPose',
+			# x:142 y:63
+			OperatableStateMachine.add('SetGoal',
 										hsr_SetBasePoseByTfNameState(tf_name='shelf', service_name='/pose_server/getPose'),
-										transitions={'completed': 'Task2aMove'},
+										transitions={'completed': 'MoveTask2a'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:429 y:69
-			OperatableStateMachine.add('Task2aMove',
+			# x:442 y:75
+			OperatableStateMachine.add('MoveTask2a',
 										hsr_Task2aState(move_srv_name="/avoidance_move_server/move"),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
