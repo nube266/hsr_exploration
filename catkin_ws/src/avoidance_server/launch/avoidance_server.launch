@@ -1,5 +1,7 @@
 <launch>
+    <!--
     <node name="ork_tabletop" pkg="object_recognition_core" type="detection" args="-c $(find ork_tf_broadcaster)/conf/detection.table.hsr.ros.ork"/>
+    -->
     <node name="avoidance_server" pkg="avoidance_server" type="avoidance_server_node" output="screen">
         <remap from="clusters" to="/tabletop/clusters"/>
     </node>
