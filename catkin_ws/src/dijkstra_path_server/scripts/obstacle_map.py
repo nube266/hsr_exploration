@@ -79,6 +79,15 @@ class ObstacleMap:
         self._middle_points = []
         for line in self._connect_lines:
             self._middle_points.append(line.get_middle_point())
+        for point in self._obstacle_points:
+            self._middle_points.append(Point(x=point.x + self._obstacle_area_size + 10,
+                                             y=point.y + self._obstacle_area_size + 10))
+            self._middle_points.append(Point(x=point.x + self._obstacle_area_size + 10,
+                                             y=point.y - self._obstacle_area_size + 10))
+            self._middle_points.append(Point(x=point.x - self._obstacle_area_size + 10,
+                                             y=point.y + self._obstacle_area_size + 10))
+            self._middle_points.append(Point(x=point.x - self._obstacle_area_size + 10,
+                                             y=point.y - self._obstacle_area_size + 10))
 
     def not_overlap_line_and_obstacle_point(self, segment):
         for point in self._obstacle_points:
