@@ -57,8 +57,9 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 
 	def create(self):
 		# x:1397 y:315, x:847 y:410, x:1486 y:209
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed', 'time_up'], input_keys=['start_time'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed', 'time_up'], input_keys=['start_time'], output_keys=['offset'])
 		_state_machine.userdata.start_time = 5.0
+		_state_machine.userdata.offset = 0.0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -70,20 +71,20 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 			# x:45 y:36
 			OperatableStateMachine.add('SpeakMoveOnToCoffeetable',
 										hsr_SpeakState(sentence='Im moving on to the coffee table', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'SetPoseSearchingPointTallTable'},
+										transitions={'done': 'CheckElapsedTimeBeforeFetch'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:231 y:39
+			# x:542 y:16
 			OperatableStateMachine.add('SetPoseSearchingPointTallTable',
 										hsr_SetBasePoseByTfNameState(tf_name='longtableb', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchingPointTallTable'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:487 y:38
+			# x:928 y:11
 			OperatableStateMachine.add('MoveToSearchingPointTallTable',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'CheckElapsedTimeBeforeFetch', 'failed': 'MoveToSearchingPointTallTable'},
+										transitions={'succeeded': 'FetchObjectInterface2', 'failed': 'MoveToSearchingPointTallTable'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
@@ -101,24 +102,24 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
 										remapping={'variable': 'object_name'})
 
-			# x:310 y:381
+			# x:285 y:401
 			OperatableStateMachine.add('HSR Move_2',
 										self.use_behavior(HSRMoveSM, 'HSR Move_2'),
 										transitions={'succeeded': 'CheckElapsedTimeBeforePut', 'failed': 'HSR Move_2'},
 										autonomy={'succeeded': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'tf_name': 'location_name'})
 
-			# x:798 y:321
+			# x:822 y:291
 			OperatableStateMachine.add('Put2',
 										hsr_PutObjectDynState(put_place_type='shelf', service_name='/grasp/put'),
-										transitions={'succeeded': 'CheckElapsedTimeBeforeMoveToTable', 'failed': 'SendTwist'},
+										transitions={'succeeded': 'CheckElapsedTimeBeforeFetch', 'failed': 'SendTwist'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'target_name': 'location_to_put'})
 
-			# x:748 y:39
+			# x:253 y:29
 			OperatableStateMachine.add('CheckElapsedTimeBeforeFetch',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
-										transitions={'time_remains': 'FetchObjectInterface2', 'time_up': 'SpeakTimeUp'},
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=1.0),
+										transitions={'time_remains': 'SetPoseSearchingPointTallTable', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
@@ -128,16 +129,9 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										transitions={'succeeded': 'time_up', 'failed': 'time_up'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:900 y:155
-			OperatableStateMachine.add('CheckElapsedTimeBeforeMoveToTable',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
-										transitions={'time_remains': 'SetPoseSearchingPointTallTable', 'time_up': 'SpeakTimeUp'},
-										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
-										remapping={'start_time': 'start_time', 'offset': 'offset'})
-
-			# x:478 y:297
+			# x:462 y:316
 			OperatableStateMachine.add('CheckElapsedTimeBeforePut',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.5),
 										transitions={'time_remains': 'Put2', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
@@ -148,7 +142,7 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										transitions={'done': 'MoveToNeutralTimeUp'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:365 y:170
+			# x:438 y:226
 			OperatableStateMachine.add('HSR FetchObjectLongTable',
 										self.use_behavior(HSRFetchObjectLongTableSM, 'HSR FetchObjectLongTable'),
 										transitions={'finished': 'SpeakObjectName2', 'grasp_failed': 'SetPoseSearchingPointTallTable', 'not_found': 'finished', 'failed': 'failed'},

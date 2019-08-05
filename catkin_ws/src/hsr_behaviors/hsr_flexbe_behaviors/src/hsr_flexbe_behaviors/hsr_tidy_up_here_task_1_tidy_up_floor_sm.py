@@ -59,8 +59,9 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 
 	def create(self):
 		# x:1531 y:322, x:1376 y:171, x:1493 y:216
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed', 'time_up'], input_keys=['start_time'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed', 'time_up'], input_keys=['start_time'], output_keys=['offset'])
 		_state_machine.userdata.start_time = 5.0
+		_state_machine.userdata.offset = 0.0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -109,14 +110,14 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 
 			# x:334 y:21
 			OperatableStateMachine.add('CheckElapsedTimeBeforeFetch',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=1.0),
 										transitions={'time_remains': 'SetPoseSearchingPoint', 'time_up': 'time_up'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
 			# x:519 y:270
 			OperatableStateMachine.add('CheckElapsedTimePut',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.5),
 										transitions={'time_remains': 'PutDyn', 'time_up': 'MoveToNeutralPutTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
