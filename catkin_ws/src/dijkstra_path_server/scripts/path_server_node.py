@@ -54,6 +54,7 @@ class path_server:
         self._is_succeeded = False
         rospy.loginfo("Calculate shortest path")
         self.create_map(req)
+        self._map.set_obstacle_area_size(60)
         print("before calculate_short_path: {0}".format(self._map.get_obstacle_area_size()))
         while not self._is_succeeded and self._map.get_obstacle_area_size() >= 0:
             self.calculate_short_path()

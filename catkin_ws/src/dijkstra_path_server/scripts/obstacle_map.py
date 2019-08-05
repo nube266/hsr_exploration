@@ -34,6 +34,8 @@ class ObstacleMap:
         self._obstacle_points = []
         self._obstacle_area_size = ObstacleMap.INITIAL_OBSTACLE_AREA_SIZE
         self._point_view_size = ObstacleMap.INITIAL_POINT_VIEW_SIZE
+        self._threshold_x_max = 10000
+        self._threshold_x_max = 10000
 
     def set_start_point(self, point):
         self._start_point = point
@@ -62,6 +64,12 @@ class ObstacleMap:
     def print_obstacle_point(self):
         for point in self._obstacle_points:
             point.print_data()
+
+    def set_threshold_x_max(self, max):
+        self._threshold_x_max = max
+
+    def set_threshold_y_max(self, max):
+        self._threshold_y_max = max
 
     def create_line_connecting_all_points(self):
         self._connect_lines = []

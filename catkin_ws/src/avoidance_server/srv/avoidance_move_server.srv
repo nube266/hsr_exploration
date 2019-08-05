@@ -1,4 +1,6 @@
 float64 goal_point_x
 float64 goal_point_y
+float64 threshold_x_max
+float64 threshold_y_max
 ---
 bool is_succeeded

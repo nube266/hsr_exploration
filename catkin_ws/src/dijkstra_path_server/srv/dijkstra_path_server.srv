@@ -4,6 +4,8 @@ float32 goal_point_x
 float32 goal_point_y
 float32[] obstacle_point_x
 float32[] obstacle_point_y
+float32 threshold_x_max
+float32 threshold_y_max
 ---
 float32[] shortest_path_point_x
 float32[] shortest_path_point_y

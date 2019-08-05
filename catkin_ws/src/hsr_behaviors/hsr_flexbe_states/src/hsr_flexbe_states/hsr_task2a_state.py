@@ -10,17 +10,22 @@ class hsr_Task2aState(EventState):
     '''
     Move the HSR base to the 'goal' target pose using an Actionlib action.
 
-    ># goal         Pose	Goal pose that the base should reach.
+    ># pose             Pose	Goal pose that the base should reach.
 
-    <= succeeded			The base has succesfully moved to the goal pose.
-    <= failed				The base could not move to the goal pose.
+    -- threshold_x_max  float   Threshold of point that robot can reach (Relative distance from work start point [m])
+    -- threshold_y_max  float   Threshold of point that robot can reach (Relative distance from work start point [m])
+
+    <= succeeded			    The base has succesfully moved to the goal pose.
+    <= failed				    The base could not move to the goal pose.
     '''
 
-    def __init__(self, move_srv_name="/avoidance_move_server/move"):
+    def __init__(self, move_srv_name="/avoidance_move_server/move", threshold_x_max=2.0, threshold_y_max=2.0):
         super(hsr_Task2aState, self).__init__(outcomes=['succeeded', 'failed'],
                                               input_keys=['pose'])
         self._move_srv_name = move_srv_name
         self._move_server = ProxyServiceCaller({self._move_srv_name: avoidance_move_server})
+        self._threshold_x_max = threshold_x_max
+        self._threshold_y_max = threshold_y_max
 
     def execute(self, userdata):
         rospy.loginfo('Let\'s move')
@@ -34,7 +39,7 @@ class hsr_Task2aState(EventState):
     def on_enter(self, userdata):
         goal_point_x = userdata.pose.position.x
         goal_point_y = userdata.pose.position.y
-        req = avoidance_move_serverRequest(goal_point_x, goal_point_y)
+        req = avoidance_move_serverRequest(goal_point_x, goal_point_y, self._threshold_x_max, self._threshold_y_max)
         self._failed = False
         try:
             self._srv_result = self._move_server.call(self._move_srv_name, req)

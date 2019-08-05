@@ -76,7 +76,7 @@ class move_server:
                                                  self._shortest_path_point_y[i]))
         print("---------------------")
 
-    def calculate_shortest_path(self):
+    def calculate_shortest_path(self, req):
         rospy.wait_for_service("/dijkstra_path_server/get_path", 10.0)
         try:
             dijkstra_path = rospy.ServiceProxy("/dijkstra_path_server/get_path",
@@ -86,7 +86,9 @@ class move_server:
                                 self._goal_point_x,
                                 self._goal_point_y,
                                 self._obstacle_points_x,
-                                self._obstacle_points_y)
+                                self._obstacle_points_y,
+                                req.threshold_x_max,
+                                req.threshold_y_max)
             self._shortest_path_point_x = res.shortest_path_point_x
             self._shortest_path_point_y = res.shortest_path_point_y
         except Exception as e:
@@ -115,17 +117,14 @@ class move_server:
         goal_pose.target_pose.pose.orientation.y = self._omni_base.get_pose().ori.y
         goal_pose.target_pose.pose.orientation.z = self._omni_base.get_pose().ori.z
         goal_pose.target_pose.pose.orientation.w = self._omni_base.get_pose().ori.w
-
-        print(goal_pose)
-
         return goal_pose
 
     def avoidance_move(self, req):
-        print("Start /avoidance_move_server/move")
+        print("Start Service")
         self.set_robot_point()
         self.set_goal_point(req)
         self.set_obstacle_points()
-        self.calculate_shortest_path()
+        self.calculate_shortest_path(req)
         self.print_points()
         self._is_succeeded = self.move_shortest_path()
         return avoidance_move_serverResponse(self._is_succeeded)
