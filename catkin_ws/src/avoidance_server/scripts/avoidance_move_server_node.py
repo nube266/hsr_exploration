@@ -108,13 +108,16 @@ class move_server:
     def get_next_goal(self, position_x, position_y):
         goal_pose = MoveBaseGoal()
         goal_pose.target_pose.header.frame_id = "map"
-        goal_pose.target_pose.pose.position.x = position_x
-        goal_pose.target_pose.pose.position.y = position_y
+        goal_pose.target_pose.pose.position.x = position_x / 100.0
+        goal_pose.target_pose.pose.position.y = position_y / 100.0
         goal_pose.target_pose.pose.position.z = 0.0
         goal_pose.target_pose.pose.orientation.x = self._omni_base.get_pose().ori.x
         goal_pose.target_pose.pose.orientation.y = self._omni_base.get_pose().ori.y
         goal_pose.target_pose.pose.orientation.z = self._omni_base.get_pose().ori.z
         goal_pose.target_pose.pose.orientation.w = self._omni_base.get_pose().ori.w
+
+        print(goal_pose)
+
         return goal_pose
 
     def avoidance_move(self, req):
