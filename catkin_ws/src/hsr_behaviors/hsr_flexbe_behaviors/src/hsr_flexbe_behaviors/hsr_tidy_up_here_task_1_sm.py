@@ -11,7 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_start_state import hsr_SetStartTimeState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_behaviors.hsr_tidy_up_here_open_drawers_sm import HSRTidyUpHereOpenDrawersSM
-from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_sm import HSRTidyUpHereTask1TidyUpSM
+from hsr_flexbe_behaviors.hsr_tidy_up_test_sm import HSRTidyUpTestSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -33,11 +33,10 @@ class HSRTidyUpHereTask1SM(Behavior):
 		self.name = 'HSR Tidy Up Here Task 1'
 
 		# parameters of this behavior
-		self.add_parameter('time_limit_task1', 15.0)
 
 		# references to used behaviors
 		self.add_behavior(HSRTidyUpHereOpenDrawersSM, 'HSR Tidy Up Here Open Drawers')
-		self.add_behavior(HSRTidyUpHereTask1TidyUpSM, 'HSR Tidy Up Here Task 1 Tidy Up')
+		self.add_behavior(HSRTidyUpTestSM, 'HSR Tidy Up Test')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -75,15 +74,14 @@ class HSRTidyUpHereTask1SM(Behavior):
 			# x:326 y:22
 			OperatableStateMachine.add('HSR Tidy Up Here Open Drawers',
 										self.use_behavior(HSRTidyUpHereOpenDrawersSM, 'HSR Tidy Up Here Open Drawers'),
-										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up', 'failed': 'HSR Tidy Up Here Task 1 Tidy Up'},
+										transitions={'finished': 'HSR Tidy Up Test', 'failed': 'HSR Tidy Up Test'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:573 y:111
-			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up',
-										self.use_behavior(HSRTidyUpHereTask1TidyUpSM, 'HSR Tidy Up Here Task 1 Tidy Up'),
+			# x:581 y:116
+			OperatableStateMachine.add('HSR Tidy Up Test',
+										self.use_behavior(HSRTidyUpTestSM, 'HSR Tidy Up Test'),
 										transitions={'finished': 'finished', 'failed': 'finished'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'start_time': 'start_time'})
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

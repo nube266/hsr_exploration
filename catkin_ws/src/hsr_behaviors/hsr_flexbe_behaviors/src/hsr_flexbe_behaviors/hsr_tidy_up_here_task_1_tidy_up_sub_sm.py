@@ -8,11 +8,12 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_floor_sm import HSRTidyUpHereTask1TidyUpFloorSM
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_long_table_sm import HSRTidyUpHereTask1TidyUpLongTableSM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_tall_table_sm import HSRTidyUpHereTask1TidyUpTallTableSM
-from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_floor_sm import HSRTidyUpHereTask1TidyUpFloorSM
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
+from hsr_flexbe_states.hsr_wait_dyn_state import WaitDynState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -34,12 +35,12 @@ class HSRTidyUpHereTask1TidyUpSubSM(Behavior):
 		self.name = 'HSR Tidy Up Here Task 1 Tidy Up Sub'
 
 		# parameters of this behavior
-		self.add_parameter('time_limit_task1', 15.0)
+		self.add_parameter('time_limit_task1', 5.0)
 
 		# references to used behaviors
+		self.add_behavior(HSRTidyUpHereTask1TidyUpFloorSM, 'HSR Tidy Up Here Task 1 Tidy Up Floor')
 		self.add_behavior(HSRTidyUpHereTask1TidyUpLongTableSM, 'HSR Tidy Up Here Task 1 Tidy Up Long Table')
 		self.add_behavior(HSRTidyUpHereTask1TidyUpTallTableSM, 'HSR Tidy Up Here Task 1 Tidy Up Tall Table')
-		self.add_behavior(HSRTidyUpHereTask1TidyUpFloorSM, 'HSR Tidy Up Here Task 1 Tidy Up Floor')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -65,9 +66,9 @@ class HSRTidyUpHereTask1TidyUpSubSM(Behavior):
 			# x:104 y:84
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Floor',
 										self.use_behavior(HSRTidyUpHereTask1TidyUpFloorSM, 'HSR Tidy Up Here Task 1 Tidy Up Floor'),
-										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up Long Table', 'failed': 'failed', 'time_up': 'SpeakTimeUp'},
+										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up Long Table', 'failed': 'failed', 'time_up': 'Wait'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'time_up': Autonomy.Inherit},
-										remapping={'start_time': 'start_time'})
+										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
 			# x:1517 y:458
 			OperatableStateMachine.add('MoveToNeutralTimeUp',
@@ -78,22 +79,29 @@ class HSRTidyUpHereTask1TidyUpSubSM(Behavior):
 			# x:183 y:240
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Long Table',
 										self.use_behavior(HSRTidyUpHereTask1TidyUpLongTableSM, 'HSR Tidy Up Here Task 1 Tidy Up Long Table'),
-										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up Tall Table', 'failed': 'failed', 'time_up': 'SpeakTimeUp'},
+										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up Tall Table', 'failed': 'failed', 'time_up': 'Wait'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'time_up': Autonomy.Inherit},
-										remapping={'start_time': 'start_time'})
+										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
 			# x:422 y:389
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Tall Table',
 										self.use_behavior(HSRTidyUpHereTask1TidyUpTallTableSM, 'HSR Tidy Up Here Task 1 Tidy Up Tall Table'),
-										transitions={'finished': 'finished', 'failed': 'failed', 'time_up': 'SpeakTimeUp'},
+										transitions={'finished': 'finished', 'failed': 'failed', 'time_up': 'Wait'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit, 'time_up': Autonomy.Inherit},
-										remapping={'start_time': 'start_time'})
+										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
 			# x:1526 y:222
 			OperatableStateMachine.add('SpeakTimeUp',
 										hsr_SpeakState(sentence='Time is up. Move on to the next task', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'MoveToNeutralTimeUp'},
 										autonomy={'done': Autonomy.Off})
+
+			# x:1084 y:55
+			OperatableStateMachine.add('Wait',
+										WaitDynState(),
+										transitions={'done': 'SpeakTimeUp'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'wait_time': 'offset'})
 
 
 		return _state_machine

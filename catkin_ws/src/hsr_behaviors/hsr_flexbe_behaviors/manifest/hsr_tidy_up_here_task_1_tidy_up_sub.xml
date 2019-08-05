@@ -19,7 +19,7 @@
 	<!-- Available Parameters -->
 	<params>
 
-		<param type="numeric" name="time_limit_task1" default="15.0" label="time_limit_task1" hint="Sets the time_limit_task1">
+		<param type="numeric" name="time_limit_task1" default="5.0" label="time_limit_task1" hint="Sets the time_limit_task1">
 			<min value="0" />
 			<max value="20" />
 		</param>

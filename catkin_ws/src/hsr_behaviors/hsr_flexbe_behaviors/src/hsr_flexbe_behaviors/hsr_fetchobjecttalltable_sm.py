@@ -21,7 +21,7 @@ from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 Created on Wed July 20 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRFetchObjectSM(Behavior):
+class HSRFetchObjectTallTableSM(Behavior):
 	'''
 	Behavior of the object fetching process
 Search -> Fetch -> Analyse
@@ -29,8 +29,8 @@ Search -> Fetch -> Analyse
 
 
 	def __init__(self):
-		super(HSRFetchObjectSM, self).__init__()
-		self.name = 'HSR FetchObject'
+		super(HSRFetchObjectTallTableSM, self).__init__()
+		self.name = 'HSR FetchObjectTallTable'
 
 		# parameters of this behavior
 		self.add_parameter('time_limit', 5.0)
@@ -69,14 +69,14 @@ Search -> Fetch -> Analyse
 		with _state_machine:
 			# x:160 y:72
 			OperatableStateMachine.add('SearchObject',
-										hsr_SearchObjectDynState(search_point='', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish'),
+										hsr_SearchObjectDynState(search_point='', search_place_type='talltable', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish'),
 										transitions={'found': 'FetchObject', 'notfound': 'not_found', 'failed': 'failed'},
 										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'centroid_x_max': 'search_centroid_x_max', 'centroid_y_max': 'search_centroid_y_max', 'centroid_y_min': 'search_centroid_y_min', 'centroid_z_max': 'search_centroid_z_max', 'centroid_z_min': 'search_centroid_z_min', 'sleep_time': 'search_sleep_time', 'is_floor': 'search_is_floor', 'object_name': 'object_name'})
 
 			# x:372 y:84
 			OperatableStateMachine.add('FetchObject',
-										hsr_FetchObjectState(fetch_place_type='floor', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
+										hsr_FetchObjectState(fetch_place_type='talltable', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
 										transitions={'succeeded': 'Analyse', 'failed': 'grasp_failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 

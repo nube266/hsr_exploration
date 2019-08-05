@@ -13,17 +13,8 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="HSR Tidy Up Here Open Drawers" />
-	<contains name="HSR Tidy Up Here Task 1 Tidy Up" />
+	<contains name="HSR Tidy Up Test" />
 
 	<!-- Available Parameters -->
-	<params>
-
-		<param type="numeric" name="time_limit_task1" default="15.0" label="time_limit_task1" hint="Sets the time_limit_task1">
-			<min value="0" />
-			<max value="20" />
-		</param>
-
-	</params>
-
 
 </behavior>
