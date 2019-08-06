@@ -63,7 +63,7 @@ class HSRTask2aSM(Behavior):
 
 			# x:442 y:75
 			OperatableStateMachine.add('MoveTask2a',
-										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_size=2.0, obstacle_area_size=0.55),
+										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_size=10.0, obstacle_area_size=0.45),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})

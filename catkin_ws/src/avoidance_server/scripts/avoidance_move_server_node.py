@@ -39,15 +39,22 @@ class move_server:
 
     def set_obstacle_points(self):
         self._tts.say("Start object search")
-        self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
-                                                  "head_tilt_joint": -0.8})
-        rospy.sleep(6.0)
         self._obstacle_points_x = []
         self._obstacle_points_y = []
-        rospy.wait_for_service("/avoidance_server/get_obstacle_points", 10.0)
         try:
+            self._omni_base.go_rel(0.0, 0.0, 0.35, 100.0)
+            self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
+                                                      "head_tilt_joint": -0.7})
+            rospy.sleep(3.0)
             get_obstacle_points_srv = rospy.ServiceProxy("/avoidance_server/get_obstacle_points",
                                                          avoidance_server)
+            res = get_obstacle_points_srv()
+            self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
+            self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
+            self._omni_base.go_rel(0.0, 0.0, -0.7, 100.0)
+            self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
+                                                      "head_tilt_joint": -0.7})
+            rospy.sleep(3.0)
             res = get_obstacle_points_srv()
             self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
             self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]

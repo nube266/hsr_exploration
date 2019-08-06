@@ -19,7 +19,7 @@ class hsr_Task2aState(EventState):
     <= failed				        The base could not move to the goal pose.
     '''
 
-    def __init__(self, move_srv_name="/avoidance_move_server/move", reachable_area_size=10.0, obstacle_area_size =0.55):
+    def __init__(self, move_srv_name="/avoidance_move_server/move", reachable_area_size=10.0, obstacle_area_size =0.45):
         super(hsr_Task2aState, self).__init__(outcomes=['succeeded', 'failed'],
                                               input_keys=['pose'])
         self._move_srv_name = move_srv_name
