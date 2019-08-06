@@ -89,22 +89,11 @@ class ObstacleMap:
             if point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
                 self._middle_points.append(line.get_middle_point())
         for point in self._obstacle_points:
-            middle_point = (Point(x=point.x + self._obstacle_area_size + 10,
-                                  y=point.y + self._obstacle_area_size + 10))
-            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
-                self._middle_points.append(middle_point)
-            middle_point = (Point(x=point.x + self._obstacle_area_size + 10,
-                                  y=point.y - self._obstacle_area_size + 10))
-            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
-                self._middle_points.append(middle_point)
-            middle_point = (Point(x=point.x - self._obstacle_area_size + 10,
-                                  y=point.y + self._obstacle_area_size + 10))
-            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
-                self._middle_points.append(middle_point)
-            middle_point = (Point(x=point.x - self._obstacle_area_size + 10,
-                                  y=point.y - self._obstacle_area_size + 10))
-            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
-                self._middle_points.append(middle_point)
+            for i in range(-1, 2, 1):
+                for j in range(-1, 2, 1):
+                    middle_point = Point(x=point.x + i*(self._obstacle_area_size + 10),
+                                         y=point.y + j*(self._obstacle_area_size + 10))
+                    self._middle_points.append(middle_point)
 
     def not_overlap_line_and_obstacle_point(self, segment):
         for point in self._obstacle_points:
@@ -161,13 +150,13 @@ class ObstacleMap:
             Circle(self._midpoint_start_goal, self._reachable_area_size).draw(
                 img=img, outline=(0, 0, 0))
         if mode == "FULL":
-            for line in self._connect_lines:
-                line.draw(img=img, fill=(130, 130, 130))
+            #for line in self._connect_lines:
+            #    line.draw(img=img, fill=(130, 130, 130))
             for point in self._middle_points:
                 Circle(point, self._point_view_size).draw(
                     img=img, fill=(255, 255, 0))
-            for line in self._passable_lines:
-                line.draw(img=img, fill=(150, 0, 0))
+            #for line in self._passable_lines:
+            #    line.draw(img=img, fill=(150, 0, 0))
         if mode == "FULL" or mode == "SHORTEST_PATH_ONLY":
             all_points = self._middle_points[:]
             all_points.insert(0, self._start_point)

@@ -5,5 +5,5 @@
     <node name="avoidance_server" pkg="avoidance_server" type="avoidance_server_node" output="screen">
         <remap from="clusters" to="/tabletop/clusters"/>
     </node>
-    <node name="avoidance_server" pkg="avoidance_server" type="avoidance_move_server_node" output="screen"></node>
+    <node name="avoidance_move_server" pkg="avoidance_server" type="avoidance_move_server_node.py" output="screen" />
 </launch>
