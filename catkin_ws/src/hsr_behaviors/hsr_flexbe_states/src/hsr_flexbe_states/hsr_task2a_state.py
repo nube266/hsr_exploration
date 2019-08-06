@@ -10,16 +10,15 @@ class hsr_Task2aState(EventState):
     '''
     Move the HSR base to the 'goal' target pose using an Actionlib action.
 
-    ># pose             Pose	Goal pose that the base should reach.
+    ># pose                 Pose	Goal pose that the base should reach.
 
-    -- threshold_x_max  float   Threshold of point that robot can reach (Relative distance from work start point [m])
-    -- threshold_y_max  float   Threshold of point that robot can reach (Relative distance from work start point [m])
+    -- reachable_area_size  float   Size of the area where the robot can move [m]
 
-    <= succeeded			    The base has succesfully moved to the goal pose.
-    <= failed				    The base could not move to the goal pose.
+    <= succeeded			        The base has succesfully moved to the goal pose.
+    <= failed				        The base could not move to the goal pose.
     '''
 
-    def __init__(self, move_srv_name="/avoidance_move_server/move", threshold_x_max=2.0, threshold_y_max=2.0):
+    def __init__(self, move_srv_name="/avoidance_move_server/move", reachable_area_size=2.0):
         super(hsr_Task2aState, self).__init__(outcomes=['succeeded', 'failed'],
                                               input_keys=['pose'])
         self._move_srv_name = move_srv_name

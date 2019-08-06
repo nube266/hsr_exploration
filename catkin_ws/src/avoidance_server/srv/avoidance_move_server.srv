@@ -1,6 +1,5 @@
 float64 goal_point_x
 float64 goal_point_y
-float64 threshold_x_max
-float64 threshold_y_max
+float64 reachable_area_size
 ---
 bool is_succeeded

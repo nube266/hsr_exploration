@@ -34,8 +34,7 @@ class ObstacleMap:
         self._obstacle_points = []
         self._obstacle_area_size = ObstacleMap.INITIAL_OBSTACLE_AREA_SIZE
         self._point_view_size = ObstacleMap.INITIAL_POINT_VIEW_SIZE
-        self._threshold_x_max = 10000
-        self._threshold_x_max = 10000
+        self._reachable_area_size = 10000
 
     def set_start_point(self, point):
         self._start_point = point
@@ -49,8 +48,9 @@ class ObstacleMap:
     def print_goal_point(self):
         self._goal_point.print_data()
 
-    def set_obstacle_area_size(self, obstacle_area_size):
-        self._obstacle_area_size = obstacle_area_size
+    def set_obstacle_area_size(self, area_size):
+        print("Set obstacle_area_size: " + str(area_size))
+        self._obstacle_area_size = area_size
 
     def get_obstacle_area_size(self):
         return self._obstacle_area_size
@@ -65,11 +65,9 @@ class ObstacleMap:
         for point in self._obstacle_points:
             point.print_data()
 
-    def set_threshold_x_max(self, max):
-        self._threshold_x_max = max
-
-    def set_threshold_y_max(self, max):
-        self._threshold_y_max = max
+    def set_reachable_area_size(self, area_size):
+        print("Set reachable_area_size: " + str(area_size))
+        self._reachable_area_size = area_size
 
     def create_line_connecting_all_points(self):
         self._connect_lines = []
@@ -84,18 +82,29 @@ class ObstacleMap:
                     self._connect_lines.append(Segment(point1, point2))
 
     def create_middle_point(self):
+        self._midpoint_start_goal = Segment(self._start_point, self._goal_point).get_middle_point()
         self._middle_points = []
         for line in self._connect_lines:
-            self._middle_points.append(line.get_middle_point())
+            point = line.get_middle_point()
+            if point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
+                self._middle_points.append(line.get_middle_point())
         for point in self._obstacle_points:
-            self._middle_points.append(Point(x=point.x + self._obstacle_area_size + 10,
-                                             y=point.y + self._obstacle_area_size + 10))
-            self._middle_points.append(Point(x=point.x + self._obstacle_area_size + 10,
-                                             y=point.y - self._obstacle_area_size + 10))
-            self._middle_points.append(Point(x=point.x - self._obstacle_area_size + 10,
-                                             y=point.y + self._obstacle_area_size + 10))
-            self._middle_points.append(Point(x=point.x - self._obstacle_area_size + 10,
-                                             y=point.y - self._obstacle_area_size + 10))
+            middle_point = (Point(x=point.x + self._obstacle_area_size + 10,
+                                  y=point.y + self._obstacle_area_size + 10))
+            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
+                self._middle_points.append(middle_point)
+            middle_point = (Point(x=point.x + self._obstacle_area_size + 10,
+                                  y=point.y - self._obstacle_area_size + 10))
+            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
+                self._middle_points.append(middle_point)
+            middle_point = (Point(x=point.x - self._obstacle_area_size + 10,
+                                  y=point.y + self._obstacle_area_size + 10))
+            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
+                self._middle_points.append(middle_point)
+            middle_point = (Point(x=point.x - self._obstacle_area_size + 10,
+                                  y=point.y - self._obstacle_area_size + 10))
+            if middle_point.get_distance(self._midpoint_start_goal) < self._reachable_area_size:
+                self._middle_points.append(middle_point)
 
     def not_overlap_line_and_obstacle_point(self, segment):
         for point in self._obstacle_points:
@@ -148,6 +157,9 @@ class ObstacleMap:
                 img=img, fill=(255, 255, 255))
             Circle(point, self._point_view_size).draw(
                 img=img, fill=(0, 0, 0))
+        if self._midpoint_start_goal is not None and self._reachable_area_size is not None:
+            Circle(self._midpoint_start_goal, self._reachable_area_size).draw(
+                img=img, outline=(0, 0, 0))
         if mode == "FULL":
             for line in self._connect_lines:
                 line.draw(img=img, fill=(130, 130, 130))
@@ -201,6 +213,8 @@ if __name__ == "__main__":
     map.add_obstacle_point(Point(x=300, y=500))
     map.add_obstacle_point(Point(x=520, y=600))
     map.add_obstacle_point(Point(x=500, y=400))
+    map.set_obstacle_area_size(60)
+    map.set_reachable_area_size(200)
     map.create_shortest_path()
     map.print_shortest_path_point()
     map.show(mode="FULL", window_width=1000, window_height=1000)

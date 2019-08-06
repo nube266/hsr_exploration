@@ -87,8 +87,7 @@ class move_server:
                                 self._goal_point_y,
                                 self._obstacle_points_x,
                                 self._obstacle_points_y,
-                                req.threshold_x_max,
-                                req.threshold_y_max)
+                                req.reachable_area_size * 100)
             self._shortest_path_point_x = res.shortest_path_point_x
             self._shortest_path_point_y = res.shortest_path_point_y
         except Exception as e:

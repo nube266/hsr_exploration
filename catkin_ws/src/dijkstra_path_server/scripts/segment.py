@@ -11,6 +11,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 import math
 
+
 class Segment:
     def __init__(self, start_point=Point(), end_point=Point()):
         self._start_point = start_point
@@ -47,16 +48,16 @@ class Segment:
         a2 = a ** 2
         b2 = b ** 2
         r2 = a2 + b2
-        tt = -(a*(x1-x0)+b*(y1-y0))
+        tt = -(a * (x1 - x0) + b * (y1 - y0))
         if tt < 0:
-            return math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0))
+            return math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
         elif tt > r2:
-            return math.sqrt((x2-x0)*(x2-x0) + (y2-y0)*(y2-y0))
+            return math.sqrt((x2 - x0) * (x2 - x0) + (y2 - y0) * (y2 - y0))
         else:
-            f1 = a*(y1-y0)-b*(x1-x0)
+            f1 = a * (y1 - y0) - b * (x1 - x0)
             if r2 == 0:
-                return math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0))
-            return math.sqrt((f1*f1)/r2)
+                return math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
+            return math.sqrt((f1 * f1) / r2)
 
     def get_middle_point(self):
         return self._middle_point

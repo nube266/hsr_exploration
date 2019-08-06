@@ -7,6 +7,7 @@
 # Yusuke Miake
 #
 from PIL import Image, ImageDraw
+import math
 
 
 class Point:
@@ -19,6 +20,10 @@ class Point:
             return True
         return False
 
+    def get_distance(self, point):
+        return math.sqrt((self.x - point.x) * (self.x - point.x)
+                         + (self.y - point.y) * (self.y - point.y))
+
     def print_data(self):
         print("x: " + str(self.x) + "\ty:" + str(self.y))
 
@@ -30,5 +35,7 @@ class Point:
 
 if __name__ == "__main__":
     point = Point(x=100, y=100)
+    point2 = Point(x=200, y=200)
     point.draw().show()
     point.print_data()
+    print("distance: " + str(point.get_distance(point2)))
