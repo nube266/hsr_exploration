@@ -55,8 +55,10 @@ class move_server:
             rospy.logerr(e)
 
     def set_goal_point(self, req):
-        self._goal_point_x = req.goal_point_x * 100
+        self._goal_point_x = req.goal_point_x * 100 
         self._goal_point_y = req.goal_point_y * 100
+        self._goal_orientation_z = req.goal_orientation_z
+        self._goal_orientation_w = req.goal_orientation_w
 
     def print_points(self):
         print("---------------------")
@@ -113,10 +115,10 @@ class move_server:
         goal_pose.target_pose.pose.position.x = position_x / 100.0
         goal_pose.target_pose.pose.position.y = position_y / 100.0
         goal_pose.target_pose.pose.position.z = 0.0
-        goal_pose.target_pose.pose.orientation.x = self._omni_base.get_pose().ori.x
-        goal_pose.target_pose.pose.orientation.y = self._omni_base.get_pose().ori.y
-        goal_pose.target_pose.pose.orientation.z = self._omni_base.get_pose().ori.z
-        goal_pose.target_pose.pose.orientation.w = self._omni_base.get_pose().ori.w
+        goal_pose.target_pose.pose.orientation.x = 0.0
+        goal_pose.target_pose.pose.orientation.y = 0.0
+        goal_pose.target_pose.pose.orientation.z = self._goal_orientation_z
+        goal_pose.target_pose.pose.orientation.w = self._goal_orientation_w
         return goal_pose
 
     def avoidance_move(self, req):
