@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Tidy Up Here Task 1 Tidy Up Tall Table">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_tall_table_sm" class="HSRTidyUpHereTask1TidyUpTallTableSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Wed Aug 1 2019</date>
+	<description>
+		Behavior of actual tidy up task of the tall table in Tidy Up Here Task 1 (Tidying up clattered objects on the floor, the coffee table, and the side table)
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="HSR Move" />
+	<contains name="HSR FetchObjectTallTable" />
+
+	<!-- Available Parameters -->
+	<params>
+
+		<param type="numeric" name="time_limit_task1" default="15.0" label="time_limit_task1" hint="Sets the time_limit_task1">
+			<min value="0" />
+			<max value="20" />
+		</param>
+
+	</params>
+
+
+</behavior>

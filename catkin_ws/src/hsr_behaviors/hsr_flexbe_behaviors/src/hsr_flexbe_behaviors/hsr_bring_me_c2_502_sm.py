@@ -9,15 +9,11 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from flexbe_states.publisher_string_state import PublisherStringState
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
-from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectDynState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_pass_object_state import hsr_PassObjectState
-from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.wait_state import WaitState
+from hsr_flexbe_states.hsr_fetch_object_dyn_state import hsr_FetchObjectDynState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -53,7 +49,9 @@ class HSRBringMeC2502SM(Behavior):
 
 	def create(self):
 		# x:30 y:365, x:130 y:365
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['target_name'])
+		_state_machine.userdata.target_name = 'oolongtea'
+		_state_machine.userdata.location_name = 'shelf'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -64,60 +62,26 @@ class HSRBringMeC2502SM(Behavior):
 		with _state_machine:
 			# x:30 y:32
 			OperatableStateMachine.add('SetPoseSearchPersonPoint',
-										hsr_SetBasePoseByTfNameState(tf_name='search_person_point_0', service_name='/pose_server/getPose'),
+										hsr_SetBasePoseByTfNameState(tf_name='shelf', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchPersonPoint'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:271 y:129
-			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(service_name='/wrs_semantics/bring_me_instruction'),
-										transitions={'succeeded': 'SetPoseFetchLocation', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'command': 'message', 'object_name': 'object_name', 'location_name': 'location_name'})
-
-			# x:250 y:261
+			# x:357 y:121
 			OperatableStateMachine.add('PublishYoloTargetName',
 										PublisherStringState(topic='/target_name'),
 										transitions={'done': 'FetchObject'},
 										autonomy={'done': Autonomy.Off},
-										remapping={'value': 'object_name'})
+										remapping={'value': 'target_name'})
 
-			# x:488 y:134
-			OperatableStateMachine.add('SetPoseFetchLocation',
-										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
-										transitions={'completed': 'MoveToFetchLocation'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'tf_name': 'location_name', 'pose': 'pose'})
-
-			# x:728 y:134
-			OperatableStateMachine.add('MoveToFetchLocation',
+			# x:266 y:34
+			OperatableStateMachine.add('MoveToSearchPersonPoint',
 										hsr_MoveBaseState(),
 										transitions={'succeeded': 'PublishYoloTargetName', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:530 y:280
-			OperatableStateMachine.add('FetchObject',
-										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
-										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'target_name': 'object_name', 'location_name': 'location_name'})
-
-			# x:266 y:34
-			OperatableStateMachine.add('MoveToSearchPersonPoint',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'AskForCommand', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
-
-			# x:535 y:32
-			OperatableStateMachine.add('AskForCommand',
-										hsr_SpeakState(sentence='How may I help you?', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Wait'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:702 y:282
+			# x:613 y:227
 			OperatableStateMachine.add('SetPoseSearchPersonPoint2',
 										hsr_SetBasePoseByTfNameState(tf_name='search_person_point_0', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToSearchPersonPoint2'},
@@ -131,30 +95,24 @@ class HSRBringMeC2502SM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:648 y:450
+			# x:544 y:384
 			OperatableStateMachine.add('HereYouAre',
 										hsr_SpeakState(sentence='Here you are', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'PassObject'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:639 y:548
+			# x:494 y:497
 			OperatableStateMachine.add('PassObject',
 										hsr_PassObjectState(service_name='/kinesthetic/wait_open'),
-										transitions={'succeeded': 'AskForCommand', 'failed': 'PassObject'},
+										transitions={'succeeded': 'finished', 'failed': 'PassObject'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:28 y:125
-			OperatableStateMachine.add('ListenCommand',
-										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'Analyse', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
-
-			# x:712 y:25
-			OperatableStateMachine.add('Wait',
-										WaitState(wait_time=1.5),
-										transitions={'done': 'ListenCommand'},
-										autonomy={'done': Autonomy.Off})
+			# x:372 y:212
+			OperatableStateMachine.add('FetchObject',
+										hsr_FetchObjectDynState(grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', is_yolo=True),
+										transitions={'succeeded': 'SetPoseSearchPersonPoint2', 'failed': 'SetPoseSearchPersonPoint'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'target_name': 'target_name', 'location_name': 'location_name'})
 
 
 		return _state_machine

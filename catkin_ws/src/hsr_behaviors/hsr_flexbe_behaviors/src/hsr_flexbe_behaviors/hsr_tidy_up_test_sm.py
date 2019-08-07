@@ -8,7 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_start_state import hsr_SetStartTimeState
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_sub_sm import HSRTidyUpHereTask1TidyUpSubSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -16,22 +17,23 @@ from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 
 
 '''
-Created on Fri Jul 12 2019
+Created on Tue Jul 30 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRSearchObjectonthetableSM(Behavior):
+class HSRTidyUpTestSM(Behavior):
 	'''
-	Test 'search_object' on a short table
+	Behavior to test only tidy up process in Tidy Up Here Task 1
 	'''
 
 
 	def __init__(self):
-		super(HSRSearchObjectonthetableSM, self).__init__()
-		self.name = 'HSR Search Object on the table'
+		super(HSRTidyUpTestSM, self).__init__()
+		self.name = 'HSR Tidy Up Test'
 
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -43,7 +45,7 @@ class HSRSearchObjectonthetableSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:130 y:365
+		# x:30 y:478, x:130 y:478
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -53,12 +55,19 @@ class HSRSearchObjectonthetableSM(Behavior):
 
 
 		with _state_machine:
-			# x:65 y:60
-			OperatableStateMachine.add('Search',
-										hsr_SearchObjectState(search_point='table', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish', centroid_x_max=0.8, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.5, centroid_z_min=0.35, sleep_time=5.0, is_floor=True),
-										transitions={'found': 'finished', 'notfound': 'finished', 'failed': 'failed'},
-										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'object_name': 'object_name'})
+			# x:30 y:40
+			OperatableStateMachine.add('Start',
+										hsr_SetStartTimeState(),
+										transitions={'succeeded': 'HSR Tidy Up Here Task 1 Tidy Up Sub'},
+										autonomy={'succeeded': Autonomy.Off},
+										remapping={'start_time': 'start_time'})
+
+			# x:73 y:226
+			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Sub',
+										self.use_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub'),
+										transitions={'finished': 'finished', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'start_time': 'start_time'})
 
 
 		return _state_machine

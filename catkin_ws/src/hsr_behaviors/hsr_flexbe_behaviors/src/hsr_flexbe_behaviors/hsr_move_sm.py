@@ -8,7 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
+from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_dyn_state import hsr_SetBasePoseByTfNameDynState
+from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -16,18 +17,18 @@ from hsr_flexbe_states.hsr_search_object_state import hsr_SearchObjectState
 
 
 '''
-Created on Fri Jul 12 2019
+Created on Mon Jul 22 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRSearchObjectonthetableSM(Behavior):
+class HSRMoveSM(Behavior):
 	'''
-	Test 'search_object' on a short table
+	State to set a pose and call MoveBase action
 	'''
 
 
 	def __init__(self):
-		super(HSRSearchObjectonthetableSM, self).__init__()
-		self.name = 'HSR Search Object on the table'
+		super(HSRMoveSM, self).__init__()
+		self.name = 'HSR Move'
 
 		# parameters of this behavior
 
@@ -43,8 +44,9 @@ class HSRSearchObjectonthetableSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:130 y:365
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:30 y:478, x:240 y:463
+		_state_machine = OperatableStateMachine(outcomes=['succeeded', 'failed'], input_keys=['tf_name'])
+		_state_machine.userdata.tf_name = 'searching_point_0'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -53,12 +55,19 @@ class HSRSearchObjectonthetableSM(Behavior):
 
 
 		with _state_machine:
-			# x:65 y:60
-			OperatableStateMachine.add('Search',
-										hsr_SearchObjectState(search_point='table', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish', centroid_x_max=0.8, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.5, centroid_z_min=0.35, sleep_time=5.0, is_floor=True),
-										transitions={'found': 'finished', 'notfound': 'finished', 'failed': 'failed'},
-										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'object_name': 'object_name'})
+			# x:59 y:77
+			OperatableStateMachine.add('SetPose',
+										hsr_SetBasePoseByTfNameDynState(service_name='/pose_server/getPose'),
+										transitions={'completed': 'Move'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'tf_name': 'tf_name', 'pose': 'pose'})
+
+			# x:187 y:268
+			OperatableStateMachine.add('Move',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'succeeded', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
 
 
 		return _state_machine

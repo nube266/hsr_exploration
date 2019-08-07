@@ -15,11 +15,13 @@ class hsr_MoveToNeutralState(EventState):
     '''
     State of passing an object to a person 
 
+    - open_hand        Bool            Indicates if the hand will be opend
+
     <= succeeded                       Successfully passed the object.
     <= failed                          Passing the object failed.
     '''
 
-    def __init__(self):
+    def __init__(self, open_hand=False):
         super(hsr_MoveToNeutralState,self).__init__(outcomes=['succeeded', 'failed'])
 
         # 
@@ -27,6 +29,8 @@ class hsr_MoveToNeutralState(EventState):
         # 
         self._robot = hsrb_interface.Robot()
         self._whole_body = self._robot.get('whole_body')
+        self._gripper = self._robot.get('gripper')
+        self._open_hand = open_hand
 
     def execute(self, userdata):
         '''
@@ -48,7 +52,15 @@ class hsr_MoveToNeutralState(EventState):
         # Move to neutral 
         #
         try:
+            #
+            # Move to neutral 
+            #
             self._whole_body.move_to_neutral()
+            
+            # Open hand
+            if self._open_hand:
+                self._gripper.command(1.0)
+
             self._failed = False
         except Exception as e:
             rospy.logerr(e)
