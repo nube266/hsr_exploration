@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Choose Person Test">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_choose_person_test_sm" class="HSRChoosePersonTestSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Wed Aug 07 2019</date>
+	<description>
+		Test behavior of 'hsr_ChoosePersonState', which subscribes to a result of person detection (tracking), and decide which side the person is, left or right.
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
