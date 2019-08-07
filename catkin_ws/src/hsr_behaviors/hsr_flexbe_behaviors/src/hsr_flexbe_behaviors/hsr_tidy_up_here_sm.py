@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_behaviors.hsr_tidy_up_here_listen_sm import HSRTidyUpHereListenSM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2b_sm import HSRTidyUpHereTask2bSM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_sm import HSRTidyUpHereTask1SM
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2a_sm import HSRTidyUpHereTask2aSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -37,6 +38,7 @@ class HSRTidyUpHereSM(Behavior):
 		self.add_behavior(HSRTidyUpHereListenSM, 'HSR Tidy Up Here Listen')
 		self.add_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b')
 		self.add_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1')
+		self.add_behavior(HSRTidyUpHereTask2aSM, 'HSR Tidy Up Here Task 2a')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -48,7 +50,7 @@ class HSRTidyUpHereSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:478, x:405 y:144
+		# x:30 y:478, x:405 y:182
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 		_state_machine.userdata.target_name = 'oolongtea'
 
@@ -66,7 +68,7 @@ class HSRTidyUpHereSM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'object_name': 'object_name'})
 
-			# x:215 y:332
+			# x:248 y:424
 			OperatableStateMachine.add('HSR Tidy Up Here Task 2b',
 										self.use_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
@@ -76,6 +78,12 @@ class HSRTidyUpHereSM(Behavior):
 			# x:187 y:182
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
 										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
+										transitions={'finished': 'HSR Tidy Up Here Task 2a', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:209 y:294
+			OperatableStateMachine.add('HSR Tidy Up Here Task 2a',
+										self.use_behavior(HSRTidyUpHereTask2aSM, 'HSR Tidy Up Here Task 2a'),
 										transitions={'finished': 'HSR Tidy Up Here Task 2b', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 

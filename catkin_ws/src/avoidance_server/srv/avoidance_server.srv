@@ -1,0 +1,5 @@
+
+---
+bool is_succeeded
+float32[] obstacle_points_x
+float32[] obstacle_points_y
