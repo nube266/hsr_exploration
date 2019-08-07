@@ -1,0 +1,12 @@
+float32 start_point_x
+float32 start_point_y
+float32 goal_point_x
+float32 goal_point_y
+float32[] obstacle_point_x
+float32[] obstacle_point_y
+float32 reachable_area_size
+float32 obstacle_area_size
+---
+float32[] shortest_path_point_x
+float32[] shortest_path_point_y
+bool is_succeeded

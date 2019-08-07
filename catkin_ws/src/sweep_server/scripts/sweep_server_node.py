@@ -1,10 +1,10 @@
 #!/usr/bin/python
-#h -*- coding: utf-8 -*-
+# h -*- coding: utf-8 -*-
 
 #
 # Active Intelligent Systems Laboratory
 # Toyohashi University of Technology
-# 
+#
 # Yusuke Miake
 #
 
@@ -15,6 +15,7 @@ import tf
 import sys
 from hsrb_interface import geometry
 from sweep_server.srv import *
+
 
 class Sweep:
     JOINT_POSITIONS_GRASP_OBJECT = {'arm_flex_joint': -1.86,
@@ -57,11 +58,12 @@ class Sweep:
 
     def sweep_floor(self):
         try:
-            self.listener.waitForTransform(self._target_tf, "/base_link", rospy.Time(), rospy.Duration(10))
+            self.listener.waitForTransform(
+                self._target_tf, "/base_link", rospy.Time(), rospy.Duration(10))
         except (tf.Exception):
             rospy.logerr('Fail in wait for transform')
             return False
-        
+
         try:
             exec('self.'+self._sweep_mode+'()')
             return True
@@ -75,7 +77,8 @@ class Sweep:
             self._omni_base.go_rel(-self._sweep_distance, 0.0, 0.0, 100)
             rospy.sleep(self._waiting_time)
             print 'Lower the robot\'s hand'
-            self._whole_body.move_to_joint_positions({'arm_lift_joint': self._sweep_height})
+            self._whole_body.move_to_joint_positions(
+                {'arm_lift_joint': self._sweep_height})
             rospy.sleep(self._waiting_time)
             print 'Do a sweep'
             self._omni_base.go_rel(2*self._sweep_distance, 0.0, 0.0, 100)
@@ -96,7 +99,8 @@ class Sweep:
             self._omni_base.go_rel(0.0, 0.0, -self._sweep_angular, 100)
             rospy.sleep(self._waiting_time)
             print 'Lower the robot\'s hand'
-            self._whole_body.move_to_joint_positions({'arm_lift_joint': self._sweep_height})
+            self._whole_body.move_to_joint_positions(
+                {'arm_lift_joint': self._sweep_height})
             rospy.sleep(self._waiting_time)
             print 'Do a sweep'
             self._omni_base.go_rel(0.0, 0.0, 2*self._sweep_angular, 100)
@@ -116,13 +120,14 @@ class Sweep:
             self.setup_sweep()
             print 'Perform preliminary motion'
             if self._is_right_move:
-                self._omni_base.go_rel(0.0, self._sweep_distance, 0.0, 100)                
+                self._omni_base.go_rel(0.0, self._sweep_distance, 0.0, 100)
             else:
                 self._omni_base.go_rel(0.0, -self._sweep_distance, 0.0, 100)
             self._omni_base.go_rel(MOVE_FRONT_DISTANCE_LATERAL, 0.0, 0.0, 100)
             rospy.sleep(self._waiting_time)
             print 'Lower the robot\'s hand'
-            self._whole_body.move_to_joint_positions({'arm_lift_joint': self._sweep_height})
+            self._whole_body.move_to_joint_positions(
+                {'arm_lift_joint': self._sweep_height})
             rospy.sleep(self._waiting_time)
             print 'Do a sweep'
             if self._is_right_move:
@@ -148,16 +153,20 @@ class Sweep:
         self._whole_body.linear_weight = Sweep.LINEAR_WEIGHT
         self._whole_body.angular_weight = Sweep.ANGULAR_WEIGHT
         print 'Move the hand to the position of the object'
-        self._whole_body.move_end_effector_pose(geometry.pose(z = -0.3), self._target_tf)
+        self._whole_body.move_end_effector_pose(
+            geometry.pose(z=-0.3), self._target_tf)
         rospy.sleep(self._waiting_time)
         print 'Lift the robot lift'
-        self._whole_body.move_to_joint_positions({'arm_lift_joint': Sweep.START_ARM_LIFT_HEIGHT})
+        self._whole_body.move_to_joint_positions(
+            {'arm_lift_joint': Sweep.START_ARM_LIFT_HEIGHT})
         rospy.sleep(self._waiting_time)
         print 'Change hand direction'
         if self.get_is_object_grasp():
-            self._whole_body.move_to_joint_positions(Sweep.JOINT_POSITIONS_GRASP_OBJECT)
+            self._whole_body.move_to_joint_positions(
+                Sweep.JOINT_POSITIONS_GRASP_OBJECT)
         else:
-            self._whole_body.move_to_joint_positions(Sweep.JOINT_POSITIONS_NO_GRASP_OBJECT)
+            self._whole_body.move_to_joint_positions(
+                Sweep.JOINT_POSITIONS_NO_GRASP_OBJECT)
         rospy.sleep(self._waiting_time)
 
     def get_is_object_grasp(self):
@@ -174,7 +183,8 @@ class Sweep:
         rospy.logerr(exc)
         self._whole_body.move_to_neutral()
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     sweep = Sweep()
     srv = rospy.Service('sweep', sweep_server, sweep.sweep)
     print "Ready to sweep"
