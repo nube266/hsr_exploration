@@ -118,7 +118,7 @@ class HSRTidyUpHereTask1TidyUpTallTableSM(Behavior):
 
 			# x:287 y:33
 			OperatableStateMachine.add('CheckElapsedTimeBeforeFetch',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=1.0),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.8),
 										transitions={'time_remains': 'SetPoseSearchingPointCoffeeTable', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
@@ -131,7 +131,7 @@ class HSRTidyUpHereTask1TidyUpTallTableSM(Behavior):
 
 			# x:518 y:281
 			OperatableStateMachine.add('CheckElapsedTimeBeforePut',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.5),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.3),
 										transitions={'time_remains': 'Put2', 'time_up': 'SpeakTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})

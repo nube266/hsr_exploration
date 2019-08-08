@@ -8,10 +8,9 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_start_state import hsr_SetStartTimeState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_behaviors.hsr_tidy_up_here_open_drawers_sm import HSRTidyUpHereOpenDrawersSM
-from hsr_flexbe_behaviors.hsr_tidy_up_test_sm import HSRTidyUpTestSM
+from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_tidy_up_sub_sm import HSRTidyUpHereTask1TidyUpSubSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -36,7 +35,7 @@ class HSRTidyUpHereTask1SM(Behavior):
 
 		# references to used behaviors
 		self.add_behavior(HSRTidyUpHereOpenDrawersSM, 'HSR Tidy Up Here Open Drawers')
-		self.add_behavior(HSRTidyUpTestSM, 'HSR Tidy Up Test')
+		self.add_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -49,7 +48,8 @@ class HSRTidyUpHereTask1SM(Behavior):
 
 	def create(self):
 		# x:698 y:276, x:1055 y:202
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['start_time'])
+		_state_machine.userdata.start_time = 0.0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -58,13 +58,6 @@ class HSRTidyUpHereTask1SM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:28
-			OperatableStateMachine.add('Start',
-										hsr_SetStartTimeState(),
-										transitions={'succeeded': 'Speak'},
-										autonomy={'succeeded': Autonomy.Off},
-										remapping={'start_time': 'start_time'})
-
 			# x:182 y:26
 			OperatableStateMachine.add('Speak',
 										hsr_SpeakState(sentence='I am going to tidy up here', topic='/talk_request', interrupting=False, queueing=False, language=1),
@@ -74,14 +67,15 @@ class HSRTidyUpHereTask1SM(Behavior):
 			# x:326 y:22
 			OperatableStateMachine.add('HSR Tidy Up Here Open Drawers',
 										self.use_behavior(HSRTidyUpHereOpenDrawersSM, 'HSR Tidy Up Here Open Drawers'),
-										transitions={'finished': 'HSR Tidy Up Test', 'failed': 'HSR Tidy Up Test'},
+										transitions={'finished': 'HSR Tidy Up Here Task 1 Tidy Up Sub', 'failed': 'HSR Tidy Up Here Task 1 Tidy Up Sub'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:581 y:116
-			OperatableStateMachine.add('HSR Tidy Up Test',
-										self.use_behavior(HSRTidyUpTestSM, 'HSR Tidy Up Test'),
+			# x:575 y:101
+			OperatableStateMachine.add('HSR Tidy Up Here Task 1 Tidy Up Sub',
+										self.use_behavior(HSRTidyUpHereTask1TidyUpSubSM, 'HSR Tidy Up Here Task 1 Tidy Up Sub'),
 										transitions={'finished': 'finished', 'failed': 'finished'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'start_time': 'start_time'})
 
 
 		return _state_machine

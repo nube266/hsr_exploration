@@ -64,46 +64,46 @@ class HSRChoosePersonTestSM(Behavior):
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:267 y:267
+			# x:174 y:203
 			OperatableStateMachine.add('SpeakLeft',
 										hsr_SpeakState(sentence='You are on the left', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'SetPosePassLeft'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:490 y:306
+			# x:401 y:206
 			OperatableStateMachine.add('SpeakRight',
 										hsr_SpeakState(sentence='You are on the right', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'SetPosePassRight'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:518 y:194
+			# x:278 y:113
 			OperatableStateMachine.add('ChoosePerson',
 										hsr_ChoosePersonState(topic_name='/monocular_person_following/target_pose'),
 										transitions={'left': 'SpeakLeft', 'right': 'SpeakRight'},
 										autonomy={'left': Autonomy.Off, 'right': Autonomy.Off})
 
-			# x:32 y:313
+			# x:113 y:300
 			OperatableStateMachine.add('SetPosePassLeft',
 										hsr_SetBasePoseByTfNameState(tf_name='deliveryarea_left', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToThePerson'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:261 y:353
+			# x:397 y:299
 			OperatableStateMachine.add('SetPosePassRight',
 										hsr_SetBasePoseByTfNameState(tf_name='deliveryarea_right', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToThePerson'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:158 y:451
+			# x:289 y:391
 			OperatableStateMachine.add('MoveToThePerson',
 										hsr_MoveBaseState(),
-										transitions={'succeeded': 'Pass', 'failed': 'Pass'},
+										transitions={'succeeded': 'SpeakHereYouAre', 'failed': 'SpeakHereYouAre'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:184 y:562
+			# x:292 y:586
 			OperatableStateMachine.add('Pass',
 										hsr_PassObjectState(service_name='/kinesthetic/wait_open'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
@@ -116,10 +116,16 @@ class HSRChoosePersonTestSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:394 y:113
+			# x:477 y:32
 			OperatableStateMachine.add('SpeakBeforeChoose',
 										hsr_SpeakState(sentence='Please wave', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'ChoosePerson'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:285 y:480
+			OperatableStateMachine.add('SpeakHereYouAre',
+										hsr_SpeakState(sentence='Here you are', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'Pass'},
 										autonomy={'done': Autonomy.Off})
 
 
