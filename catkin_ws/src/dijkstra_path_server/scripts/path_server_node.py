@@ -55,12 +55,13 @@ class path_server:
         rospy.loginfo("Calculate shortest path")
         self.create_map(req)
         self._map.set_obstacle_area_size(55)
-        self._map.set_reachable_area_size(req.reachable_area_size)
-        print("before calculate_short_path: {0}".format(self._map.get_obstacle_area_size()))
+        self._map.set_reachable_area_upper_left(Point(x=req.reachable_area_upper_left_x,
+                                                      y=req.reachable_area_upper_left_y))
+        self._map.set_reachable_area_bottom_right(Point(x=req.reachable_area_bottom_right_x,
+                                                        y=req.reachable_area_bottom_right_y))
         while not self._is_succeeded and self._map.get_obstacle_area_size() >= 0:
             self.calculate_short_path()
             self._map.set_obstacle_area_size(self._map.get_obstacle_area_size() - 5)
-        print("after calculate_short_path: {0}".format(self._map.get_obstacle_area_size()))
         print("is_succeeded: {0}".format(self._is_succeeded))
         return dijkstra_path_serverResponse(self._shortest_path_point_x,
                                             self._shortest_path_point_y,

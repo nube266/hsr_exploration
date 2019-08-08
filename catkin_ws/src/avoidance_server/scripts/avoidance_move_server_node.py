@@ -45,7 +45,7 @@ class move_server:
             self._omni_base.go_rel(0.0, 0.0, 0.35, 100.0)
             self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
                                                       "head_tilt_joint": -0.7})
-            rospy.sleep(3.0)
+            rospy.sleep(2.0)
             get_obstacle_points_srv = rospy.ServiceProxy("/avoidance_server/get_obstacle_points",
                                                          avoidance_server)
             res = get_obstacle_points_srv()
@@ -54,7 +54,7 @@ class move_server:
             self._omni_base.go_rel(0.0, 0.0, -0.7, 100.0)
             self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
                                                       "head_tilt_joint": -0.7})
-            rospy.sleep(3.0)
+            rospy.sleep(2.0)
             res = get_obstacle_points_srv()
             self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
             self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
@@ -96,7 +96,10 @@ class move_server:
                                 self._goal_point_y,
                                 self._obstacle_points_x,
                                 self._obstacle_points_y,
-                                req.reachable_area_size * 100,
+                                req.reachable_area_upper_left_x * 100,
+                                req.reachable_area_upper_left_y * 100,
+                                req.reachable_area_bottom_right_x * 100,
+                                req.reachable_area_bottom_right_y * 100,
                                 req.obstacle_area_size * 100)
             self._shortest_path_point_x = res.shortest_path_point_x
             self._shortest_path_point_y = res.shortest_path_point_y

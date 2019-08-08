@@ -10,21 +10,29 @@ class hsr_Task2aState(EventState):
     '''
     Move the HSR base to the 'goal' target pose using an Actionlib action.
 
-    ># pose                 Pose	Goal pose that the base should reach.
+    ># pose                             Pose	Goal pose that the base should reach.
 
-    -- reachable_area_size  float   Size of the area where the robot can move [m]
-    -- obstacle_area_size   float   The distance that should not be close to the object [m]
+    -- obstacle_area_size               float   The distance that should not be close to the object [m]
+    -- reachable_area_upper_left_x      float   Upper left coordinates of the area that can be used as a candidate point when calculating the shortest path [m]
+    -- reachable_area_upper_left_y      float   Upper left coordinates of the area that can be used as a candidate point when calculating the shortest path [m]
+    -- reachable_area_bottom_right_x    float   Upper left coordinates of the area that can be used as a candidate point when calculating the shortest path [m]
+    -- reachable_area_bottom_right_y    float   Upper left coordinates of the area that can be used as a candidate point when calculating the shortest path [m]
 
-    <= succeeded			        The base has succesfully moved to the goal pose.
-    <= failed				        The base could not move to the goal pose.
+    <= succeeded			                The base has succesfully moved to the goal pose.
+    <= failed				                The base could not move to the goal pose.
     '''
 
-    def __init__(self, move_srv_name="/avoidance_move_server/move", reachable_area_size=10.0, obstacle_area_size =0.45):
+    def __init__(self, move_srv_name="/avoidance_move_server/move", reachable_area_upper_left_x=-10000,
+                 reachable_area_upper_left_y=-10000, reachable_area_bottom_right_x=10000,
+                 reachable_area_bottom_right_y=10000, obstacle_area_size =0.45):
         super(hsr_Task2aState, self).__init__(outcomes=['succeeded', 'failed'],
                                               input_keys=['pose'])
         self._move_srv_name = move_srv_name
         self._move_server = ProxyServiceCaller({self._move_srv_name: avoidance_move_server})
-        self._reachable_area_size = reachable_area_size
+        self._reachable_area_upper_left_x = reachable_area_upper_left_x
+        self._reachable_area_upper_left_y = reachable_area_upper_left_y
+        self._reachable_area_bottom_right_x = reachable_area_bottom_right_x
+        self._reachable_area_bottom_right_y = reachable_area_bottom_right_y
         self._obstacle_area_size = obstacle_area_size
 
     def execute(self, userdata):
@@ -41,7 +49,10 @@ class hsr_Task2aState(EventState):
         goal_point_y = userdata.pose.position.y
         goal_orientation_z = userdata.pose.orientation.z
         goal_orientation_w = userdata.pose.orientation.w
-        req = avoidance_move_serverRequest(goal_point_x, goal_point_y, self._reachable_area_size, self._obstacle_area_size,
+        req = avoidance_move_serverRequest(goal_point_x, goal_point_y,
+                                           self._reachable_area_upper_left_x, self._reachable_area_upper_left_y,
+                                           self._reachable_area_bottom_right_x, self._reachable_area_bottom_right_y,
+                                           self._obstacle_area_size,
                                            goal_orientation_z, goal_orientation_w)
         self._failed = False
         try:
