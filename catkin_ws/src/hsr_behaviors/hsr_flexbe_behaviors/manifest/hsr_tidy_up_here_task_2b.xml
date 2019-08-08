@@ -12,6 +12,7 @@
 
 
 	<!-- Contained Behaviors -->
+	<contains name="HSR Choose Person Test" />
 
 	<!-- Available Parameters -->
 

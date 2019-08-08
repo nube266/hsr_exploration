@@ -41,7 +41,7 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 		self.name = 'HSR Tidy Up Here Task 1 Tidy Up Floor'
 
 		# parameters of this behavior
-		self.add_parameter('time_limit_task1', 15)
+		self.add_parameter('time_limit_task1', 15.0)
 
 		# references to used behaviors
 		self.add_behavior(HSRsweeptestSM, 'HSR sweep test')
@@ -110,14 +110,14 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 
 			# x:334 y:21
 			OperatableStateMachine.add('CheckElapsedTimeBeforeFetch',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=1.0),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.8),
 										transitions={'time_remains': 'SetPoseSearchingPoint', 'time_up': 'time_up'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
 			# x:519 y:270
 			OperatableStateMachine.add('CheckElapsedTimePut',
-										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.5),
+										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.3),
 										transitions={'time_remains': 'PutDyn', 'time_up': 'MoveToNeutralPutTimeUp'},
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})

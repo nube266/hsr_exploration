@@ -1,0 +1,85 @@
+yolo_model:
+
+  config_file:
+    name: yolov3_robocup_2019.cfg
+  weight_file:
+    name: yolov3_530000.weights
+  threshold:
+    value: 0.15
+  detection_classes:
+    names:
+        - chipscan
+        - masterchefcan
+        - crackerbox
+        - sugarbox
+        - tomatosoupcan
+        - mustardbottle
+        - tunafishcan
+        - puddingbox
+        - gelatinbox
+        - pottedmeatcan
+        - banana
+        - strawberry
+        - apple
+        - lemon
+        - peach
+        - pear
+        - orange
+        - plum
+        - pitcherbase
+        - bleachcleanser
+        - windexbottle
+        - bowl
+        - mug
+        - sponge
+        - fork
+        - spoon
+        - knife
+        - spatula
+        - woodblock
+        - largemarker
+        - smallmarker
+        - adjustablewrench
+        - hammer
+        - largeclamp
+        - extralargeclamp
+        - softball
+        - baseball
+        - tennisball
+        - racquetball
+        - golfball
+        - chain
+        - foambrick
+        - amarbles
+        - acups
+        - bcups
+        - ccups
+        - dcups
+        - ecups
+        - fcups
+        - gcups
+        - hcups
+        - icups
+        - jcups
+        - acoloredwoodblocks
+        - atoyairplane
+        - btoyairplane
+        - ctoyairplane
+        - etoyairplane
+        - htoyairplane
+        - ktoyairplane
+        - alegoduplo
+        - blegoduplo
+        - clegoduplo
+        - dlegoduplo
+        - elegoduplo
+        - flegoduplo
+        - glegoduplo
+        - hlegoduplo
+        - ilegoduplo
+        - jlegoduplo
+        - klegoduplo
+        - llegoduplo
+        - mlegoduplo
+        - timer
+        - rubikscube
