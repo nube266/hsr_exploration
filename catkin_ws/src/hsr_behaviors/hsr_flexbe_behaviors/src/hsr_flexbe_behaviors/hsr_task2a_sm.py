@@ -10,6 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_task2a_state import hsr_Task2aState
+from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -44,7 +45,7 @@ class HSRTask2aSM(Behavior):
 
 
 	def create(self):
-		# x:675 y:71, x:678 y:260
+		# x:742 y:75, x:916 y:245
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -63,10 +64,24 @@ class HSRTask2aSM(Behavior):
 
 			# x:441 y:64
 			OperatableStateMachine.add('Task2aState',
-										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_upper_left_x=2.2, reachable_area_upper_left_y=-10000, reachable_area_bottom_right_x=10000, reachable_area_bottom_right_y=-1.34, obstacle_area_size=0.45),
-										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_upper_left_x=2.2, reachable_area_upper_left_y=-10000, reachable_area_bottom_right_x=10000, reachable_area_bottom_right_y=-1.4, obstacle_area_size=0.55),
+										transitions={'succeeded': 'finished', 'failed': 'FailedSetGoal'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})
+
+			# x:409 y:233
+			OperatableStateMachine.add('FailedSetGoal',
+										hsr_SetBasePoseByTfNameState(tf_name='shelf', service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveGoal'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:694 y:236
+			OperatableStateMachine.add('MoveGoal',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
 
 
 		return _state_machine
