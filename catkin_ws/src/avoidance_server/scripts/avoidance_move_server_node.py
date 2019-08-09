@@ -42,26 +42,17 @@ class move_server:
         self._obstacle_points_x = []
         self._obstacle_points_y = []
         try:
-            self._omni_base.go_rel(0.0, 0.0, 0.4, 100.0)
-            self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
-                                                      "head_tilt_joint": -0.7})
-            rospy.sleep(1.0)
             get_obstacle_points_srv = rospy.ServiceProxy("/avoidance_server/get_obstacle_points",
                                                          avoidance_server)
-            for i in range(3):
+            yaw_list = [ -0.4, 0.8, -0.4]
+            for yaw in yaw_list:
+                self._omni_base.go_rel(0.0, 0.0, yaw, 100.0)
+                self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
+                                                          "head_tilt_joint": -0.7})
+                rospy.sleep(1.0)
                 res = get_obstacle_points_srv()
                 self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
                 self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
-                rospy.sleep(0.5)
-            self._omni_base.go_rel(0.0, 0.0, -0.8, 100.0)
-            self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
-                                                      "head_tilt_joint": -0.7})
-            rospy.sleep(1.0)
-            for i in range(3):
-                res = get_obstacle_points_srv()
-                self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
-                self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
-                rospy.sleep(0.5)
         except Exception as e:
             rospy.logerr(e)
 
@@ -116,12 +107,8 @@ class move_server:
             next_goal = self.get_next_goal(self._shortest_path_point_x[i],
                                            self._shortest_path_point_y[i])
             self._cli.send_goal(next_goal)
-            is_succeeded = self._cli.wait_for_result(rospy.Duration(20))
-            if is_succeeded is False:
-                self._tts.say("Failed to move")
-                return False
+            self._cli.wait_for_result(rospy.Duration(20))
         self._tts.say("Finished moving")
-        return True
 
     def get_next_goal(self, position_x, position_y):
         goal_pose = MoveBaseGoal()
@@ -135,6 +122,19 @@ class move_server:
         goal_pose.target_pose.pose.orientation.w = self._goal_orientation_w
         return goal_pose
 
+    def reach_goal_check(self):
+        robot_point_x = self._omni_base.pose[0] * 100
+        robot_point_y = self._omni_base.pose[1] * 100
+        print("robot_point x:\t{0}\ty:\t{1}".format(robot_point_x, robot_point_y))
+        print("goal_point x:\t{0}\ty:\t{1}".format(self._goal_point_x, self._goal_point_y))
+        if abs(robot_point_x - self._goal_point_x) < 20 and\
+           abs(robot_point_y - self._goal_point_y) < 20:
+            print("Reaching the goal")
+            return True
+        else:
+            print("The goal has not been reached")
+            return False
+
     def avoidance_move(self, req):
         print("Start Service")
         self.set_robot_point()
@@ -142,7 +142,8 @@ class move_server:
         self.set_obstacle_points()
         self.calculate_shortest_path(req)
         self.print_points()
-        self._is_succeeded = self.move_shortest_path()
+        self.move_shortest_path()
+        self._is_succeeded = self.reach_goal_check()
         return avoidance_move_serverResponse(self._is_succeeded)
 
 
