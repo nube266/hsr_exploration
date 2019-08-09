@@ -8,13 +8,11 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from flexbe_states.subscriber_state import SubscriberState
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
 from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from flexbe_states.wait_state import WaitState
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -60,19 +58,11 @@ class HSRTidyUpHereListenSM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:40
-			OperatableStateMachine.add('SetPose',
-										hsr_SetBasePoseByTfNameState(tf_name='initial_point', service_name='/pose_server/getPose'),
-										transitions={'completed': 'Move'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
-
-			# x:434 y:124
-			OperatableStateMachine.add('ListenObject',
-										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'Analyse', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+			# x:409 y:34
+			OperatableStateMachine.add('SpeakGiveMe',
+										hsr_SpeakState(sentence='How may I help you?', topic='/talk_request', interrupting=False, queueing=False, language=1),
+										transitions={'done': 'Wait1'},
+										autonomy={'done': Autonomy.Off})
 
 			# x:259 y:302
 			OperatableStateMachine.add('SpeakObject',
@@ -107,18 +97,12 @@ class HSRTidyUpHereListenSM(Behavior):
 										transitions={'done': 'ListenTidyUp'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:230 y:41
-			OperatableStateMachine.add('Move',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'SpeakGiveMe', 'failed': 'SpeakGiveMe'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
-
-			# x:409 y:34
-			OperatableStateMachine.add('SpeakGiveMe',
-										hsr_SpeakState(sentence='How may I help you?', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Wait1'},
-										autonomy={'done': Autonomy.Off})
+			# x:434 y:124
+			OperatableStateMachine.add('ListenObject',
+										SubscriberState(topic='/sr_res', blocking=True, clear=True),
+										transitions={'received': 'Analyse', 'unavailable': 'failed'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'message'})
 
 
 		return _state_machine
