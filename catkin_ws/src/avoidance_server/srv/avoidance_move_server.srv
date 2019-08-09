@@ -1,8 +1,11 @@
-float64 goal_point_x
-float64 goal_point_y
-float64 reachable_area_size
-float64 obstacle_area_size
-float64 goal_orientation_z
-float64 goal_orientation_w
+float32 goal_point_x
+float32 goal_point_y
+float32 reachable_area_upper_left_x
+float32 reachable_area_upper_left_y
+float32 reachable_area_bottom_right_x
+float32 reachable_area_bottom_right_y
+float32 obstacle_area_size
+float32 goal_orientation_z
+float32 goal_orientation_w
 ---
 bool is_succeeded
