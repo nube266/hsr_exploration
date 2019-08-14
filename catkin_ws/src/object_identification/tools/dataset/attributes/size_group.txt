@@ -1,0 +1,8 @@
+large
+small
+big
+little
+tall
+short
+high
+low
