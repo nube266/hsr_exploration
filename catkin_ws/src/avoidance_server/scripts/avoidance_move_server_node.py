@@ -39,22 +39,12 @@ class move_server:
 
     def set_obstacle_points(self):
         self._tts.say("Start object search")
-        self._obstacle_points_x = []
-        self._obstacle_points_y = []
         try:
-            self._omni_base.go_rel(0.0, 0.0, 0.35, 100.0)
             self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
                                                       "head_tilt_joint": -0.7})
-            rospy.sleep(3.0)
+            rospy.sleep(2.0)
             get_obstacle_points_srv = rospy.ServiceProxy("/avoidance_server/get_obstacle_points",
                                                          avoidance_server)
-            res = get_obstacle_points_srv()
-            self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
-            self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
-            self._omni_base.go_rel(0.0, 0.0, -0.7, 100.0)
-            self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
-                                                      "head_tilt_joint": -0.7})
-            rospy.sleep(3.0)
             res = get_obstacle_points_srv()
             self._obstacle_points_x = [n * 100 for n in res.obstacle_points_x]
             self._obstacle_points_y = [n * 100 for n in res.obstacle_points_y]
@@ -135,7 +125,7 @@ class move_server:
         self.set_obstacle_points()
         self.calculate_shortest_path(req)
         self.print_points()
-        self._is_succeeded = self.move_shortest_path()
+        # self._is_succeeded = self.move_shortest_path()
         return avoidance_move_serverResponse(self._is_succeeded)
 
 
