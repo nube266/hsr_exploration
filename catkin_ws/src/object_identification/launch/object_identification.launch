@@ -1,0 +1,12 @@
+<launch>
+    <arg name="point_topic" default="/camera/depth_registered/points" />
+    <arg name="image_topic" default="/camera/rgb/image_color" />
+    <arg name="camerainfo_topic" default="/camera/rgb/camera_info" />
+    <node pkg="object_identification" type="object_identification" name="object_identification" output="screen">
+        <param name="point_topic" value="$(arg point_topic)" />
+        <param name="image_topic" value="$(arg image_topic)" />
+        <param name="camerainfo_topic" value="$(arg camerainfo_topic)" />
+    </node>
+    <node pkg="object_identification" type="attribute_estimate_node.py" name="attribute_estimate_node" output="screen">
+    </node>
+</launch>

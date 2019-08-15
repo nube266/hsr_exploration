@@ -1,0 +1,17 @@
+white
+black
+blue
+green
+red
+brown
+yellow
+orange
+gray
+gold
+silver
+beige
+cream
+grey
+pink
+purple
+blonde
