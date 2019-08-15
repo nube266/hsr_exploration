@@ -11,6 +11,8 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
+from flexbe_states.subscriber_state import SubscriberState
+from flexbe_states.decision_state import DecisionState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -55,13 +57,13 @@ class HSRRobotInspectionSM(Behavior):
 
 
 		with _state_machine:
-			# x:64 y:65
+			# x:73 y:52
 			OperatableStateMachine.add('SpeakStart',
 										hsr_SpeakState(sentence='I am ready to go', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'SetPoseArenaGoal'},
+										transitions={'done': 'SubscribeDoorResult'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:124 y:263
+			# x:146 y:252
 			OperatableStateMachine.add('MoveToArenaGoal',
 										hsr_MoveBaseState(),
 										transitions={'succeeded': 'Speak', 'failed': 'MoveToArenaGoal'},
@@ -74,12 +76,26 @@ class HSRRobotInspectionSM(Behavior):
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:102 y:165
+			# x:260 y:173
 			OperatableStateMachine.add('SetPoseArenaGoal',
 										hsr_SetBasePoseByTfNameState(tf_name='arena_goal', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToArenaGoal'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
+
+			# x:250 y:83
+			OperatableStateMachine.add('SubscribeDoorResult',
+										SubscriberState(topic='/ork_door_detector/is_door', blocking=True, clear=True),
+										transitions={'received': 'Decision', 'unavailable': 'failed'},
+										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
+										remapping={'message': 'message'})
+
+			# x:538 y:81
+			OperatableStateMachine.add('Decision',
+										DecisionState(outcomes=['is_door', 'no_door'], conditions=lambda x : "is_door" if x.data else "no_door"),
+										transitions={'is_door': 'SubscribeDoorResult', 'no_door': 'SetPoseArenaGoal'},
+										autonomy={'is_door': Autonomy.Off, 'no_door': Autonomy.Off},
+										remapping={'input_value': 'message'})
 
 
 		return _state_machine
