@@ -8,11 +8,11 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from flexbe_states.subscriber_state import SubscriberState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
+from flexbe_states.subscriber_state import SubscriberState
 from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from flexbe_states.wait_state import WaitState
-from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -80,7 +80,7 @@ class HSRTidyUpHereListenSM(Behavior):
 
 			# x:588 y:233
 			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='shelf', default_id='0', service_name='/wrs_semantics_bring/bring_me_instruction'),
+										hsr_AnalyseCommandState(default_location='shelf', default_id='0', service_name='/wrs_semantics/bring_me_instruction'),
 										transitions={'succeeded': 'SpeakObject', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'message', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})

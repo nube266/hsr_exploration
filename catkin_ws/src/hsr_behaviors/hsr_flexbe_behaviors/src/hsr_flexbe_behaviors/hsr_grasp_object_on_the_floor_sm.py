@@ -59,7 +59,7 @@ class HSRgraspobjectonthefloorSM(Behavior):
 		with _state_machine:
 			# x:45 y:51
 			OperatableStateMachine.add('MoveToNeutral',
-										hsr_MoveToNeutralState(),
+										hsr_MoveToNeutralState(open_hand=True),
 										transitions={'succeeded': 'Interface', 'failed': 'finished'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
@@ -72,7 +72,7 @@ class HSRgraspobjectonthefloorSM(Behavior):
 
 			# x:217 y:43
 			OperatableStateMachine.add('Interface',
-										hsr_FetchObjectInterfaceState(centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=5.0, is_floor=False),
+										hsr_FetchObjectInterfaceState(centroid_x_max=1.5, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.3, centroid_z_min=0.0, sleep_time=8.0, is_floor=False),
 										transitions={'done': 'HSR FetchObject'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'centroid_x_max': 'centroid_x_max', 'centroid_y_max': 'centroid_y_max', 'centroid_y_min': 'centroid_y_min', 'centroid_z_max': 'centroid_z_max', 'centroid_z_min': 'centroid_z_min', 'sleep_time': 'sleep_time', 'is_floor': 'is_floor'})

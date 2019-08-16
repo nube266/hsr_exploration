@@ -145,7 +145,7 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 			# x:367 y:187
 			OperatableStateMachine.add('HSR FetchObject1',
 										self.use_behavior(HSRFetchObjectSM, 'HSR FetchObject1'),
-										transitions={'finished': 'SpeakObjectName', 'grasp_failed': 'SetPoseSearchingPoint', 'not_found': 'finished', 'failed': 'FetchObjectInterface1'},
+										transitions={'finished': 'SpeakObjectName', 'grasp_failed': 'SetPoseSearchingPoint', 'not_found': 'finished', 'failed': 'MoveToNeutralGraspFail'},
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
@@ -179,6 +179,12 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 			OperatableStateMachine.add('MoveToNeutralPutTimeUp',
 										hsr_MoveToNeutralState(open_hand=True),
 										transitions={'succeeded': 'time_up', 'failed': 'time_up'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:59 y:252
+			OperatableStateMachine.add('MoveToNeutralGraspFail',
+										hsr_MoveToNeutralState(open_hand=False),
+										transitions={'succeeded': 'FetchObjectInterface1', 'failed': 'MoveToNeutralGraspFail'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR Robot Inspection no door">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_robot_inspection_no_door_sm" class="HSRRobotInspectionnodoorSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Mon Aug 05 2019</date>
+	<description>
+		A behavior for the robot inspection task in RoboCup Japan Open 2019
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

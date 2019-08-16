@@ -13,8 +13,6 @@ from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2b_sm import HSRTidyUpHereTask2b
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_sm import HSRTidyUpHereTask1SM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2a_sm import HSRTidyUpHereTask2aSM
 from hsr_flexbe_states.hsr_start_state import hsr_SetStartTimeState
-from hsr_flexbe_behaviors.hsr_tidy_up_here_listen_sm import HSRTidyUpHereListenSM
-from hsr_flexbe_behaviors.hsr_wait_for_door_opened_sm import HSRWaitfordooropenedSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -25,15 +23,15 @@ from hsr_flexbe_behaviors.hsr_wait_for_door_opened_sm import HSRWaitfordooropene
 Created on Sat Jul 20 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRTidyUpHereSM(Behavior):
+class HSRTidyUpHerenolistenSM(Behavior):
 	'''
 	Whole behavior of Tidy Up Here in Robocup Japan 2019 / WRS 2020
 	'''
 
 
 	def __init__(self):
-		super(HSRTidyUpHereSM, self).__init__()
-		self.name = 'HSR Tidy Up Here'
+		super(HSRTidyUpHerenolistenSM, self).__init__()
+		self.name = 'HSR Tidy Up Here no listen'
 
 		# parameters of this behavior
 
@@ -41,8 +39,6 @@ class HSRTidyUpHereSM(Behavior):
 		self.add_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b')
 		self.add_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1')
 		self.add_behavior(HSRTidyUpHereTask2aSM, 'HSR Tidy Up Here Task 2a')
-		self.add_behavior(HSRTidyUpHereListenSM, 'HSR Tidy Up Here Listen')
-		self.add_behavior(HSRWaitfordooropenedSM, 'HSR Wait for door opened')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -54,8 +50,8 @@ class HSRTidyUpHereSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:478, x:619 y:208
-		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		# x:30 y:478, x:418 y:182
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['target_name'])
 		_state_machine.userdata.target_name = 'oolongtea'
 
 		# Additional creation code can be added inside the following tags
@@ -77,9 +73,9 @@ class HSRTidyUpHereSM(Behavior):
 										self.use_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'target_name': 'object_name'})
+										remapping={'target_name': 'target_name'})
 
-			# x:312 y:256
+			# x:201 y:238
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
 										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
 										transitions={'finished': 'HSR Tidy Up Here Task 2a', 'failed': 'failed'},
@@ -95,22 +91,9 @@ class HSRTidyUpHereSM(Behavior):
 			# x:30 y:117
 			OperatableStateMachine.add('SetStartTime',
 										hsr_SetStartTimeState(),
-										transitions={'succeeded': 'HSR Tidy Up Here Listen'},
+										transitions={'succeeded': 'HSR Tidy Up Here Task 1'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'start_time': 'start_time'})
-
-			# x:316 y:46
-			OperatableStateMachine.add('HSR Tidy Up Here Listen',
-										self.use_behavior(HSRTidyUpHereListenSM, 'HSR Tidy Up Here Listen'),
-										transitions={'finished': 'HSR Wait for door opened', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'object_name': 'object_name'})
-
-			# x:310 y:149
-			OperatableStateMachine.add('HSR Wait for door opened',
-										self.use_behavior(HSRWaitfordooropenedSM, 'HSR Wait for door opened'),
-										transitions={'finished': 'HSR Tidy Up Here Task 1', 'failed': 'HSR Tidy Up Here Task 1'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

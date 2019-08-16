@@ -42,7 +42,7 @@ class move_server:
         try:
             self._whole_body.move_to_joint_positions({"arm_roll_joint": -1.57,
                                                       "head_tilt_joint": -0.7})
-            rospy.sleep(2.0)
+            rospy.sleep(1.0)
             get_obstacle_points_srv = rospy.ServiceProxy("/avoidance_server/get_obstacle_points",
                                                          avoidance_server)
             res = get_obstacle_points_srv()
@@ -86,7 +86,10 @@ class move_server:
                                 self._goal_point_y,
                                 self._obstacle_points_x,
                                 self._obstacle_points_y,
-                                req.reachable_area_size * 100,
+                                req.reachable_area_upper_left_x * 100,
+                                req.reachable_area_upper_left_y * 100,
+                                req.reachable_area_bottom_right_x * 100,
+                                req.reachable_area_bottom_right_y * 100,
                                 req.obstacle_area_size * 100)
             self._shortest_path_point_x = res.shortest_path_point_x
             self._shortest_path_point_y = res.shortest_path_point_y
@@ -99,7 +102,7 @@ class move_server:
             next_goal = self.get_next_goal(self._shortest_path_point_x[i],
                                            self._shortest_path_point_y[i])
             self._cli.send_goal(next_goal)
-            is_succeeded = self._cli.wait_for_result(rospy.Duration(30))
+            is_succeeded = self._cli.wait_for_result(rospy.Duration(20))
             if is_succeeded is False:
                 self._tts.say("Failed to move")
                 return False
@@ -125,7 +128,7 @@ class move_server:
         self.set_obstacle_points()
         self.calculate_shortest_path(req)
         self.print_points()
-        # self._is_succeeded = self.move_shortest_path()
+        self._is_succeeded = self.move_shortest_path()
         return avoidance_move_serverResponse(self._is_succeeded)
 
 
