@@ -64,7 +64,7 @@ class HSRTask2aSM(Behavior):
 
 			# x:441 y:64
 			OperatableStateMachine.add('Task2aState',
-										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_upper_left_x=-10000, reachable_area_upper_left_y=-10000, reachable_area_bottom_right_x=10000, reachable_area_bottom_right_y=10000, obstacle_area_size=0.55),
+										hsr_Task2aState(move_srv_name="/avoidance_move_server/move", reachable_area_upper_left_x=-10000, reachable_area_upper_left_y=2.67628, reachable_area_bottom_right_x=3.65699, reachable_area_bottom_right_y=10000, obstacle_area_size=0.55),
 										transitions={'succeeded': 'finished', 'failed': 'FailedSetGoal'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})
