@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Test new timer">
+
+	<executable package_path="hsr_flexbe_behaviors.test_new_timer_sm" class="TestnewtimerSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Tue Aug 13 2019</date>
+	<description>
+		A behavior to test 'hsr_CheckElapsedGlobalTime' state
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

@@ -1,0 +1,14 @@
+brick
+cement
+concrete
+glass
+gravel
+metal
+plastic
+sand
+stone
+wood
+wooden
+iron
+steel
+cloth

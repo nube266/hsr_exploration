@@ -13,8 +13,8 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="HSR sweep test" />
-	<contains name="HSR FetchObject" />
 	<contains name="HSR Move" />
+	<contains name="HSR FetchObjectNew" />
 
 	<!-- Available Parameters -->
 	<params>

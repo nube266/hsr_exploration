@@ -1,0 +1,11 @@
+balcony
+living
+bathroom
+bathtub
+toilet
+kitchen
+shelf
+table
+center
+left
+right

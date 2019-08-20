@@ -1,0 +1,10 @@
+logo
+no-logo
+lid
+no-lid
+label
+no-label
+lettering
+no-lettering
+grip
+no-grip

@@ -1,0 +1,4 @@
+bent
+empty
+many
+stack
