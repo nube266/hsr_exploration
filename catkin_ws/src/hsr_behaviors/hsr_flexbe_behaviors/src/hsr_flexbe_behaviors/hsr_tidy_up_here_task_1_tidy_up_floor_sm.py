@@ -16,10 +16,10 @@ from hsr_flexbe_states.hsr_check_elapsed_time_state import hsr_CheckElapsedTimeS
 from hsr_flexbe_behaviors.hsr_sweep_test_sm import HSRsweeptestSM
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
 from hsr_flexbe_states.hsr_fetch_object_interface_state import hsr_FetchObjectInterfaceState
-from hsr_flexbe_behaviors.hsr_fetchobject_sm import HSRFetchObjectSM
 from hsr_flexbe_behaviors.hsr_move_sm import HSRMoveSM
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
+from hsr_flexbe_behaviors.hsr_fetchobjectnew_sm import HSRFetchObjectNewSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -45,8 +45,8 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 
 		# references to used behaviors
 		self.add_behavior(HSRsweeptestSM, 'HSR sweep test')
-		self.add_behavior(HSRFetchObjectSM, 'HSR FetchObject1')
 		self.add_behavior(HSRMoveSM, 'HSR Move')
+		self.add_behavior(HSRFetchObjectNewSM, 'HSR FetchObjectNew')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -115,7 +115,7 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 										autonomy={'time_remains': Autonomy.Off, 'time_up': Autonomy.Off},
 										remapping={'start_time': 'start_time', 'offset': 'offset'})
 
-			# x:519 y:270
+			# x:476 y:282
 			OperatableStateMachine.add('CheckElapsedTimePut',
 										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.3),
 										transitions={'time_remains': 'PutDyn', 'time_up': 'MoveToNeutralPutTimeUp'},
@@ -137,17 +137,10 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 
 			# x:22 y:150
 			OperatableStateMachine.add('FetchObjectInterface1',
-										hsr_FetchObjectInterfaceState(centroid_x_max=1.3, centroid_y_max=1.0, centroid_y_min=-1.0, centroid_z_max=0.2, centroid_z_min=0.0, sleep_time=5.0, is_floor=False),
-										transitions={'done': 'HSR FetchObject1'},
+										hsr_FetchObjectInterfaceState(centroid_x_max=1.25, centroid_y_max=1.2, centroid_y_min=-1.2, centroid_z_max=0.2, centroid_z_min=0.0, sleep_time=5.0, is_floor=False),
+										transitions={'done': 'HSR FetchObjectNew'},
 										autonomy={'done': Autonomy.Off},
 										remapping={'centroid_x_max': 'search_centroid_x_max', 'centroid_y_max': 'search_centroid_y_max', 'centroid_y_min': 'search_centroid_y_min', 'centroid_z_max': 'search_centroid_z_max', 'centroid_z_min': 'search_centroid_z_min', 'sleep_time': 'search_sleep_time', 'is_floor': 'search_is_floor'})
-
-			# x:367 y:187
-			OperatableStateMachine.add('HSR FetchObject1',
-										self.use_behavior(HSRFetchObjectSM, 'HSR FetchObject1'),
-										transitions={'finished': 'SpeakObjectName', 'grasp_failed': 'SetPoseSearchingPoint', 'not_found': 'finished', 'failed': 'MoveToNeutralGraspFail'},
-										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
 			# x:253 y:270
 			OperatableStateMachine.add('HSR Move',
@@ -186,6 +179,13 @@ class HSRTidyUpHereTask1TidyUpFloorSM(Behavior):
 										hsr_MoveToNeutralState(open_hand=False),
 										transitions={'succeeded': 'FetchObjectInterface1', 'failed': 'MoveToNeutralGraspFail'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:359 y:156
+			OperatableStateMachine.add('HSR FetchObjectNew',
+										self.use_behavior(HSRFetchObjectNewSM, 'HSR FetchObjectNew'),
+										transitions={'finished': 'SpeakObjectName', 'grasp_failed': 'SetPoseSearchingPoint', 'not_found': 'finished', 'failed': 'MoveToNeutralGraspFail'},
+										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
 
 		return _state_machine

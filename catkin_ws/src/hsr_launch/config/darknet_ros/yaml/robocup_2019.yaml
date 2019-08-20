@@ -3,9 +3,9 @@ yolo_model:
   config_file:
     name: yolov3_robocup_2019.cfg
   weight_file:
-    name: yolov3_520000.weights
+    name: yolov3.backup
   threshold:
-    value: 0.15
+    value: 0.01
   detection_classes:
     names:
         - chipscan

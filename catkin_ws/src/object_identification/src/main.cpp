@@ -224,13 +224,13 @@ input_cloud_data_raw_(new pcl::PointCloud < pcl::PointXYZRGB >)
 
     client_attr = nh_.serviceClient<object_identification::get_attribute>("/get_attribute"); 
 
-    float x_min = -1.5, x_max = 1.5, y_min = -1.5, y_max = 1.5, z_min = 0.0, z_max = 1.0;
-    nh_.getParam("/object_identification/x_max", x_max);
-    nh_.getParam("/object_identification/x_min", x_min);
-    nh_.getParam("/object_identification/y_max", y_max);
-    nh_.getParam("/object_identification/y_min", y_min);
-    nh_.getParam("/object_identification/z_max", z_max);
-    nh_.getParam("/object_identification/z_min", z_min);
+    float x_min = 0, x_max = 1.5, y_min = -0.5, y_max = 0.5, z_min = 0.0, z_max = 0.5;
+    nh_.getParam("/ork_tf_broadcaster/centroid_x_max", x_max);
+    nh_.getParam("/ork_tf_broadcaster/centroid_x_min", x_min);
+    nh_.getParam("/ork_tf_broadcaster/centroid_y_max", y_max);
+    nh_.getParam("/ork_tf_broadcaster/centroid_y_min", y_min);
+    nh_.getParam("/ork_tf_broadcaster/centroid_z_max", z_max);
+    nh_.getParam("/ork_tf_broadcaster/centroid_z_min", z_min);
     boxFilter_min = Eigen::Vector4f(x_min, y_min, z_min, 1.0);
     boxFilter_max = Eigen::Vector4f(x_max, y_max, z_max, 1.0);
 //    boxFilter_min = Eigen::Vector4f(-1.5, -1.5, 0, 1.0);

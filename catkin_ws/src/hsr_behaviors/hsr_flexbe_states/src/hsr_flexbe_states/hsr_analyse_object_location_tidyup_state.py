@@ -27,12 +27,15 @@ class hsr_AnalyseObjectLocationTidyUpState(EventState):
     <= failed                          Analysis failed.
     '''
 
-    def __init__(self, service_name='/wrs_semantics/tidyup_locationAndDepositOfObject_task1'):
-        super(hsr_AnalyseObjectLocationTidyUpState,self).__init__(input_keys=['command'], output_keys=['location_name', 'deposit_name'], outcomes=['succeeded', 'failed'])
+    def __init__(self, default_location, default_deposit, service_name='/wrs_semantics/tidyup_locationAndDepositOfObject_task1'):
+        super(hsr_AnalyseObjectLocationTidyUpState,self).__init__(input_keys=['command'], output_keys=['location_name', 'location_to_put'], outcomes=['succeeded', 'failed'])
 
         self._service_name = service_name
 
         self._get_object_location_srv = ProxyServiceCaller({self._service_name : Object_Location_Deposit})
+
+        self._default_location = default_location
+        self._default_deposit = default_deposit
 
     def execute(self, userdata):
         '''
@@ -59,7 +62,14 @@ class hsr_AnalyseObjectLocationTidyUpState(EventState):
         try:
             self._srv_result = self._get_object_location_srv.call(self._service_name, req)
             userdata.location_name = self._srv_result.location_name
-            userdata.deposit_name = self._srv_result.deposit_name
+            userdata.location_to_put = self._srv_result.deposit_name
+
+            if self._srv_result.location_name == '':
+                userdata.location_name = self._default_location
+                userdata.location_to_put = self._default_deposit
+            else :
+                userdata.location_name = self._srv_result.location_name
+                userdata.location_to_put = self._srv_result.deposit_name
 
             rospy.loginfo(self._srv_result.location_name + ' ' + self._srv_result.deposit_name)
 

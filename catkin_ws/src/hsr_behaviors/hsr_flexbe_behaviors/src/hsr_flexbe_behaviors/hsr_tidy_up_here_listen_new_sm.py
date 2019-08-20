@@ -10,8 +10,8 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
-from flexbe_states.subscriber_state import SubscriberState
 from flexbe_states.wait_state import WaitState
+from flexbe_states.subscriber_state import SubscriberState
 from hsr_flexbe_states.hsr_analyse_object_bringme_state import hsr_AnalyseObjectBringMeState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
@@ -67,27 +67,14 @@ class HSRTidyUpHereListenNewSM(Behavior):
 			# x:259 y:302
 			OperatableStateMachine.add('SpeakObject',
 										hsr_SpeakDynState(sentence="I'll bring +", sentence_when_empty="Could you say that again?", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Wait2', 'empty': 'Wait1'},
+										transitions={'done': 'finished', 'empty': 'Wait1'},
 										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
 										remapping={'variable': 'object_name'})
-
-			# x:582 y:453
-			OperatableStateMachine.add('ListenTidyUp',
-										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'finished', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
 
 			# x:285 y:158
 			OperatableStateMachine.add('Wait1',
 										WaitState(wait_time=1.5),
 										transitions={'done': 'ListenObject'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:403 y:415
-			OperatableStateMachine.add('Wait2',
-										WaitState(wait_time=1.5),
-										transitions={'done': 'ListenTidyUp'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:563 y:98

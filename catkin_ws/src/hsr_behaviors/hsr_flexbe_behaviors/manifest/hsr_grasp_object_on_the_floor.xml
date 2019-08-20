@@ -12,7 +12,7 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="HSR FetchObject" />
+	<contains name="HSR FetchObjectNew" />
 
 	<!-- Available Parameters -->
 	<params>

@@ -10,7 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_search_object_dyn_state import hsr_SearchObjectDynState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
-from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
+from hsr_flexbe_states.hsr_analyse_object_location_tidyup_state import hsr_AnalyseObjectLocationTidyUpState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -77,15 +77,15 @@ Search -> Fetch -> Analyse
 			# x:372 y:84
 			OperatableStateMachine.add('FetchObject',
 										hsr_FetchObjectState(fetch_place_type='longtable', grasp_srv_name='/grasp/service', stop_tf_srv_name='/ork_tf_broadcaster/stop_publish', target_name='closest'),
-										transitions={'succeeded': 'Analyse', 'failed': 'grasp_failed'},
+										transitions={'succeeded': 'AnalyseObject', 'failed': 'grasp_failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:546 y:99
-			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='bin', default_id=0, service_name='/wrs_semantics/tidyup_locationOfObject_stge1'),
+			# x:553 y:240
+			OperatableStateMachine.add('AnalyseObject',
+										hsr_AnalyseObjectLocationTidyUpState(default_location='bin', default_deposit='binb', service_name='/wrs_semantics/tidyup_locationAndDepositOfObject_task1'),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'command': 'object_name', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
+										remapping={'command': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
 
 		return _state_machine
