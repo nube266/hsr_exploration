@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="HSR Tidy Up Here">
+<behavior name="HSR Tidy Up Here Task 2a and 2b">
 
-	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_sm" class="HSRTidyUpHereSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_tidy_up_here_task_2a_and_2b_sm" class="HSRTidyUpHereTask2aand2bSM" />
 	<tagstring></tagstring>
 	<author>ShigemichiMatsuzaki</author>
 	<date>Sat Jul 20 2019</date>
@@ -12,10 +12,8 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="HSR Tidy Up Here Task 2b" />
-	<contains name="HSR Tidy Up Here Task 1" />
 	<contains name="HSR Tidy Up Here Task 2a" />
-	<contains name="HSR Tidy Up Here Listen New" />
+	<contains name="HSR Tidy Up Here Task 2b" />
 
 	<!-- Available Parameters -->
 

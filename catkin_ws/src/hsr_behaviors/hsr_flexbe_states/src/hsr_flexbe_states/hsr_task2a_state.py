@@ -71,3 +71,4 @@ class hsr_Task2aState(EventState):
 
     def on_stop(self):
         pass
+

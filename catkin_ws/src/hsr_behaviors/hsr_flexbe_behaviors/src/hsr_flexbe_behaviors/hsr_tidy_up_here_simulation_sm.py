@@ -8,7 +8,6 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_wait_press_wrist_state import hsr_WaitWristPressedState
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2b_sm import HSRTidyUpHereTask2bSM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_1_sm import HSRTidyUpHereTask1SM
 from hsr_flexbe_behaviors.hsr_tidy_up_here_task_2a_sm import HSRTidyUpHereTask2aSM
@@ -24,15 +23,15 @@ from hsr_flexbe_behaviors.hsr_tidy_up_here_listen_new_sm import HSRTidyUpHereLis
 Created on Sat Jul 20 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRTidyUpHereSM(Behavior):
+class HSRTidyUpHereSimulationSM(Behavior):
 	'''
 	Whole behavior of Tidy Up Here in Robocup Japan 2019 / WRS 2020
 	'''
 
 
 	def __init__(self):
-		super(HSRTidyUpHereSM, self).__init__()
-		self.name = 'HSR Tidy Up Here'
+		super(HSRTidyUpHereSimulationSM, self).__init__()
+		self.name = 'HSR Tidy Up Here Simulation'
 
 		# parameters of this behavior
 
@@ -63,53 +62,39 @@ class HSRTidyUpHereSM(Behavior):
 
 
 		with _state_machine:
-			# x:31 y:42
-			OperatableStateMachine.add('StartButton',
-										hsr_WaitWristPressedState(),
+			# x:59 y:78
+			OperatableStateMachine.add('SetStartTime',
+										hsr_SetStartTimeState(),
 										transitions={'succeeded': 'HSR Tidy Up Here Listen New'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'start_time': 'start_time'})
 
-			# x:205 y:530
-			OperatableStateMachine.add('HSR Tidy Up Here Task 2b',
-										self.use_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b'),
-										transitions={'finished': 'finished', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
-										remapping={'target_name': 'object_name'})
-
-			# x:296 y:222
+			# x:312 y:256
 			OperatableStateMachine.add('HSR Tidy Up Here Task 1',
 										self.use_behavior(HSRTidyUpHereTask1SM, 'HSR Tidy Up Here Task 1'),
 										transitions={'finished': 'HSR Tidy Up Here Task 2a', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'start_time': 'start_time'})
 
-			# x:250 y:388
+			# x:236 y:341
 			OperatableStateMachine.add('HSR Tidy Up Here Task 2a',
 										self.use_behavior(HSRTidyUpHereTask2aSM, 'HSR Tidy Up Here Task 2a'),
 										transitions={'finished': 'HSR Tidy Up Here Task 2b', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:167 y:153
-			OperatableStateMachine.add('SetStartTime',
-										hsr_SetStartTimeState(),
-										transitions={'succeeded': 'HSR Tidy Up Here Task 1'},
-										autonomy={'succeeded': Autonomy.Off},
-										remapping={'start_time': 'start_time'})
-
-			# x:291 y:19
+			# x:286 y:114
 			OperatableStateMachine.add('HSR Tidy Up Here Listen New',
 										self.use_behavior(HSRTidyUpHereListenNewSM, 'HSR Tidy Up Here Listen New'),
-										transitions={'finished': 'StartButton2', 'failed': 'failed'},
+										transitions={'finished': 'HSR Tidy Up Here Task 1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'object_name': 'object_name'})
 
-			# x:324 y:105
-			OperatableStateMachine.add('StartButton2',
-										hsr_WaitWristPressedState(),
-										transitions={'succeeded': 'SetStartTime'},
-										autonomy={'succeeded': Autonomy.Off},
-										remapping={'start_time': 'start_time'})
+			# x:194 y:460
+			OperatableStateMachine.add('HSR Tidy Up Here Task 2b',
+										self.use_behavior(HSRTidyUpHereTask2bSM, 'HSR Tidy Up Here Task 2b'),
+										transitions={'finished': 'finished', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'target_name': 'object_name'})
 
 
 		return _state_machine

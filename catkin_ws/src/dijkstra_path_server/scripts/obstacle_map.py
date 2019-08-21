@@ -243,3 +243,4 @@ if __name__ == "__main__":
     map.create_shortest_path()
     map.print_shortest_path_point()
     map.show(mode="FULL", window_width=1000, window_height=1000)
+

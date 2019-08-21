@@ -142,10 +142,10 @@ class HSRTidyUpHereTask1TidyUpTallTableSM(Behavior):
 										transitions={'done': 'MoveToNeutralTimeUp'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:397 y:211
+			# x:478 y:131
 			OperatableStateMachine.add('HSR FetchObjectTallTable',
 										self.use_behavior(HSRFetchObjectTallTableSM, 'HSR FetchObjectTallTable'),
-										transitions={'finished': 'SpeakObjectName2', 'grasp_failed': 'SetPoseSearchingPointCoffeeTable', 'not_found': 'finished', 'failed': 'failed'},
+										transitions={'finished': 'SpeakObjectName2', 'grasp_failed': 'Neutral', 'not_found': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
@@ -154,6 +154,12 @@ class HSRTidyUpHereTask1TidyUpTallTableSM(Behavior):
 										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=0.0, linear_y=0.0, angular=0.3, duration=1.0),
 										transitions={'completed': 'HSR Move_2'},
 										autonomy={'completed': Autonomy.Off})
+
+			# x:247 y:110
+			OperatableStateMachine.add('Neutral',
+										hsr_MoveToNeutralState(open_hand=False),
+										transitions={'succeeded': 'CheckElapsedTimeBeforeFetch', 'failed': 'CheckElapsedTimeBeforeFetch'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 
 		return _state_machine

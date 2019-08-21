@@ -12,10 +12,8 @@ from hsr_flexbe_states.hsr_wait_press_wrist_state import hsr_WaitWristPressedSta
 from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
-from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
-from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.decision_state import DecisionState
 from flexbe_states.wait_state import WaitState
+from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -26,15 +24,15 @@ from flexbe_states.wait_state import WaitState
 Created on Mon Aug 05 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRRobotInspectionSM(Behavior):
+class HSRRobotInspectionnodoorSM(Behavior):
 	'''
 	A behavior for the robot inspection task in RoboCup Japan Open 2019
 	'''
 
 
 	def __init__(self):
-		super(HSRRobotInspectionSM, self).__init__()
-		self.name = 'HSR Robot Inspection'
+		super(HSRRobotInspectionnodoorSM, self).__init__()
+		self.name = 'HSR Robot Inspection no door'
 
 		# parameters of this behavior
 
@@ -60,11 +58,12 @@ class HSRRobotInspectionSM(Behavior):
 
 
 		with _state_machine:
-			# x:57 y:30
-			OperatableStateMachine.add('SpeakImReady',
-										hsr_SpeakState(sentence="I'm ready", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Start'},
-										autonomy={'done': Autonomy.Off})
+			# x:23 y:59
+			OperatableStateMachine.add('Start',
+										hsr_WaitWristPressedState(),
+										transitions={'succeeded': 'Wait'},
+										autonomy={'succeeded': Autonomy.Off},
+										remapping={'start_time': 'start_time'})
 
 			# x:146 y:252
 			OperatableStateMachine.add('MoveToArenaGoal',
@@ -79,51 +78,30 @@ class HSRRobotInspectionSM(Behavior):
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:442 y:188
+			# x:100 y:175
 			OperatableStateMachine.add('SetPoseArenaGoal',
 										hsr_SetBasePoseByTfNameState(tf_name='arena_goal', service_name='/pose_server/getPose'),
 										transitions={'completed': 'MoveToArenaGoal'},
 										autonomy={'completed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:294 y:205
+			# x:607 y:162
+			OperatableStateMachine.add('Wait',
+										WaitState(wait_time=5.0),
+										transitions={'done': 'SpeakMove'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:305 y:205
 			OperatableStateMachine.add('Twist2',
 										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=0, linear_y=0.0, angular=0.5, duration=1.5),
 										transitions={'completed': 'SetPoseArenaGoal'},
 										autonomy={'completed': Autonomy.Off})
 
-			# x:560 y:78
-			OperatableStateMachine.add('Subscribe',
-										SubscriberState(topic='/ork_door_detector/is_door', blocking=True, clear=True),
-										transitions={'received': 'D', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
-
-			# x:760 y:62
-			OperatableStateMachine.add('D',
-										DecisionState(outcomes=['is_person', 'no_person'], conditions=lambda x : 'is_person' if x.data else 'no_person'),
-										transitions={'is_person': 'Subscribe', 'no_person': 'W'},
-										autonomy={'is_person': Autonomy.Off, 'no_person': Autonomy.Off},
-										remapping={'input_value': 'message'})
-
-			# x:668 y:212
-			OperatableStateMachine.add('W',
-										WaitState(wait_time=5.0),
+			# x:470 y:187
+			OperatableStateMachine.add('SpeakMove',
+										hsr_SpeakState(sentence='I am moving', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'SetPoseArenaGoal'},
 										autonomy={'done': Autonomy.Off})
-
-			# x:432 y:24
-			OperatableStateMachine.add('SpeakStart',
-										hsr_SpeakState(sentence="Let's start", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Subscribe'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:222 y:20
-			OperatableStateMachine.add('Start',
-										hsr_WaitWristPressedState(),
-										transitions={'succeeded': 'SpeakStart'},
-										autonomy={'succeeded': Autonomy.Off},
-										remapping={'start_time': 'start_time'})
 
 
 		return _state_machine

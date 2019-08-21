@@ -72,7 +72,7 @@ class HSRTidyUpHereOpenDrawersSM(Behavior):
 			# x:30 y:209
 			OperatableStateMachine.add('OpenDrawer1',
 										hsr_OpenDrawerState(open_srv_name='/grasp/open_drawer', height=0),
-										transitions={'succeeded': 'SetPose2', 'failed': 'SetPose1'},
+										transitions={'succeeded': 'SetPose2', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:218 y:40
@@ -92,7 +92,7 @@ class HSRTidyUpHereOpenDrawersSM(Behavior):
 			# x:217 y:212
 			OperatableStateMachine.add('OpenDrawer2',
 										hsr_OpenDrawerState(open_srv_name='/grasp/open_drawer', height=0),
-										transitions={'succeeded': 'SetPose3', 'failed': 'SetPose2'},
+										transitions={'succeeded': 'SetPose3', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:437 y:38
@@ -112,7 +112,7 @@ class HSRTidyUpHereOpenDrawersSM(Behavior):
 			# x:432 y:220
 			OperatableStateMachine.add('OpenDrawer3',
 										hsr_OpenDrawerState(open_srv_name='/grasp/open_drawer', height=1),
-										transitions={'succeeded': 'finished', 'failed': 'SetPose3'},
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 

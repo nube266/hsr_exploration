@@ -10,9 +10,9 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
-from flexbe_states.subscriber_state import SubscriberState
-from hsr_flexbe_states.hsr_analyse_command_state import hsr_AnalyseCommandState
 from flexbe_states.wait_state import WaitState
+from flexbe_states.subscriber_state import SubscriberState
+from hsr_flexbe_states.hsr_analyse_object_bringme_state import hsr_AnalyseObjectBringMeState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -20,18 +20,18 @@ from flexbe_states.wait_state import WaitState
 
 
 '''
-Created on Fri Jul 26 2019
+Created on Fri Aug 16 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSRTidyUpHereListenSM(Behavior):
+class HSRTidyUpHereListenNewSM(Behavior):
 	'''
 	Listening behavior
 	'''
 
 
 	def __init__(self):
-		super(HSRTidyUpHereListenSM, self).__init__()
-		self.name = 'HSR Tidy Up Here Listen'
+		super(HSRTidyUpHereListenNewSM, self).__init__()
+		self.name = 'HSR Tidy Up Here Listen New'
 
 		# parameters of this behavior
 
@@ -67,23 +67,9 @@ class HSRTidyUpHereListenSM(Behavior):
 			# x:259 y:302
 			OperatableStateMachine.add('SpeakObject',
 										hsr_SpeakDynState(sentence="I'll bring +", sentence_when_empty="Could you say that again?", topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'Wait2', 'empty': 'Wait1'},
+										transitions={'done': 'finished', 'empty': 'Wait1'},
 										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
 										remapping={'variable': 'object_name'})
-
-			# x:485 y:471
-			OperatableStateMachine.add('ListenTidyUp',
-										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'finished', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
-
-			# x:588 y:233
-			OperatableStateMachine.add('Analyse',
-										hsr_AnalyseCommandState(default_location='shelf', default_id='0', service_name='/wrs_semantics/bring_me_instruction'),
-										transitions={'succeeded': 'SpeakObject', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'command': 'message', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
 			# x:285 y:158
 			OperatableStateMachine.add('Wait1',
@@ -91,18 +77,19 @@ class HSRTidyUpHereListenSM(Behavior):
 										transitions={'done': 'ListenObject'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:310 y:401
-			OperatableStateMachine.add('Wait2',
-										WaitState(wait_time=1.5),
-										transitions={'done': 'ListenTidyUp'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:434 y:124
+			# x:563 y:98
 			OperatableStateMachine.add('ListenObject',
 										SubscriberState(topic='/sr_res', blocking=True, clear=True),
-										transitions={'received': 'Analyse', 'unavailable': 'failed'},
+										transitions={'received': 'AnalyseObjectBringMeState', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'message'})
+
+			# x:624 y:218
+			OperatableStateMachine.add('AnalyseObjectBringMeState',
+										hsr_AnalyseObjectBringMeState(service_name='/wrs_semantics/tidyup_recognizeObject_bringme'),
+										transitions={'succeeded': 'SpeakObject', 'failed': 'SpeakObject'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'command': 'message', 'object_name': 'object_name'})
 
 
 		return _state_machine

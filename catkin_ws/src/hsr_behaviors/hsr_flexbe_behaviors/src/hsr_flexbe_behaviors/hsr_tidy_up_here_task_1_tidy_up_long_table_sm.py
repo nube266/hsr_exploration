@@ -56,7 +56,7 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 
 
 	def create(self):
-		# x:1397 y:315, x:847 y:410, x:1486 y:209
+		# x:1397 y:315, x:768 y:408, x:1486 y:209
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed', 'time_up'], input_keys=['start_time'], output_keys=['offset'])
 		_state_machine.userdata.start_time = 5.0
 		_state_machine.userdata.offset = 0.0
@@ -109,7 +109,7 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										autonomy={'succeeded': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'tf_name': 'location_name'})
 
-			# x:822 y:291
+			# x:904 y:319
 			OperatableStateMachine.add('Put2',
 										hsr_PutObjectDynState(put_place_type='shelf', service_name='/grasp/put'),
 										transitions={'succeeded': 'CheckElapsedTimeBeforeFetch', 'failed': 'SendTwist'},
@@ -129,7 +129,7 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										transitions={'succeeded': 'time_up', 'failed': 'time_up'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:462 y:316
+			# x:468 y:308
 			OperatableStateMachine.add('CheckElapsedTimeBeforePut',
 										hsr_CheckElapsedTimeState(time_limit=self.time_limit_task1, margin=0.3),
 										transitions={'time_remains': 'Put2', 'time_up': 'SpeakTimeUp'},
@@ -145,7 +145,7 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 			# x:438 y:226
 			OperatableStateMachine.add('HSR FetchObjectLongTable',
 										self.use_behavior(HSRFetchObjectLongTableSM, 'HSR FetchObjectLongTable'),
-										transitions={'finished': 'SpeakObjectName2', 'grasp_failed': 'SetPoseSearchingPointTallTable', 'not_found': 'finished', 'failed': 'failed'},
+										transitions={'finished': 'SpeakObjectName2', 'grasp_failed': 'Neutral', 'not_found': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
@@ -154,6 +154,12 @@ class HSRTidyUpHereTask1TidyUpLongTableSM(Behavior):
 										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=0.0, linear_y=0.0, angular=0.3, duration=1.0),
 										transitions={'completed': 'HSR Move_2'},
 										autonomy={'completed': Autonomy.Off})
+
+			# x:320 y:116
+			OperatableStateMachine.add('Neutral',
+										hsr_MoveToNeutralState(open_hand=False),
+										transitions={'succeeded': 'CheckElapsedTimeBeforeFetch', 'failed': 'CheckElapsedTimeBeforeFetch'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 
 		return _state_machine

@@ -75,3 +75,4 @@ if __name__ == "__main__":
                         dijkstra_path_server, p.get_path)
     rospy.loginfo("Ready to dijkstra_path_server")
     rospy.spin()
+

@@ -112,11 +112,11 @@ void AvoidanceServer::setObstaclePoints(
     }
     obstacle_points_ = result;
     std::vector<Point>().swap(result);
-    std::cout << "------------------------------------" << std::endl;
+    // std::cout << "------------------------------------" << std::endl;
     for(const auto &point : obstacle_points_) {
-        std::cout << "x:\t" << point.x << "\ty:\t" << point.y << std::endl;
+        //std::cout << "x:\t" << point.x << "\ty:\t" << point.y << std::endl;
     }
-    std::cout << "------------------------------------" << std::endl;
+    // std::cout << "------------------------------------" << std::endl;
 }
 
 } // namespace avoidance_server
