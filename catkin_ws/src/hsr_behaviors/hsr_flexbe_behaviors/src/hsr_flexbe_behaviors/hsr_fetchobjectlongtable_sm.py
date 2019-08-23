@@ -87,13 +87,11 @@ Search -> Fetch -> Analyse
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
-
 			# x:389 y:53
 			OperatableStateMachine.add('Speak',
 										hsr_SpeakState(sentence='見つけた！', topic='/talk_request', interrupting=False, queueing=False, language=0),
 										transitions={'done': 'FetchObject'},
 										autonomy={'done': Autonomy.Off})
-
 
 		return _state_machine
 
