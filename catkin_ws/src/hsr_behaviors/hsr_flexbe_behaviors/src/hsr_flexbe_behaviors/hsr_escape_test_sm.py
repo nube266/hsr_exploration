@@ -9,7 +9,6 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
-from hsr_flexbe_states.hsr_put_object_state import hsr_PutObjectState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -54,15 +53,9 @@ class HSRescapetestSM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:102
-			OperatableStateMachine.add('Put',
-										hsr_PutObjectState(put_place_type='shelf', target_name='soundtoyshelf', service_name='/grasp/put'),
-										transitions={'succeeded': 'Escape', 'failed': 'Escape'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
 			# x:166 y:189
 			OperatableStateMachine.add('Escape',
-										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=-0.5, linear_y=0.0, angular=0.0, duration=2.0),
+										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=-0.0, linear_y=0.0, angular=3.14, duration=1),
 										transitions={'completed': 'finished'},
 										autonomy={'completed': Autonomy.Off})
 

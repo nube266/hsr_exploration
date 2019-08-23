@@ -33,7 +33,7 @@ class hsr_PutObjectState(EventState):
         self._target_name      = target_name
         self._put_server     = ProxyServiceCaller({self._service_name : grasp_srv})
 
-        # self._whole_body = hsrb_interface.Robot().get('whole_body')
+        self._whole_body = hsrb_interface.Robot().get('whole_body')
 
     def execute(self, userdata):
         # If succeeded to grasp, return 'succeeded'. Otherwise, false.

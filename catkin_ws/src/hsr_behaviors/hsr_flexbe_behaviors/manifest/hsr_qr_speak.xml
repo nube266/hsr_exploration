@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="HSR QR Speak">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_qr_speak_sm" class="HSRQRSpeakSM" />
+	<tagstring></tagstring>
+	<author>ShigemichiMatsuzaki</author>
+	<date>Tue Aug 20 2019</date>
+	<description>
+		Demo to make HSR speak
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

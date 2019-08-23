@@ -6,10 +6,13 @@
 # Shigemichi Matsuzaki
 #
 import rospy
+import sys, codecs
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyPublisher
 from tmc_msgs.msg import Voice
+from std_msgs.msg import String
+
 
 class hsr_SpeakDynState(EventState):
     '''
@@ -45,18 +48,38 @@ class hsr_SpeakDynState(EventState):
         return self._outcome
 
     def on_enter(self, userdata):
+        # For logging
+        sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
+
         real_sentence  = ''
         self._outcome = 'done'
         # If variable is not empty
-        if userdata.variable != '':
-            split_sentence = self._sentence.split('+')
-            real_sentence = split_sentence.pop(0)
-            for s in split_sentence:
-                real_sentence = real_sentence + ' ' + userdata.variable + ' ' + s
-        # If it's empty, say something else
-        else:
-            real_sentence = self._sentence_when_empty
-            self._outcome = 'empty'
+        if type(userdata.variable) is str:
+            if userdata.variable != '':
+                split_sentence = self._sentence.split('+')
+                real_sentence = split_sentence.pop(0)
+                for s in split_sentence:
+                    real_sentence = real_sentence + ' ' + userdata.variable.encode().decode('unicode-escape') + ' ' + s
+                 #   print(real_sentence)
+            # If it's empty, say something else
+            else:
+                real_sentence = self._sentence_when_empty
+                self._outcome = 'empty'
+
+        elif type(userdata.variable) is String:
+            if userdata.variable.data != '':
+                split_sentence = self._sentence.split('+')
+                real_sentence = split_sentence.pop(0)
+                # print (userdata.variable.data)
+                # print(type(userdata.variable.data.encode().decode('unicode-escape')))
+                for s in split_sentence:
+                    real_sentence = real_sentence + ' ' + unicode(userdata.variable.data, "utf-8") + ' ' + s
+                    # print(real_sentence)
+            # If it's empty, say something else
+            else:
+                real_sentence = self._sentence_when_empty
+                self._outcome = 'empty'
+
 
         self._message.sentence = real_sentence
         self._pub.publish(self._topic, self._message)
