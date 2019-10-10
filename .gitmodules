@@ -75,3 +75,6 @@
 [submodule "catkin_ws/src/sweep_server"]
 	path = catkin_ws/src/sweep_server
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/sweep_server.git
+[submodule "catkin_ws/src/object_identification"]
+	path = catkin_ws/src/object_identification
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_identification
