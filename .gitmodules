@@ -1,6 +1,6 @@
 [submodule "HSR.wiki"]
 	path = gitlab-wiki
-	url = git@gitlab.com:hsr-sde-wg/HSR.wiki.git
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/HSR/wikis/home
 	branch = master
 [submodule "flexbe_behavior_engine"]
 	path = catkin_ws/src/flexbe_behavior_engine
@@ -63,3 +63,18 @@
 [submodule "catkin_ws/src/zbar_ros"]
 	path = catkin_ws/src/zbar_ros
 	url = https://github.com/ros-drivers/zbar_ros
+[submodule "catkin_ws/src/avoidance_server"]
+	path = catkin_ws/src/avoidance_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/avoidance_server.git
+[submodule "catkin_ws/src/monocular_person_following_for_robocup2019"]
+	path = catkin_ws/src/monocular_person_following_for_robocup2019
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/mano/monocular_person_following_for_robocup2019
+[submodule "catkin_ws/src/dijkstra_path_server"]
+	path = catkin_ws/src/dijkstra_path_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/dijkstra_path_server.git
+[submodule "catkin_ws/src/sweep_server"]
+	path = catkin_ws/src/sweep_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/sweep_server.git
+[submodule "catkin_ws/src/object_identification"]
+	path = catkin_ws/src/object_identification
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_identification
