@@ -69,3 +69,6 @@
 [submodule "catkin_ws/src/monocular_person_following_for_robocup2019"]
 	path = catkin_ws/src/monocular_person_following_for_robocup2019
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/mano/monocular_person_following_for_robocup2019
+[submodule "catkin_ws/src/dijkstra_path_server"]
+	path = catkin_ws/src/dijkstra_path_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/dijkstra_path_server.git
