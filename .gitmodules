@@ -1,6 +1,6 @@
 [submodule "HSR.wiki"]
 	path = gitlab-wiki
-	url = git@gitlab.com:hsr-sde-wg/HSR.wiki.git
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/hsr-sde/HSR.wiki.git
 	branch = master
 [submodule "flexbe_behavior_engine"]
 	path = catkin_ws/src/flexbe_behavior_engine
