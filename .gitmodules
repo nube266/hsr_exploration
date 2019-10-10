@@ -63,3 +63,6 @@
 [submodule "catkin_ws/src/zbar_ros"]
 	path = catkin_ws/src/zbar_ros
 	url = https://github.com/ros-drivers/zbar_ros
+[submodule "catkin_ws/src/avoidance_server"]
+	path = catkin_ws/src/avoidance_server
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/avoidance_server.git
