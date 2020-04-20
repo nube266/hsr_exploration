@@ -18,63 +18,18 @@
 	path = catkin_ws/src/darknet_ros
 	url = https://github.com/leggedrobotics/darknet_ros.git
 	branch = master
-[submodule "catkin_ws/src/grasp_server"]
-	path = catkin_ws/src/grasp_server
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/grasp_server
-[submodule "catkin_ws/src/hsr_demo_smach"]
-	path = catkin_ws/src/hsr_demo_smach
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demo_smach
 [submodule "catkin_ws/src/hsr_demonstration"]
 	path = catkin_ws/src/hsr_demonstration
 	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demonstration
 [submodule "catkin_ws/src/hsrb_python_wrapper"]
 	path = catkin_ws/src/hsrb_python_wrapper
 	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsrb_python_wrapper
-[submodule "catkin_ws/src/ork_tf_broadcaster"]
-	path = catkin_ws/src/ork_tf_broadcaster
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/ork_tf_broadcaster
-[submodule "catkin_ws/src/pocketsphinx"]
-	path = catkin_ws/src/pocketsphinx
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pocketsphinx
 [submodule "catkin_ws/src/pose_server"]
 	path = catkin_ws/src/pose_server
 	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pose_server
-[submodule "catkin_ws/src/search_object"]
-	path = catkin_ws/src/search_object
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/search_object
-[submodule "catkin_ws/src/stanford_nlp_python"]
-	path = catkin_ws/src/stanford_nlp_python
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/stanford_nlp_python
-[submodule "catkin_ws/src/wrs_semantics"]
-	path = catkin_ws/src/wrs_semantics
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/wrs_semantics
 [submodule "catkin_ws/src/yolo_tf_broadcaster"]
 	path = catkin_ws/src/yolo_tf_broadcaster
 	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/yolo_tf_broadcaster
 [submodule "catkin_ws/src/object_recognition_integrator"]
 	path = catkin_ws/src/object_recognition_integrator
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_recognition_integrator
-[submodule "catkin_ws/src/color_histogram_search"]
-	path = catkin_ws/src/color_histogram_search
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/color_histogram_search
-[submodule "catkin_ws/src/teleop_twist_keyboard"]
-	path = catkin_ws/src/teleop_twist_keyboard
-	url = https://github.com/ros-teleop/teleop_twist_keyboard
-[submodule "catkin_ws/src/zbar_ros"]
-	path = catkin_ws/src/zbar_ros
-	url = https://github.com/ros-drivers/zbar_ros
-[submodule "catkin_ws/src/avoidance_server"]
-	path = catkin_ws/src/avoidance_server
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/avoidance_server.git
-[submodule "catkin_ws/src/monocular_person_following_for_robocup2019"]
-	path = catkin_ws/src/monocular_person_following_for_robocup2019
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/mano/monocular_person_following_for_robocup2019
-[submodule "catkin_ws/src/dijkstra_path_server"]
-	path = catkin_ws/src/dijkstra_path_server
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/dijkstra_path_server.git
-[submodule "catkin_ws/src/sweep_server"]
-	path = catkin_ws/src/sweep_server
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/sweep_server.git
-[submodule "catkin_ws/src/object_identification"]
-	path = catkin_ws/src/object_identification
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_identification
