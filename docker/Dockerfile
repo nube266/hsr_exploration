@@ -190,7 +190,7 @@ RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-
 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
-# RUN pip install pyaudio pocketsphinx mecab-python pycorenlp 
+# RUN pip install pyaudio pocketsphinx mecab-python pycorenlp
 # pyaudio
 
 RUN echo 'rm -rf ~/.ros/params.yaml' >> /root/.bashrc
