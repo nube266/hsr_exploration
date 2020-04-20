@@ -40,7 +40,7 @@ fi
 
 # Download and initialize all the Git submodules recursively.
 # https://git-scm.com/book/en/v2/Git-Tools-Submodules
-git submodule update --init --recursive
+# git submodule update --init --recursive
 
 ################################################################################
 

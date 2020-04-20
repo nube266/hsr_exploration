@@ -90,7 +90,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Gather the dependencies from the Ubuntu repositories.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  libcanberra-gtk3-module \
+	libcanberra-gtk3-module \
 	&& rm -rf /var/lib/apt/lists/*
 
 ################################################################################
@@ -155,29 +155,29 @@ RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /root/.bashrc
 
 # NLP
 RUN cd /tmp \ 
-    && wget http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz \
-    && tar -zxvf swig* \
-    && cd swig* \
-    && ./configure \
-    && make \
-    && make install
+	&& wget http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz \
+	&& tar -zxvf swig* \
+	&& cd swig* \
+	&& ./configure \
+	&& make \
+	&& make install
 
 COPY jdk* /tmp/
 
 RUN cd /tmp \ 
-    && tar -zxvf jdk-8u121-linux-x64.tar.gz \
-    && mkdir -p /usr/lib/jvm \
-    && mv ./jdk1.8.0_121 /usr/lib/jvm/ \
-    && update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_121/bin/java" 1 \
-    && update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_121/bin/javac" 1 \
-    && update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.8.0_121/bin/javaws" 1 \
-    && chmod a+x /usr/bin/java \
-    && chmod a+x /usr/bin/javac \
-    && chmod a+x /usr/bin/javaws \
-    && chown -R root:root /usr/lib/jvm/jdk1.8.0_121 \
-    && update-alternatives --config java \
-    && update-alternatives --config javac \
-    && update-alternatives --config javaws
+	&& tar -zxvf jdk-8u121-linux-x64.tar.gz \
+	&& mkdir -p /usr/lib/jvm \
+	&& mv ./jdk1.8.0_121 /usr/lib/jvm/ \
+	&& update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_121/bin/java" 1 \
+	&& update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_121/bin/javac" 1 \
+	&& update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.8.0_121/bin/javaws" 1 \
+	&& chmod a+x /usr/bin/java \
+	&& chmod a+x /usr/bin/javac \
+	&& chmod a+x /usr/bin/javaws \
+	&& chown -R root:root /usr/lib/jvm/jdk1.8.0_121 \
+	&& update-alternatives --config java \
+	&& update-alternatives --config javac \
+	&& update-alternatives --config javaws
 
 # Stanford NLP
 # TODO: Change this part so that the zip file is downloaded using curl
@@ -187,10 +187,10 @@ COPY ./stanford-corenlp-full-2015-12-09.zip /tmp/.
 RUN  cd /tmp && unzip stanford-corenlp-full-2015-12-09.zip -d /root/.
 
 RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-dev portaudio19-dev ros-kinetic-tf2-sensor-msgs \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
-RUN pip install pyaudio pocketsphinx mecab-python pycorenlp 
+# RUN pip install pyaudio pocketsphinx mecab-python pycorenlp 
 # pyaudio
 
 RUN echo 'rm -rf ~/.ros/params.yaml' >> /root/.bashrc
