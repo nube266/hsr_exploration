@@ -1,35 +1,3 @@
-[submodule "HSR.wiki"]
-	path = gitlab-wiki
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/HSR/wikis/home
-	branch = master
-[submodule "flexbe_behavior_engine"]
-	path = catkin_ws/src/flexbe_behavior_engine
-	url = https://github.com/team-vigir/flexbe_behavior_engine.git
-	branch = master
-[submodule "flexbe_app"]
-	path = catkin_ws/src/flexbe_app
-	url = https://github.com/FlexBE/flexbe_app.git
-	branch = master
-[submodule "generic_flexbe_states"]
-	path = catkin_ws/src/flexbe_generic_states
-	url = https://github.com/FlexBE/generic_flexbe_states.git
-	branch = master
-[submodule "darknet_ros"]
-	path = catkin_ws/src/darknet_ros
-	url = https://github.com/leggedrobotics/darknet_ros.git
-	branch = master
 [submodule "catkin_ws/src/hsr_demonstration"]
 	path = catkin_ws/src/hsr_demonstration
 	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsr_demonstration
-[submodule "catkin_ws/src/hsrb_python_wrapper"]
-	path = catkin_ws/src/hsrb_python_wrapper
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/hsrb_python_wrapper
-[submodule "catkin_ws/src/pose_server"]
-	path = catkin_ws/src/pose_server
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/pose_server
-[submodule "catkin_ws/src/yolo_tf_broadcaster"]
-	path = catkin_ws/src/yolo_tf_broadcaster
-	url = https://oauth2:pnfWUXAomFynjL5bvtdE@aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/yolo_tf_broadcaster
-[submodule "catkin_ws/src/object_recognition_integrator"]
-	path = catkin_ws/src/object_recognition_integrator
-	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/wrs/object_recognition_integrator
