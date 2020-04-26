@@ -193,6 +193,11 @@ RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
 # RUN pip install pyaudio pocketsphinx mecab-python pycorenlp
 # pyaudio
 
+# RUN apt-get update && apt-get install -y ros-kinetic-move-base \
+# 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+RUN apt-get update && apt-get install -y ros-kinetic-navigation \
+	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
 RUN echo 'rm -rf ~/.ros/params.yaml' >> /root/.bashrc
 RUN echo 'ln -s /root/HSR/params.yaml ~/.ros/params.yaml' >> /root/.bashrc
 # Enter the container with a Bash shell.

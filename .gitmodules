@@ -1,0 +1,3 @@
+[submodule "catkin_ws/src/hsrb_rosnav"]
+	path = catkin_ws/src/hsrb_rosnav
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/YusukeMiake/hsrb_rosnav.git

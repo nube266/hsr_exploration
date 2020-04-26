@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<launch>
-  <include file="$(find hsrb_gazebo_launch)/launch/hsrb_mock_home_world.launch"/>
-</launch>

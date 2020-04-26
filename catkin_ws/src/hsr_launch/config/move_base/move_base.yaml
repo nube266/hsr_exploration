@@ -1,0 +1,11 @@
+# Global and local planner
+base_global_planner: "navfn/NavfnROS"
+base_local_planner: "base_local_planner/TrajectoryPlannerROS"
+
+# How long the controller will wait in seconds without receiving a valid control before space-clearing operations are performed.
+controller_patience: 60
+
+# Determines whether or not the robot will attempt an in-place rotation when attempting to clear out space.
+# Note: This parameter is only used when the default recovery behaviors are in use, meaning the user has not
+# set the recovery_behaviors parameter to anything custom.
+clearing_rotation_allowed: false

@@ -1,0 +1,16 @@
+local_costmap:
+  static_map: false
+  rolling_window: true
+  track_unknown_space: false
+  combination_method: 0
+
+  resolution: 0.25
+  width: 10.0
+  height: 10.0
+
+  obstacle_range: 10.0
+  raytrace_range: 11.0
+
+  plugins:
+    - {name: obstacles_laser, type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation,       type: "costmap_2d::InflationLayer"}

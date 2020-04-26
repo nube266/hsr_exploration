@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- move_base -->
+    <node pkg="move_base" name="move_base" type="move_base" clear_params="true" output="screen">
+        <!-- move_base params -->
+        <rosparam file="$(find hsr_launch)/config/move_base/move_base.yaml" command="load" />
+        <!-- observation sources located in costmap_common.yaml -->
+        <rosparam file="$(find hsr_launch)/config/move_base/costmap_common.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find hsr_launch)/config/move_base/costmap_common.yaml" command="load" ns="local_costmap" />
+        <!-- static global costmap, static map provides size -->
+        <rosparam file="$(find hsr_launch)/config/move_base/global_costmap.yaml" command="load" />
+        <!-- local costmap with laser -->
+        <rosparam file="$(find hsr_launch)/config/move_base/local_costmap.yaml" command="load" />
+        <!-- planner -->
+        <rosparam file="$(find hsr_launch)/config/move_base/planner.yaml" command="load" />
+    </node>
+</launch>
