@@ -2,7 +2,7 @@
 #
 # Active Intelligent Systems Laboratory
 # Toyohashi University of Technology
-# 
+#
 # Shigemichi Matsuzaki
 #
 import rospy
@@ -10,6 +10,7 @@ from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
 import hsrb_interface
+
 
 class hsr_MoveToNeutralState(EventState):
     '''
@@ -22,11 +23,11 @@ class hsr_MoveToNeutralState(EventState):
     '''
 
     def __init__(self, open_hand=False):
-        super(hsr_MoveToNeutralState,self).__init__(outcomes=['succeeded', 'failed'])
+        super(hsr_MoveToNeutralState, self).__init__(outcomes=['succeeded', 'failed'])
 
-        # 
+        #
         # Robot interface
-        # 
+        #
         self._robot = hsrb_interface.Robot()
         self._whole_body = self._robot.get('whole_body')
         self._gripper = self._robot.get('gripper')
@@ -41,22 +42,21 @@ class hsr_MoveToNeutralState(EventState):
         # Wait for a second
         rospy.sleep(1)
         # If an object is found, return 'succeeded'
-        if not  self._failed:
+        if not self._failed:
             return 'succeeded'
         else:
             return 'failed'
 
-
     def on_enter(self, userdata):
         #
-        # Move to neutral 
+        # Move to neutral
         #
         try:
             #
-            # Move to neutral 
+            # Move to neutral
             #
             self._whole_body.move_to_neutral()
-            
+
             # Open hand
             if self._open_hand:
                 self._gripper.command(1.0)
@@ -68,9 +68,9 @@ class hsr_MoveToNeutralState(EventState):
 
     def on_exit(self, userdata):
         pass
-    
+
     def on_start(self):
         pass
-    
+
     def on_stop(self):
         pass

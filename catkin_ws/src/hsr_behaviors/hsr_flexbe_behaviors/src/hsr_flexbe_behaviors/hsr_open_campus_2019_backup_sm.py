@@ -16,8 +16,8 @@ from hsr_flexbe_states.hsr_escape_by_twist_state import hsr_EscapeByTwistState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from hsr_flexbe_states.hsr_fetch_object_interface_state import hsr_FetchObjectInterfaceState
 from hsr_flexbe_behaviors.hsr_fetchobjectnew_sm import HSRFetchObjectNewSM
+from hsr_flexbe_states.hsr_open_drawer_state import hsr_OpenDrawerState
 from hsr_flexbe_states.hsr_wait_press_wrist_state import hsr_WaitWristPressedState
-from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -28,15 +28,15 @@ from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 Created on Tue Aug 20 2019
 @author: ShigemichiMatsuzaki
 '''
-class HSROpenCampus2019SM(Behavior):
+class HSROpenCampus2019backupSM(Behavior):
 	'''
 	Demo of Tidy Up Here in Open Campus 2019
 	'''
 
 
 	def __init__(self):
-		super(HSROpenCampus2019SM, self).__init__()
-		self.name = 'HSR Open Campus 2019'
+		super(HSROpenCampus2019backupSM, self).__init__()
+		self.name = 'HSR Open Campus 2019 backup'
 
 		# parameters of this behavior
 
@@ -94,25 +94,31 @@ class HSROpenCampus2019SM(Behavior):
 			# x:1537 y:598
 			OperatableStateMachine.add('Put',
 										hsr_PutObjectState(put_place_type='shelf', target_name='drawer_0', service_name='/grasp/put'),
-										transitions={'succeeded': 'SpeakPutSucceeded', 'failed': 'SpeakPutFailed1'},
+										transitions={'succeeded': 'SpeakPutSucceeded', 'failed': 'Escape'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:1298 y:495
+			# x:1398 y:500
 			OperatableStateMachine.add('Escape',
 										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=0.0, linear_y=0.0, angular=0.3, duration=1.0),
 										transitions={'completed': 'SetPoseDrawerToPut'},
 										autonomy={'completed': Autonomy.Off})
 
-			# x:368 y:125
-			OperatableStateMachine.add('WaitStart',
-										WaitState(wait_time=0.1),
-										transitions={'done': 'SpeakStart'},
+			# x:311 y:111
+			OperatableStateMachine.add('SpeakDrawerStart',
+										hsr_SpeakState(sentence='片付けを始めるよ', topic='/talk_request', interrupting=False, queueing=False, language=0),
+										transitions={'done': 'SetPoseDrawer'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:1403 y:265
+			# x:320 y:208
+			OperatableStateMachine.add('WaitStart',
+										WaitState(wait_time=0.1),
+										transitions={'done': 'SpeakDrawerStart'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:1355 y:153
 			OperatableStateMachine.add('SpeakGraspFailed',
 										hsr_SpeakState(sentence='拾うのに失敗したからやり直すよ', topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'MoveToNetural1'},
+										transitions={'done': 'SetPoseFloor'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:1521 y:26
@@ -172,10 +178,10 @@ class HSROpenCampus2019SM(Behavior):
 			# x:57 y:284
 			OperatableStateMachine.add('Put2',
 										hsr_PutObjectState(put_place_type='shelf', target_name='drawer_0', service_name='/grasp/put'),
-										transitions={'succeeded': 'SpeakPutSucceeded2', 'failed': 'SpeakPutFailed2'},
+										transitions={'succeeded': 'SpeakPutSucceeded2', 'failed': 'Escape2'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:225 y:375
+			# x:135 y:385
 			OperatableStateMachine.add('Escape2',
 										hsr_EscapeByTwistState(topic='/hsrb/command_velocity', linear_x=0.0, linear_y=0.0, angular=0.3, duration=1.0),
 										transitions={'completed': 'SetPoseDrawerToPut2'},
@@ -190,14 +196,21 @@ class HSROpenCampus2019SM(Behavior):
 			# x:145 y:476
 			OperatableStateMachine.add('SpeakFinishShortTable',
 										hsr_SpeakState(sentence='これで終わりだよ', topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'SetPoseFloor'},
+										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
 			# x:182 y:636
 			OperatableStateMachine.add('SpeakGraspFailed2',
 										hsr_SpeakState(sentence='もう一度拾います', topic='/talk_request', interrupting=False, queueing=False, language=1),
-										transitions={'done': 'MoveToNeutral2'},
+										transitions={'done': 'SetPoseShortTable'},
 										autonomy={'done': Autonomy.Off})
+
+			# x:289 y:25
+			OperatableStateMachine.add('SetPoseDrawer',
+										hsr_SetBasePoseByTfNameState(tf_name='drawer', service_name='/pose_server/getPose'),
+										transitions={'completed': 'MoveToDrawer'},
+										autonomy={'completed': Autonomy.Off},
+										remapping={'pose': 'pose'})
 
 			# x:1346 y:593
 			OperatableStateMachine.add('SpeakPut1',
@@ -237,6 +250,19 @@ class HSROpenCampus2019SM(Behavior):
 										autonomy={'finished': Autonomy.Inherit, 'grasp_failed': Autonomy.Inherit, 'not_found': Autonomy.Inherit, 'failed': Autonomy.Inherit},
 										remapping={'search_centroid_y_max': 'search_centroid_y_max', 'search_centroid_y_min': 'search_centroid_y_min', 'search_centroid_z_max': 'search_centroid_z_max', 'search_centroid_z_min': 'search_centroid_z_min', 'search_sleep_time': 'search_sleep_time', 'search_is_floor': 'search_is_floor', 'search_centroid_x_max': 'search_centroid_x_max', 'object_name': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
 
+			# x:610 y:34
+			OperatableStateMachine.add('MoveToDrawer',
+										hsr_MoveBaseState(),
+										transitions={'succeeded': 'OpenDrawer', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'request': 'pose'})
+
+			# x:865 y:48
+			OperatableStateMachine.add('OpenDrawer',
+										hsr_OpenDrawerState(open_srv_name='/grasp/open_drawer', height=0),
+										transitions={'succeeded': 'SetPoseFloor', 'failed': 'SetPoseFloor'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
 			# x:1075 y:26
 			OperatableStateMachine.add('SetPoseFloor',
 										hsr_SetBasePoseByTfNameState(tf_name='floor', service_name='/pose_server/getPose'),
@@ -253,38 +279,8 @@ class HSROpenCampus2019SM(Behavior):
 
 			# x:30 y:102
 			OperatableStateMachine.add('SpeakBeforeWrist',
-										hsr_SpeakState(sentence="手首を押してね", topic='/talk_request', interrupting=False, queueing=False, language=0),
+										hsr_SpeakState(sentence='Press my wrist', topic='/talk_request', interrupting=False, queueing=False, language=1),
 										transitions={'done': 'WaitWristPressed'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:1394 y:81
-			OperatableStateMachine.add('MoveToNetural1',
-										hsr_MoveToNeutralState(open_hand=False),
-										transitions={'succeeded': 'SetPoseFloor', 'failed': 'MoveToNetural1'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:395 y:655
-			OperatableStateMachine.add('MoveToNeutral2',
-										hsr_MoveToNeutralState(open_hand=False),
-										transitions={'succeeded': 'SetPoseShortTable', 'failed': 'MoveToNeutral2'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:1466 y:490
-			OperatableStateMachine.add('SpeakPutFailed1',
-										hsr_SpeakState(sentence="失敗や", topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'Escape'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:100 y:375
-			OperatableStateMachine.add('SpeakPutFailed2',
-										hsr_SpeakState(sentence="失敗や", topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'Escape2'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:546 y:72
-			OperatableStateMachine.add('SpeakStart',
-										hsr_SpeakState(sentence="片付けを始めるよ！", topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'SetPoseFloor'},
 										autonomy={'done': Autonomy.Off})
 
 

@@ -1,0 +1,20 @@
+<launch>
+    <!-- Run octomap_server-node -->
+    <node pkg="tf" type="static_transform_publisher" name="map_world_broadcaster" args="0 0 0 0 0 0 world /map 100" />
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server" clear_params="true" output="screen">
+        <param name="resolution" value="0.05" />
+        <!-- Fixed map frame (set to 'map' if SLAM or localization running!) -->
+        <param name="frame_id" type="string" value="/map" />
+        <!-- Maximum range to integrate (speedup!) -->
+        <param name="sensor_model/max_range" value="3.5" />
+        <!-- Probabilities for hits and misses in the sensor model when dynamically building a map -->
+        <param name="sensor_model/hit" value= "0.8" />
+        <param name="sensor_model/miss" value= "0.2" />
+        <param name="height_map" type="bool" value="false" />
+        <param name="latch" value="true" />
+        <param name="filter_ground" type="bool" value="false" />
+        <param name="publish_free_space" value="true"/>
+        <!-- data source to integrate (PointCloud2) -->
+        <remap from="cloud_in" to="/octomap_publish_server/octomap_server_input"/>
+    </node>
+</launch>

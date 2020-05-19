@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_search_object_dyn_state import hsr_SearchObjectDynState
 from hsr_flexbe_states.hsr_fetch_object_state import hsr_FetchObjectState
 from hsr_flexbe_states.hsr_analyse_object_location_tidyup_state import hsr_AnalyseObjectLocationTidyUpState
+from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -70,7 +71,7 @@ Search -> Fetch -> Analyse
 			# x:160 y:72
 			OperatableStateMachine.add('SearchObject',
 										hsr_SearchObjectDynState(search_point='', search_place_type='floor', service_search_floor='/search_object/search_floor', service_update_threshold='/ork_tf_broadcaster/update_threshold', service_publish_tf='/ork_tf_broadcaster/start_publish', service_stop_tf='/ork_tf_broadcaster/stop_publish'),
-										transitions={'found': 'FetchObject', 'notfound': 'not_found', 'failed': 'failed'},
+										transitions={'found': 'Speak', 'notfound': 'not_found', 'failed': 'failed'},
 										autonomy={'found': Autonomy.Off, 'notfound': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'centroid_x_max': 'search_centroid_x_max', 'centroid_y_max': 'search_centroid_y_max', 'centroid_y_min': 'search_centroid_y_min', 'centroid_z_max': 'search_centroid_z_max', 'centroid_z_min': 'search_centroid_z_min', 'sleep_time': 'search_sleep_time', 'is_floor': 'search_is_floor', 'object_name': 'object_name'})
 
@@ -86,6 +87,12 @@ Search -> Fetch -> Analyse
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'command': 'object_name', 'location_name': 'location_name', 'location_to_put': 'location_to_put'})
+
+			# x:377 y:90
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakState(sentence="ものを見つけたよ！", topic='/talk_request', interrupting=False, queueing=False, language=0),
+										transitions={'done': 'FetchObject'},
+										autonomy={'done': Autonomy.Off})
 
 
 		return _state_machine

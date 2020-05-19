@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>viewpoint_planner_3d</name>
+    <version>0.0.0</version>
+    <description>The viewpoint_planner_3d package</description>
+    <maintainer email="miake@aisl.cs.tut.ac.jp">aisl</maintainer>
+    <license>MIT</license>
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>octomap_msgs</depend>
+    <depend>octomap_ros</depend>
+    <depend>pcl_conversions</depend>
+    <depend>pcl_ros</depend>
+    <depend>roscpp</depend>
+    <depend>rospy</depend>
+    <depend>sensor_msgs</depend>
+    <depend>std_msgs</depend>
+    <depend>geometry_msgs</depend>
+    <depend>message_generation</depend>
+    <depend>message_runtime</depend>
+    <depend>octomap</depend>
+    <depend>tf</depend>
+    <depend>costmap_2d</depend>
+    <depend>navfn</depend>
+    <depend>visualization_msgs</depend>
+    <export>
+        <costmap_2d plugin="${prefix}/costmap_plugins.xml"/>
+    </export>
+</package>

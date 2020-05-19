@@ -1,3 +1,18 @@
 [submodule "catkin_ws/src/hsrb_rosnav"]
 	path = catkin_ws/src/hsrb_rosnav
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/YusukeMiake/hsrb_rosnav.git
+[submodule "catkin_ws/src/flexbe_app"]
+	path = catkin_ws/src/flexbe_app
+	url = https://github.com/FlexBE/flexbe_app.git
+	branch = master
+[submodule "catkin_ws/src/generic_flexbe_states"]
+	path = catkin_ws/src/generic_flexbe_states
+	url = https://github.com/FlexBE/generic_flexbe_states.git
+	branch = master
+[submodule "catkin_ws/src/flexbe_behavior_engine"]
+	path = catkin_ws/src/flexbe_behavior_engine
+	url = https://github.com/team-vigir/flexbe_behavior_engine.git
+	branch = master
+[submodule "catkin_ws/src/octomap_publisher"]
+	path = catkin_ws/src/octomap_publisher
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/YusukeMiake/octomap_publisher.git

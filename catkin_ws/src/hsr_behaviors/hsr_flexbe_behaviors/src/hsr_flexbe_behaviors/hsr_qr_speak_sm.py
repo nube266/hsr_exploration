@@ -8,10 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_set_base_pose_by_tf_name_state import hsr_SetBasePoseByTfNameState
 from hsr_flexbe_states.hsr_speak_dyn_state import hsr_SpeakDynState
 from flexbe_states.wait_state import WaitState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
 from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 from hsr_flexbe_states.hsr_speak_state import hsr_SpeakState
 from flexbe_states.subscriber_state import SubscriberState
@@ -59,38 +57,17 @@ class HSRQRSpeakSM(Behavior):
 
 
 		with _state_machine:
-			# x:30 y:40
-			OperatableStateMachine.add('SetPose',
-										hsr_SetBasePoseByTfNameState(tf_name='kids', service_name='/pose_server/getPose'),
-										transitions={'completed': 'Move'},
-										autonomy={'completed': Autonomy.Off},
-										remapping={'pose': 'pose'})
-
-			# x:351 y:173
-			OperatableStateMachine.add('Speak',
-										hsr_SpeakDynState(sentence="+", sentence_when_empty='', topic='/talk_request', interrupting=False, queueing=False, language=0),
-										transitions={'done': 'Wait', 'empty': 'SubscribeString'},
-										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
-										remapping={'variable': 'message'})
+			# x:184 y:165
+			OperatableStateMachine.add('Neutral',
+										hsr_MoveToNeutralState(open_hand=False),
+										transitions={'succeeded': 'SpeakExplain', 'failed': 'SpeakExplain'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:349 y:248
 			OperatableStateMachine.add('Wait',
 										WaitState(wait_time=2.0),
 										transitions={'done': 'SubscribeString'},
 										autonomy={'done': Autonomy.Off})
-
-			# x:30 y:117
-			OperatableStateMachine.add('Move',
-										hsr_MoveBaseState(),
-										transitions={'succeeded': 'Neutral', 'failed': 'Neutral'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
-
-			# x:184 y:165
-			OperatableStateMachine.add('Neutral',
-										hsr_MoveToNeutralState(open_hand=False),
-										transitions={'succeeded': 'SpeakExplain', 'failed': 'SpeakExplain'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:341 y:58
 			OperatableStateMachine.add('SpeakExplain',
@@ -104,6 +81,13 @@ class HSRQRSpeakSM(Behavior):
 										transitions={'received': 'Speak', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'message'})
+
+			# x:351 y:173
+			OperatableStateMachine.add('Speak',
+										hsr_SpeakDynState(sentence="+", sentence_when_empty='', topic='/talk_request', interrupting=False, queueing=False, language=0),
+										transitions={'done': 'Wait', 'empty': 'SubscribeString'},
+										autonomy={'done': Autonomy.Off, 'empty': Autonomy.Off},
+										remapping={'variable': 'message'})
 
 
 		return _state_machine
