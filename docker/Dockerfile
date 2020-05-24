@@ -195,7 +195,9 @@ RUN curl -kL https://bootstrap.pypa.io/get-pip.py | python
 
 # RUN apt-get update && apt-get install -y ros-kinetic-move-base \
 # 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
-RUN apt-get update && apt-get install -y ros-kinetic-navigation \
+RUN apt-get update && apt-get install -y \
+	ros-kinetic-navigation \
+	ros-kinetic-octomap-server \
 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN echo 'rm -rf ~/.ros/params.yaml' >> /root/.bashrc

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="hsr_search_object_sim">
+<behavior name="HSR Search Object Sim">
 
-	<executable package_path="hsr_flexbe_behaviors.hsr_search_object_sim_sm" class="hsr_search_object_simSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_search_object_sim_sm" class="HSRSearchObjectSimSM" />
 	<tagstring></tagstring>
 	<author>Yusuke Miake</author>
 	<date>Tue May 19 2020</date>

@@ -6,9 +6,11 @@
 # Yusuke Miake
 #
 import rospy
+import time
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
+from octomap_publisher.srv import *
 
 
 class hsr_GeneratingCandidatesState(EventState):
@@ -20,14 +22,29 @@ class hsr_GeneratingCandidatesState(EventState):
 
     '''
 
-    def __init__(self):
+    def __init__(self, srv_name="/octomap_publisher/update_octomap", timeout=10.0):
         super(hsr_GeneratingCandidatesState, self).__init__(outcomes=["succeeded", "failed"])
+        self._srv_name = srv_name
+        self._timeout = timeout
 
     def execute(self, userdata):
-        pass
+        rospy.loginfo("Generating Candidates")
+        start_time = time.time()
+        while self._timeout >= time.time() - start_time:
+            res = self._service()
+            if res.is_succeeded:
+                break
+            res.is_succeeded = False
+        if res.is_succeeded:
+            rospy.loginfo("Successfully generated candidates")
+            return "succeeded"
+        else:
+            rospy.loginfo("Failed to generate a candidate")
+            return "failed"
 
     def on_enter(self, userdata):
-        pass
+        rospy.wait_for_service(self._srv_name)
+        self._service = rospy.ServiceProxy(self._srv_name, update_octomap)
 
     def on_exit(self, userdata):
         pass

@@ -11,9 +11,6 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_reset_octomap_state import hsr_ResetOctomapState
 from hsr_flexbe_states.hsr_update_octomap_state import hsr_UpdateOctomapState
 from hsr_flexbe_states.hsr_generating_candidates_state import hsr_GeneratingCandidatesState
-from hsr_flexbe_states.hsr_object_detection_state import hsr_ObjectDetectionState
-from hsr_flexbe_states.hsr_viewpoint_evaluator import hsr_ViewpointEvaluatorState
-from hsr_flexbe_states.hsr_move_state_for_gazebo import hsr_MoveStateForGazebo
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -24,15 +21,15 @@ from hsr_flexbe_states.hsr_move_state_for_gazebo import hsr_MoveStateForGazebo
 Created on Tue May 19 2020
 @author: Yusuke Miake
 '''
-class hsr_search_object_simSM(Behavior):
+class HSRSearchObjectSimSM(Behavior):
 	'''
 	Simulation of object search
 	'''
 
 
 	def __init__(self):
-		super(hsr_search_object_simSM, self).__init__()
-		self.name = 'hsr_search_object_sim'
+		super(HSRSearchObjectSimSM, self).__init__()
+		self.name = 'HSR Search Object Sim'
 
 		# parameters of this behavior
 
@@ -48,7 +45,7 @@ class hsr_search_object_simSM(Behavior):
 
 
 	def create(self):
-		# x:829 y:170, x:228 y:273
+		# x:951 y:50, x:228 y:273
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -58,43 +55,23 @@ class hsr_search_object_simSM(Behavior):
 
 
 		with _state_machine:
-			# x:79 y:34
+			# x:117 y:28
 			OperatableStateMachine.add('ResetOctomap',
 										hsr_ResetOctomapState(srv_name="/octomap_server/reset"),
-										transitions={'succeeded': 'GenerateCandidates'},
+										transitions={'succeeded': 'UpdateOctomap'},
 										autonomy={'succeeded': Autonomy.Off})
 
-			# x:590 y:27
+			# x:404 y:26
 			OperatableStateMachine.add('UpdateOctomap',
 										hsr_UpdateOctomapState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
-										transitions={'succeeded': 'ObjectDetection', 'failed': 'failed'},
+										transitions={'succeeded': 'GeneratingCandidates', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:321 y:30
-			OperatableStateMachine.add('GenerateCandidates',
-										hsr_GeneratingCandidatesState(),
-										transitions={'succeeded': 'UpdateOctomap', 'failed': 'failed'},
+			# x:651 y:24
+			OperatableStateMachine.add('GeneratingCandidates',
+										hsr_GeneratingCandidatesState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
+										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
-
-			# x:592 y:160
-			OperatableStateMachine.add('ObjectDetection',
-										hsr_ObjectDetectionState(),
-										transitions={'found': 'finished', 'not_found': 'ViewpointEvaluator'},
-										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off})
-
-			# x:590 y:292
-			OperatableStateMachine.add('ViewpointEvaluator',
-										hsr_ViewpointEvaluatorState(),
-										transitions={'succeeded': 'Move', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'pose': 'pose'})
-
-			# x:328 y:359
-			OperatableStateMachine.add('Move',
-										hsr_MoveStateForGazebo(),
-										transitions={'succeeded': 'UpdateOctomap', 'failed': 'failed'},
-										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
 
 
 		return _state_machine
