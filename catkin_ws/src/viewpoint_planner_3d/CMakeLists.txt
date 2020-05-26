@@ -22,12 +22,24 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  message_generation
+  tf
+  costmap_2d
+  navfn
+  image_transport
+  cv_bridge
 )
 
-find_package(octomap REQUIRED)
+find_package(
+  OpenCV REQUIRED
+)
+find_package(
+  octomap REQUIRED
+)
 
 add_service_files(
   FILES
+  generating_candidates.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -39,17 +51,28 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS
-  octomap_msgs
-  octomap_ros
-  roscpp
-  rospy
-  sensor_msgs
-  std_msgs
-  message_runtime
+  INCLUDE_DIRS include
+# LIBRARIES viewpoint_planner_src
+  CATKIN_DEPENDS octomap_msgs octomap_ros roscpp rospy sensor_msgs std_msgs message_runtime image_transport cv_bridge
 )
 
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${OCTOMAP_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
+
+set(LINK_LIBS
+  ${catkin_LIBRARIES}
+  ${OCTOMAP_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+add_executable(generating_candidates
+  src/generating_candidates/generating_candidates.cpp
+  src/generating_candidates/generating_candidates_server.cpp
+  ${SOURCE_FILES}
+)
+target_link_libraries(generating_candidates ${LINK_LIBS})
+add_dependencies(generating_candidates ${viewpoint_planner_3d_EXPORTED_TARGETS})

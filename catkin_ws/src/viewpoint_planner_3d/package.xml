@@ -22,7 +22,6 @@
     <depend>costmap_2d</depend>
     <depend>navfn</depend>
     <depend>visualization_msgs</depend>
-    <export>
-        <costmap_2d plugin="${prefix}/costmap_plugins.xml"/>
-    </export>
+    <depend>image_transport</depend>
+    <depend>cv_bridge</depend>
 </package>

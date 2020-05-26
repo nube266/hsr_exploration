@@ -1,0 +1,7 @@
+<launch>
+    <!-- Distance between candidate viewpoints ([m]) -->
+    <arg name="distance_between_candidates" default="0.6"/>
+    <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
+        <param name="distance_between_candidates" value="$(arg distance_between_candidates)" type="double"/>
+    </node>
+</launch>
