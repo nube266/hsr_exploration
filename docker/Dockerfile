@@ -180,9 +180,6 @@ RUN cd /tmp \
 	&& update-alternatives --config javaws
 
 # Stanford NLP
-# TODO: Change this part so that the zip file is downloaded using curl
-#       (Problem occured where the downloaded file can't be unzipped. File broken?)
-# RUN cd /tmp && curl -O http://nlp.stanford.edu/software/stanford-corenlp-full-2015-12-09.zip \
 COPY ./stanford-corenlp-full-2015-12-09.zip /tmp/.
 RUN  cd /tmp && unzip stanford-corenlp-full-2015-12-09.zip -d /root/.
 

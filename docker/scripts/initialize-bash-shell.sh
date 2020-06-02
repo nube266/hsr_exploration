@@ -98,7 +98,6 @@ HSRB_IP=`getent hosts ${HSRB_HOSTNAME} | cut -d ' ' -f 1`
 if [ -z "${HSRB_IP}" ]; then
   export ROS_IP=$(LANG=C /sbin/ifconfig docker0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
 else
-  # TODO: Use Bash instead of Python.
   export ROS_IP=`python /root/HSR/docker/scripts/print-interface-ip.py ${HSRB_IP}`
 fi
 echo "ROS_IP is set to '${ROS_IP}'."
