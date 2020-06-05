@@ -15,4 +15,6 @@
     </group>
     <!-- Viewpoiunt planner -->
     <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch"></include>
+    <!-- Octomap publisher -->
+    <include file="$(find octomap_publisher)/launch/octomap_publisher.launch"></include>
 </launch>

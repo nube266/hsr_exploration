@@ -69,7 +69,7 @@ class HSRSearchObjectSimSM(Behavior):
 
 			# x:651 y:24
 			OperatableStateMachine.add('GeneratingCandidates',
-										hsr_GeneratingCandidatesState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
+										hsr_GeneratingCandidatesState(srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0),
 										transitions={'succeeded': 'finished', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 

@@ -10,7 +10,7 @@ import time
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
-from octomap_publisher.srv import *
+from viewpoint_planner_3d.srv import *
 
 
 class hsr_GeneratingCandidatesState(EventState):
@@ -22,7 +22,7 @@ class hsr_GeneratingCandidatesState(EventState):
 
     '''
 
-    def __init__(self, srv_name="/octomap_publisher/update_octomap", timeout=10.0):
+    def __init__(self, srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0):
         super(hsr_GeneratingCandidatesState, self).__init__(outcomes=["succeeded", "failed"])
         self._srv_name = srv_name
         self._timeout = timeout
@@ -44,7 +44,7 @@ class hsr_GeneratingCandidatesState(EventState):
 
     def on_enter(self, userdata):
         rospy.wait_for_service(self._srv_name)
-        self._service = rospy.ServiceProxy(self._srv_name, update_octomap)
+        self._service = rospy.ServiceProxy(self._srv_name, generating_candidates)
 
     def on_exit(self, userdata):
         pass
