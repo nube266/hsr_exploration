@@ -1,7 +1,31 @@
 <launch>
+    <!-- Map update frequency([s]) -->
+    <arg name="map_update_frequency" default="1.0"/>
     <!-- Distance between candidate viewpoints ([m]) -->
-    <arg name="distance_between_candidates" default="0.6"/>
+    <arg name="distance_between_candidates" default="0.4"/>
+    <!-- Candidate orientation resolution ([deg]) -->
+    <arg name="candidate_yaw_resolution" default="30.0"/>
+    <!-- Minimum distance between obstacle and viewpoint candidate -->
+    <arg name="distance_obstacle_candidate" default="50.0"/>
+    <!-- Minimum Frontier length ([m]) -->
+    <arg name="min_frontier_length" default="0.3"/>
+    <!--  Minimum of robot head position([m]) -->
+    <arg name="robot_head_pos_min" default="1.0"/>
+    <!--  Maximum of robot head position([m]) -->
+    <arg name="robot_head_pos_max" default="1.69"/>
+    <!--  Maximum of robot head position([m]) -->
+    <arg name="robot_head_candidate_resolution" default="0.2"/>
+    <!-- Timeout time when stopped by some processing[s] -->
+    <arg name="timeout" default="10.0"/>
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
+        <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
         <param name="distance_between_candidates" value="$(arg distance_between_candidates)" type="double"/>
+        <param name="candidate_yaw_resolution" value="$(arg candidate_yaw_resolution)" type="double"/>
+        <param name="distance_obstacle_candidate" value="$(arg distance_obstacle_candidate)" type="double"/>
+        <param name="min_frontier_length" value="$(arg min_frontier_length)" type="double"/>
+        <param name="robot_head_pos_min" value="$(arg robot_head_pos_min)" type="double"/>
+        <param name="robot_head_pos_max" value="$(arg robot_head_pos_max)" type="double"/>
+        <param name="timeout" value="$(arg timeout)" type="double"/>
+        <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
     </node>
 </launch>

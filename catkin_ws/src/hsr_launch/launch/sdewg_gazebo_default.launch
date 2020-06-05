@@ -2,6 +2,7 @@
 <launch>
     <!-- Simulation type: unattended or not. -->
     <arg name="unattended" default="false"/>
+    <arg name="gui" default="true"/>
     <!-- Attended simulation case. -->
     <group unless="$(arg unattended)">
         <!-- Gazebo launch file. -->
@@ -9,8 +10,8 @@
             <arg name="debug" default="false"/>
             <arg name="fast_physics" default="true"/>
             <arg name="gazebo_visualization" default="true"/>
-            <arg name="gui" default="true"/>
-            <arg name="paused" default="true"/>
+            <arg name="gui" value="$(arg gui)"/>
+            <arg name="paused" default="false"/>
             <arg name="rviz" default="false"/>
             <arg name="use_laser_odom" default="true"/>
             <arg name="use_manipulation" default="true"/>
