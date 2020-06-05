@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
+    <arg name="use_gazebo" default="true"/>
+    <arg name="use_flexbe" default="true"/>
     <arg name="gui" default="false"/>
-    <include file="$(find hsr_launch)/launch/sdewg_gazebo_default.launch">
-        <arg name="gui" value="$(arg gui)"/>
-    </include>
+    <!-- gazebo -->
+    <group if="$(arg use_gazebo)">
+        <include file="$(find hsr_launch)/launch/sdewg_gazebo_default.launch">
+            <arg name="gui" value="$(arg gui)"/>
+        </include>
+    </group>
+    <!-- FlexBE -->
+    <group if="$(arg use_flexbe)">
+        <include file="$(find hsr_launch)/launch/flexbe_app_default.launch"></include>
+    </group>
+    <!-- Viewpoiunt planner -->
+    <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch"></include>
 </launch>
