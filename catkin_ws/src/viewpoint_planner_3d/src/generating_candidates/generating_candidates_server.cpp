@@ -34,6 +34,9 @@ void GeneratingCandidatesServer::setParam() {
     ros::param::get("/generating_candidates/distance_between_candidates", distance_between_candidates);
     ros::param::get("/generating_candidates/candidate_yaw_resolution", candidate_yaw_resolution);
     ros::param::get("/generating_candidates/min_frontier_length", min_frontier_length);
+    ros::param::get("/generating_candidates/robot_head_pos_min", robot_head_pos_min);
+    ros::param::get("/generating_candidates/robot_head_pos_max", robot_head_pos_max);
+    ros::param::get("/generating_candidates/robot_head_candidate_resolution", robot_head_candidate_resolution);
     ros::param::get("/generating_candidates/timeout", timeout);
 }
 
@@ -227,16 +230,18 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             if(intensity == 255 && occupancy_img.at<unsigned char>(y, x) == 255) { // white(free)
                 geometry_msgs::Pose pose;
                 for(int yaw = 0; yaw < 360; yaw += candidate_yaw_resolution) {
-                    pose.position.x = pix2meter(x);
-                    pose.position.y = pix2meter(y);
-                    pose.position.z = 0.0;
-                    pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (180 / M_PI));
-                    candidates.push_back(pose);
+                    for(double z = robot_head_pos_min; z < robot_head_pos_max; z += robot_head_candidate_resolution) {
+                        pose.position.x = pix2meter(x);
+                        pose.position.y = pix2meter(y);
+                        pose.position.z = z;
+                        pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (180 / M_PI));
+                        candidates.push_back(pose);
+                    }
                 }
             }
         }
     }
-    // // Visualization
+    // Visualization
     // for(geometry_msgs::Pose pose : candidates) {
     //     cv::circle(map_img, cv::Point(meter2pix(pose.position.x), meter2pix(pose.position.y)), 1, 128, -1);
     //     std::cout << "pose: " << pose << std::endl;

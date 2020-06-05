@@ -10,10 +10,10 @@
     <!-- Minimum Frontier length ([m]) -->
     <arg name="min_frontier_length" default="0.3"/>
     <!--  Minimum of robot head position([m]) -->
-    <arg name="robot_head_pos_min" default="1.0"/>
+    <arg name="robot_head_pos_min" default="1.00"/>
     <!--  Maximum of robot head position([m]) -->
     <arg name="robot_head_pos_max" default="1.69"/>
-    <!--  Maximum of robot head position([m]) -->
+    <!--  Resolution of viewpoint candidates in the height direction -->
     <arg name="robot_head_candidate_resolution" default="0.2"/>
     <!-- Timeout time when stopped by some processing[s] -->
     <arg name="timeout" default="10.0"/>

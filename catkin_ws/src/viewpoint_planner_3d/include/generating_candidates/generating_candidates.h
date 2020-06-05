@@ -35,14 +35,17 @@ class GeneratingCandidatesServer {
     ros::Subscriber map_sub_;    // Subscriber updating map
 
     /* Variables for occupied grid map */
-    std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidate
-    nav_msgs::OccupancyGridConstPtr map_;        // Occupancy grid map
-    std::vector<cv::Point> frontier_centroids;   // Centroid of gravity of the frontier
-    double distance_between_candidates = 0.3;    // Distance between center of gravity of frontier and viewpoint candidates[m]
-    double candidate_yaw_resolution = 0.6;       // Candidate orientation resolution
-    double distance_obstacle_candidate = 0.50;   // Minimum distance between obstacle and viewpoint candidate
-    double min_frontier_length = 0.6;            // Minimum frontier size[m]
-    double timeout = 10.0;                       // Timeout time when stopped by some processing[s]
+    std::vector<geometry_msgs::Pose> candidates;  // Viewpoint candidate
+    nav_msgs::OccupancyGridConstPtr map_;         // Occupancy grid map
+    std::vector<cv::Point> frontier_centroids;    // Centroid of gravity of the frontier
+    double distance_between_candidates = 0.3;     // Distance between center of gravity of frontier and viewpoint candidates[m]
+    double candidate_yaw_resolution = 0.6;        // Candidate orientation resolution
+    double distance_obstacle_candidate = 0.50;    // Minimum distance between obstacle and viewpoint candidate
+    double min_frontier_length = 0.6;             // Minimum frontier size[m]
+    double robot_head_pos_min = 1.00;             // Minimum of robot head position([m])
+    double robot_head_pos_max = 1.69;             // Maximum of robot head position([m])
+    double robot_head_candidate_resolution = 0.2; // Resolution of viewpoint candidates in the height direction
+    double timeout = 10.0;                        // Timeout time when stopped by some processing[s]
 
     /*-----------------------------
     overview: Set of ROS parameters
