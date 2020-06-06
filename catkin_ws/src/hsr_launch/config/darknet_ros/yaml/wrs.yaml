@@ -1,0 +1,57 @@
+yolo_model:
+
+  config_file:
+    name: wrs.cfg
+  weight_file:
+    name: wrs.weights
+  threshold:
+    value: 0.15
+  detection_classes:
+    names:
+      - dogplushtoy
+      - rabbitplushtoy
+      - hedgehogplushtoy
+      - postcardwithmoonimage
+      - postcardwithtempleimage
+      - postcardwithwaterfallimage
+      - bustoycar
+      - fireenginetoycar
+      - policetoycar
+      - whistlesoundtoy
+      - shakersoundtoy
+      - hornsoundtoy
+      - cubeblock
+      - triangularblock
+      - cylinderblock
+      - woodenbowl
+      - brownpail
+      - mixednuts
+      - bluecup
+      - pinkcup
+      - orangebiscuits
+      - yellowbiscuits
+      - wateringcan
+      - flashlight
+      - bluefork
+      - greenspoon
+      - grayknife
+      - pinkbiscuits
+      - yellowclock
+      - aluminumfoil
+      - greendish
+      - yellowdish
+      - pinkbowl
+      - bluebowl
+      - mineralwater
+      - oolongtea
+      - ketchup
+      - cannedmustard
+      - orangedrink
+      - greendrink
+      - tomato
+      - potato
+      - plant
+      - spray
+      - waterbottle
+      - blueberrydrink
+      - eggplant
