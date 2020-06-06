@@ -37,7 +37,6 @@ class hsr_MoveToNeutralState(EventState):
         '''
         Execute the state
         '''
-        rospy.loginfo('Let\'s search')
 
         # Wait for a second
         rospy.sleep(1)
@@ -55,7 +54,7 @@ class hsr_MoveToNeutralState(EventState):
             #
             # Move to neutral
             #
-            self._whole_body.move_to_neutral()
+            self._whole_body.move_to_go()
 
             # Open hand
             if self._open_hand:

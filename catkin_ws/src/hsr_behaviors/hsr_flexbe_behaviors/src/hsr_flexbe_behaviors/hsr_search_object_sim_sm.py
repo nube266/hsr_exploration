@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_reset_octomap_state import hsr_ResetOctomapState
 from hsr_flexbe_states.hsr_update_octomap_state import hsr_UpdateOctomapState
 from hsr_flexbe_states.hsr_generating_candidates_state import hsr_GeneratingCandidatesState
+from hsr_flexbe_behaviors.hsr_object_search_pose_sm import hsr_object_search_poseSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -34,6 +35,7 @@ class HSRSearchObjectSimSM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(hsr_object_search_poseSM, 'hsr_object_search_pose')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -45,7 +47,7 @@ class HSRSearchObjectSimSM(Behavior):
 
 
 	def create(self):
-		# x:951 y:50, x:228 y:273
+		# x:737 y:277, x:228 y:273
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -70,8 +72,14 @@ class HSRSearchObjectSimSM(Behavior):
 			# x:651 y:24
 			OperatableStateMachine.add('GeneratingCandidates',
 										hsr_GeneratingCandidatesState(srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0),
-										transitions={'succeeded': 'finished', 'failed': 'failed'},
+										transitions={'succeeded': 'hsr_object_search_pose', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
+
+			# x:660 y:144
+			OperatableStateMachine.add('hsr_object_search_pose',
+										self.use_behavior(hsr_object_search_poseSM, 'hsr_object_search_pose'),
+										transitions={'finished': 'finished', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

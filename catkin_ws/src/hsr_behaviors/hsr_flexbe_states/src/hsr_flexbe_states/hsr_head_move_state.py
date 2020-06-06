@@ -9,7 +9,6 @@ import rospy
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
-from viewpoint_planner.srv import *
 import hsrb_interface
 
 

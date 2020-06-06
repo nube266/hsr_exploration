@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <arg name="use_gazebo" default="true"/>
-    <arg name="use_flexbe" default="true"/>
+    <arg name="use_flexbe" default="false"/>
+    <arg name="use_darknet" default="true"/>
     <arg name="gui" default="false"/>
     <!-- gazebo -->
     <group if="$(arg use_gazebo)">
@@ -17,4 +18,8 @@
     <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch"></include>
     <!-- Octomap publisher -->
     <include file="$(find octomap_publisher)/launch/octomap_publisher.launch"></include>
+    <!-- darknet_ros(object detector) -->
+    <group if="$(arg use_darknet)">
+        <include file="$(find hsr_launch)/launch/darknet_ros_default.launch"></include>
+    </group>
 </launch>
