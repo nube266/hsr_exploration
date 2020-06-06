@@ -10,16 +10,5 @@
             <arg name="gui" value="$(arg gui)"/>
         </include>
     </group>
-    <!-- FlexBE -->
-    <group if="$(arg use_flexbe)">
-        <include file="$(find hsr_launch)/launch/flexbe_app_default.launch"></include>
-    </group>
-    <!-- Viewpoiunt planner -->
-    <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch"></include>
-    <!-- Octomap publisher -->
-    <include file="$(find octomap_publisher)/launch/octomap_publisher.launch"></include>
-    <!-- darknet_ros(object detector) -->
-    <group if="$(arg use_darknet)">
-        <include file="$(find hsr_launch)/launch/darknet_ros_default.launch"></include>
-    </group>
+    <include file="$(find hsr_launch)/launch/hsr_search.launch"></include>
 </launch>
