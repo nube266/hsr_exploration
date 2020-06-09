@@ -2,7 +2,6 @@
 <launch>
     <arg name="use_flexbe" default="false"/>
     <arg name="use_darknet" default="true"/>
-    <arg name="gui" default="false"/>
     <!-- FlexBE -->
     <group if="$(arg use_flexbe)">
         <include file="$(find hsr_launch)/launch/flexbe_app_default.launch"></include>

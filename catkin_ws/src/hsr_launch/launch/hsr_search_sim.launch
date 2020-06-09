@@ -2,7 +2,7 @@
 <launch>
     <arg name="use_gazebo" default="true"/>
     <arg name="use_flexbe" default="false"/>
-    <arg name="use_darknet" default="true"/>
+    <arg name="use_darknet" default="false"/>
     <arg name="gui" default="false"/>
     <!-- gazebo -->
     <group if="$(arg use_gazebo)">
@@ -10,5 +10,8 @@
             <arg name="gui" value="$(arg gui)"/>
         </include>
     </group>
-    <include file="$(find hsr_launch)/launch/hsr_search.launch"></include>
+    <include file="$(find hsr_launch)/launch/hsr_search.launch">
+        <arg name="use_flexbe" value="$(arg use_flexbe)"/>
+        <arg name="use_darknet" value="$(arg use_darknet)"/>
+    </include>
 </launch>
