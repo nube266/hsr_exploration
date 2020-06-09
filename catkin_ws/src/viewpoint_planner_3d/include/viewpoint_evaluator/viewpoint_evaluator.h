@@ -2,7 +2,7 @@
 #define VIEWPOINT_EVALUATOR_SERVER_H_
 
 // ros searvice
-#include "viewpoint_planner_3d/generating_candidates.h"
+#include "viewpoint_planner_3d/get_next_viewpoint.h"
 
 // ros
 #include <costmap_2d/costmap_2d.h>
@@ -34,8 +34,8 @@ namespace viewpoint_evaluator_server {
 class ViewpointEvaluatorServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;      // ROS node handle
-    ros::ServiceServer get_srv_; // ROS service that gets viewpoint candidates
+    ros::NodeHandlePtr nh_;          // ROS node handle
+    ros::ServiceServer get_nbv_srv_; // ROS service that gets viewpoint candidates
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidate
@@ -62,6 +62,15 @@ class ViewpointEvaluatorServer {
     return: None
     -----------------------------*/
     ~ViewpointEvaluatorServer();
+
+    /*-----------------------------
+    overview: Get next viewpoint(using ROS service)
+    argument: req, res (Take a look at get_next_viewpoint.srv)
+    return: is_succeeded - True if NBV (Next viewpoint) can be acquired normally
+    Ros searvice to use: get_viewpoint_candidates
+    -----------------------------*/
+    bool getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
+                viewpoint_planner_3d::get_next_viewpoint::Response &res);
 };
 } // namespace viewpoint_evaluator_server
 

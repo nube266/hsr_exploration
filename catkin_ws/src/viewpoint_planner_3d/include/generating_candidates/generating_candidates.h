@@ -1,22 +1,26 @@
 #ifndef GENERATING_CANDIDATES_SERVER_H_
 #define GENERATING_CANDIDATES_SERVER_H_
 
+// ros searvice
 #include "viewpoint_planner_3d/generating_candidates.h"
 
+// ros
 #include <costmap_2d/costmap_2d.h>
 #include <costmap_2d/costmap_2d_ros.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
+#include <sensor_msgs/Image.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
+// opencv
 #include "opencv2/highgui/highgui.hpp"
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/core/core.hpp>
-#include <sensor_msgs/Image.h>
 
+// std
 #include <chrono>
 #include <cmath>
 #include <iostream>

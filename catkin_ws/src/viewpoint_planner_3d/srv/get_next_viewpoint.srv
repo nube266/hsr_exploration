@@ -1,0 +1,3 @@
+---
+bool is_succeeded
+geometry_msgs/Pose next_viewpoint

@@ -17,6 +17,7 @@
     <arg name="robot_head_candidate_resolution" default="0.2"/>
     <!-- Timeout time when stopped by some processing[s] -->
     <arg name="timeout" default="10.0"/>
+    <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
         <param name="distance_between_candidates" value="$(arg distance_between_candidates)" type="double"/>
@@ -28,6 +29,7 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
     </node>
+    <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
         <param name="timeout" value="$(arg timeout)" type="double"/>
     </node>
