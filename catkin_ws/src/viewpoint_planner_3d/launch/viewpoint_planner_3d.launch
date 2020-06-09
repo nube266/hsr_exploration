@@ -28,4 +28,7 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
     </node>
+    <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
+        <param name="timeout" value="$(arg timeout)" type="double"/>
+    </node>
 </launch>

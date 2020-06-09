@@ -76,3 +76,11 @@ add_executable(generating_candidates
 )
 target_link_libraries(generating_candidates ${LINK_LIBS})
 add_dependencies(generating_candidates ${viewpoint_planner_3d_EXPORTED_TARGETS})
+
+add_executable(viewpoint_evaluator
+  src/viewpoint_evaluator/viewpoint_evaluator.cpp
+  src/viewpoint_evaluator/viewpoint_evaluator_server.cpp
+  ${SOURCE_FILES}
+)
+target_link_libraries(viewpoint_evaluator ${LINK_LIBS})
+add_dependencies(viewpoint_evaluator ${viewpoint_planner_3d_EXPORTED_TARGETS})
