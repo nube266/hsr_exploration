@@ -40,6 +40,7 @@ find_package(
 add_service_files(
   FILES
   generating_candidates.srv
+  get_candidates.srv
   get_next_viewpoint.srv
 )
 

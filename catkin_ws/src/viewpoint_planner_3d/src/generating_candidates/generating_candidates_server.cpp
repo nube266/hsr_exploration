@@ -12,6 +12,7 @@ GeneratingCandidatesServer::GeneratingCandidatesServer(ros::NodeHandlePtr node_h
     setParam();
     map_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::mapUpdate, this);
     gen_srv_ = nh_->advertiseService("/viewpoint_planner_3d/generating_candidates", &GeneratingCandidatesServer::generatingCandidates, this);
+    get_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_candidates", &GeneratingCandidatesServer::getCandidates, this);
     ROS_INFO("Ready to generating_candidates_server");
 }
 
@@ -58,6 +59,24 @@ bool GeneratingCandidatesServer::generatingCandidates(viewpoint_planner_3d::gene
     generateCandidateGridPattern();
 
     res.is_succeeded = true;
+    return true;
+}
+
+/*-----------------------------
+overview: Return viewpoint candidates(using ROS service)
+argument: req, res (Take a look at get_candidates.srv)
+using: candidates
+-----------------------------*/
+bool GeneratingCandidatesServer::getCandidates(viewpoint_planner_3d::get_candidates::Request &req,
+                                               viewpoint_planner_3d::get_candidates::Response &res) {
+    // Returns false if there is no viewpoint candidate
+    if(candidates.empty() == true) {
+        res, candidates = candidates;
+        res.is_succeeded = false;
+    } else {
+        res.candidates = candidates;
+        res.is_succeeded = true;
+    }
     return true;
 }
 

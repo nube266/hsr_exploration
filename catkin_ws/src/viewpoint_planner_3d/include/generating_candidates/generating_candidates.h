@@ -3,6 +3,7 @@
 
 // ros searvice
 #include "viewpoint_planner_3d/generating_candidates.h"
+#include "viewpoint_planner_3d/get_candidates.h"
 
 // ros
 #include <costmap_2d/costmap_2d.h>
@@ -36,6 +37,7 @@ class GeneratingCandidatesServer {
     /* Initial setting as ROS node */
     ros::NodeHandlePtr nh_;      // ROS node handle
     ros::ServiceServer gen_srv_; // ROS service that generates viewpoint candidates
+    ros::ServiceServer get_srv_; // ROS service that getter(viewpoint candidates)
     ros::Subscriber map_sub_;    // Subscriber updating map
 
     /* Variables for occupied grid map */
@@ -66,6 +68,14 @@ class GeneratingCandidatesServer {
     -----------------------------*/
     bool generatingCandidates(viewpoint_planner_3d::generating_candidates::Request &req,
                               viewpoint_planner_3d::generating_candidates::Response &res);
+
+    /*-----------------------------
+    overview: Return viewpoint candidates(using ROS service)
+    argument: req, res (Take a look at get_candidates.srv)
+    return: True if the viewpoint candidate is successfully got
+    -----------------------------*/
+    bool getCandidates(viewpoint_planner_3d::get_candidates::Request &req,
+                       viewpoint_planner_3d::get_candidates::Response &res);
 
     /*-----------------------------
     overview: Update map (map_) (using ROS subscribe)
