@@ -2,6 +2,7 @@
 #define VIEWPOINT_EVALUATOR_SERVER_H_
 
 // ros searvice
+#include "viewpoint_planner_3d/get_candidates.h"
 #include "viewpoint_planner_3d/get_next_viewpoint.h"
 
 // ros
@@ -10,10 +11,13 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
+#include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 
 // opencv
 #include "opencv2/highgui/highgui.hpp"
@@ -34,12 +38,15 @@ namespace viewpoint_evaluator_server {
 class ViewpointEvaluatorServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;          // ROS node handle
-    ros::ServiceServer get_nbv_srv_; // ROS service that gets viewpoint candidates
-
-    /* Variables for occupied grid map */
+    ros::NodeHandlePtr nh_;                      // ROS node handle
+    ros::ServiceServer get_nbv_srv_;             // ROS service that gets next viewpoint
+    ros::ServiceClient get_candidates_cli_;      // ROS service client that gets view viewpoint candidates
+    ros::Publisher candidates_marker_pub_;       // ROS publisher that candidates marker
     std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidate
-    double timeout = 10.0;                       // Timeout time when stopped by some processing[s]
+
+    /* Parameter */
+    double timeout = 10.0; // Timeout time when stopped by some processing[s]
+    double candidate_marker_lifetime = 5.0;
 
     /*-----------------------------
     overview: Set of ROS parameters
@@ -71,6 +78,13 @@ class ViewpointEvaluatorServer {
     -----------------------------*/
     bool getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                 viewpoint_planner_3d::get_next_viewpoint::Response &res);
+
+    /*-----------------------------
+    overview: Visualization of viewpoint candidates
+    argument: None
+    return: None
+    -----------------------------*/
+    void visualizationCandidates(void);
 };
 } // namespace viewpoint_evaluator_server
 

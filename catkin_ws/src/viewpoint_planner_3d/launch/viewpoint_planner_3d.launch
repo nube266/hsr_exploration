@@ -4,9 +4,9 @@
     <!-- Distance between candidate viewpoints ([m]) -->
     <arg name="distance_between_candidates" default="0.4"/>
     <!-- Candidate orientation resolution ([deg]) -->
-    <arg name="candidate_yaw_resolution" default="30.0"/>
+    <arg name="candidate_yaw_resolution" default="60.0"/>
     <!-- Minimum distance between obstacle and viewpoint candidate -->
-    <arg name="distance_obstacle_candidate" default="50.0"/>
+    <arg name="distance_obstacle_candidate" default="0.5"/>
     <!-- Minimum Frontier length ([m]) -->
     <arg name="min_frontier_length" default="0.3"/>
     <!--  Minimum of robot head position([m]) -->
@@ -17,6 +17,8 @@
     <arg name="robot_head_candidate_resolution" default="0.2"/>
     <!-- Timeout time when stopped by some processing[s] -->
     <arg name="timeout" default="10.0"/>
+    <!-- Display time when visualizing the viewpoint candidate (it will not disappear if set to 0)-->
+    <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -32,5 +34,6 @@
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
         <param name="timeout" value="$(arg timeout)" type="double"/>
+        <param name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)" type="double"/>
     </node>
 </launch>

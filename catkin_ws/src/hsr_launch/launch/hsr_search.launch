@@ -2,12 +2,15 @@
 <launch>
     <arg name="use_flexbe" default="false"/>
     <arg name="use_darknet" default="true"/>
+    <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- FlexBE -->
     <group if="$(arg use_flexbe)">
         <include file="$(find hsr_launch)/launch/flexbe_app_default.launch"></include>
     </group>
     <!-- Viewpoiunt planner -->
-    <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch"></include>
+    <include file="$(find viewpoint_planner_3d)/launch/viewpoint_planner_3d.launch">
+        <arg name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)"/>
+    </include>
     <!-- Octomap publisher -->
     <include file="$(find octomap_publisher)/launch/octomap_publisher.launch"></include>
     <!-- darknet_ros(object detector) -->

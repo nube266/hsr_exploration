@@ -13,6 +13,7 @@ GeneratingCandidatesServer::GeneratingCandidatesServer(ros::NodeHandlePtr node_h
     map_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::mapUpdate, this);
     gen_srv_ = nh_->advertiseService("/viewpoint_planner_3d/generating_candidates", &GeneratingCandidatesServer::generatingCandidates, this);
     get_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_candidates", &GeneratingCandidatesServer::getCandidates, this);
+    candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
     ROS_INFO("Ready to generating_candidates_server");
 }
 
@@ -189,12 +190,18 @@ int GeneratingCandidatesServer::meter2pix(double length) {
 }
 
 /*-----------------------------
-overview: Convert map length (pix) to real-world length (meter)
-argument: length(pix)
-return: length(meter)
+overview: Convert coordinates on the image to point on map
+argument: Coordinates on the image
+return: point
 -----------------------------*/
-double GeneratingCandidatesServer::pix2meter(int length) {
-    return (double)(length * map_->info.resolution);
+geometry_msgs::Point GeneratingCandidatesServer::img_point2map_pose(int x, int y, double z) {
+    geometry_msgs::Point position;
+    int center_x = map_->info.width / 2;
+    int center_y = map_->info.height / 2;
+    position.x = (double)(x - center_x) * map_->info.resolution;
+    position.y = (double)(center_y - y) * map_->info.resolution;
+    position.z = z;
+    return position;
 }
 
 /*-----------------------------
@@ -239,20 +246,20 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     // TODO: I want to generate occupancy_img from a cost map
     candidates.clear();
     cv::Mat map_img = map2img();
+    cv::Mat test_img = map2img();
     cv::Mat occupancy_img;
     cv::threshold(map_img, occupancy_img, 2, 255, cv::THRESH_BINARY);
     cv::erode(occupancy_img, occupancy_img, cv::Mat(), cv::Point(-1, 1), meter2pix(distance_obstacle_candidate));
     int grid_size = meter2pix(distance_between_candidates);
     for(int y = 0; y < map_img.rows; y += grid_size) {
-        for(int x = 0; x < map_img.rows; x += grid_size) {
+        for(int x = 0; x < map_img.cols; x += grid_size) {
             unsigned char intensity = map_img.at<unsigned char>(y, x);
             if(intensity == 255 && occupancy_img.at<unsigned char>(y, x) == 255) { // white(free)
                 geometry_msgs::Pose pose;
-                for(int yaw = 0; yaw < 360; yaw += candidate_yaw_resolution) {
+                for(double yaw = -180; yaw <= 180; yaw += candidate_yaw_resolution) {
                     for(double z = robot_head_pos_min; z < robot_head_pos_max; z += robot_head_candidate_resolution) {
-                        pose.position.x = pix2meter(x);
-                        pose.position.y = pix2meter(y);
-                        pose.position.z = z;
+                        cv::circle(test_img, cv::Point(x, y), 4, 128, -1);
+                        pose.position = img_point2map_pose(x, y, z);
                         pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (180 / M_PI));
                         candidates.push_back(pose);
                     }
@@ -260,15 +267,37 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             }
         }
     }
-    // Visualization
-    // for(geometry_msgs::Pose pose : candidates) {
-    //     cv::circle(map_img, cv::Point(meter2pix(pose.position.x), meter2pix(pose.position.y)), 1, 128, -1);
-    //     std::cout << "pose: " << pose << std::endl;
-    // }
-    // cv::namedWindow("map", cv::WINDOW_NORMAL);
-    // cv::imshow("map", map_img);
-    // cv::imshow("occupancy_img", occupancy_img);
-    // cv::waitKey(0);
+    visualizationCandidates();
+}
+
+/*-----------------------------
+overview: Visualization of viewpoint candidates
+argument: None
+return: None
+-----------------------------*/
+void GeneratingCandidatesServer::visualizationCandidates(void) {
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.resize(candidates.size());
+    int id = 0;
+    for(geometry_msgs::Pose candidate : candidates) {
+        marker_array.markers[id].header.frame_id = "world";
+        marker_array.markers[id].header.stamp = ros::Time::now();
+        marker_array.markers[id].ns = "/candidate";
+        marker_array.markers[id].id = id;
+        marker_array.markers[id].type = visualization_msgs::Marker::ARROW;
+        marker_array.markers[id].action = visualization_msgs::Marker::ADD;
+        marker_array.markers[id].lifetime = ros::Duration(0);
+        marker_array.markers[id].pose = candidate;
+        marker_array.markers[id].scale.x = 0.1;
+        marker_array.markers[id].scale.y = 0.01;
+        marker_array.markers[id].scale.z = 0.01;
+        marker_array.markers[id].color.r = 0.0f;
+        marker_array.markers[id].color.g = 1.0f;
+        marker_array.markers[id].color.b = 0.0f;
+        marker_array.markers[id].color.a = 1.0f;
+        id++;
+    }
+    candidates_marker_pub_.publish(marker_array);
 }
 
 } // namespace generating_candidates_server

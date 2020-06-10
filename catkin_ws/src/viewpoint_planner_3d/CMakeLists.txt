@@ -28,6 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
   navfn
   image_transport
   cv_bridge
+  visualization_msgs
 )
 
 find_package(
@@ -50,12 +51,13 @@ generate_messages(
   octomap_msgs
   sensor_msgs
   std_msgs
+  visualization_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
 # LIBRARIES viewpoint_planner_src
-  CATKIN_DEPENDS octomap_msgs octomap_ros roscpp rospy sensor_msgs std_msgs message_runtime image_transport cv_bridge
+  CATKIN_DEPENDS octomap_msgs octomap_ros roscpp rospy sensor_msgs std_msgs message_runtime image_transport cv_bridge visualization_msgs
 )
 
 include_directories(

@@ -4,6 +4,7 @@
     <arg name="use_flexbe" default="false"/>
     <arg name="use_darknet" default="false"/>
     <arg name="gui" default="false"/>
+    <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- gazebo -->
     <group if="$(arg use_gazebo)">
         <include file="$(find hsr_launch)/launch/sdewg_gazebo_default.launch">
@@ -13,5 +14,6 @@
     <include file="$(find hsr_launch)/launch/hsr_search.launch">
         <arg name="use_flexbe" value="$(arg use_flexbe)"/>
         <arg name="use_darknet" value="$(arg use_darknet)"/>
+        <arg name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)"/>
     </include>
 </launch>

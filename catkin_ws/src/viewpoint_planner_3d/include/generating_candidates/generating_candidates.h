@@ -8,13 +8,17 @@
 // ros
 #include <costmap_2d/costmap_2d.h>
 #include <costmap_2d/costmap_2d_ros.h>
+#include <geometry_msgs/Point.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
+#include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 
 // opencv
 #include "opencv2/highgui/highgui.hpp"
@@ -28,6 +32,7 @@
 #include <memory>
 #include <mutex>
 #include <ros/ros.h>
+#include <stdio.h>
 #include <string>
 #include <vector>
 
@@ -35,10 +40,11 @@ namespace generating_candidates_server {
 class GeneratingCandidatesServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;      // ROS node handle
-    ros::ServiceServer gen_srv_; // ROS service that generates viewpoint candidates
-    ros::ServiceServer get_srv_; // ROS service that getter(viewpoint candidates)
-    ros::Subscriber map_sub_;    // Subscriber updating map
+    ros::NodeHandlePtr nh_;                // ROS node handle
+    ros::ServiceServer gen_srv_;           // ROS service that generates viewpoint candidates
+    ros::ServiceServer get_srv_;           // ROS service that getter(viewpoint candidates)
+    ros::Subscriber map_sub_;              // Subscriber updating map
+    ros::Publisher candidates_marker_pub_; // ROS publisher that candidates marker
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates;  // Viewpoint candidate
@@ -118,11 +124,11 @@ class GeneratingCandidatesServer {
     int meter2pix(double length);
 
     /*-----------------------------
-    overview: Convert map length (pix) to real-world length (meter)
-    argument: length(pix)
-    return: length(meter)
+    overview: Convert coordinates on the image to point on map
+    argument: Coordinates on the image
+    return: point
     -----------------------------*/
-    double pix2meter(int length);
+    geometry_msgs::Point img_point2map_pose(int x, int y, double z);
 
     /*-----------------------------
     overview: Wait until get the map successfully
@@ -144,6 +150,13 @@ class GeneratingCandidatesServer {
     return: True if the viewpoint candidate is successfully generated
     -----------------------------*/
     bool generateCandidateGridPattern(void);
+
+    /*-----------------------------
+    overview: Visualization of viewpoint candidates
+    argument: None
+    return: None
+    -----------------------------*/
+    void visualizationCandidates(void);
 
   public:
     /*-----------------------------
