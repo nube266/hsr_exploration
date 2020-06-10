@@ -196,10 +196,9 @@ return: point
 -----------------------------*/
 geometry_msgs::Point GeneratingCandidatesServer::img_point2map_pose(int x, int y, double z) {
     geometry_msgs::Point position;
-    int center_x = map_->info.width / 2;
-    int center_y = map_->info.height / 2;
-    position.x = (double)(x - center_x) * map_->info.resolution;
-    position.y = (double)(center_y - y) * map_->info.resolution;
+    geometry_msgs::Pose origin = map_->info.origin;
+    position.x = (double)x * map_->info.resolution + origin.position.x;
+    position.y = (double)(map_->info.height - y) * map_->info.resolution + origin.position.y;
     position.z = z;
     return position;
 }
@@ -246,7 +245,6 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     // TODO: I want to generate occupancy_img from a cost map
     candidates.clear();
     cv::Mat map_img = map2img();
-    cv::Mat test_img = map2img();
     cv::Mat occupancy_img;
     cv::threshold(map_img, occupancy_img, 2, 255, cv::THRESH_BINARY);
     cv::erode(occupancy_img, occupancy_img, cv::Mat(), cv::Point(-1, 1), meter2pix(distance_obstacle_candidate));
@@ -256,18 +254,16 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             unsigned char intensity = map_img.at<unsigned char>(y, x);
             if(intensity == 255 && occupancy_img.at<unsigned char>(y, x) == 255) { // white(free)
                 geometry_msgs::Pose pose;
-                for(double yaw = -180; yaw <= 180; yaw += candidate_yaw_resolution) {
+                for(double yaw = -180; yaw < 180; yaw += candidate_yaw_resolution) {
                     for(double z = robot_head_pos_min; z < robot_head_pos_max; z += robot_head_candidate_resolution) {
-                        cv::circle(test_img, cv::Point(x, y), 4, 128, -1);
                         pose.position = img_point2map_pose(x, y, z);
-                        pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (180 / M_PI));
+                        pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (M_PI / 180));
                         candidates.push_back(pose);
                     }
                 }
             }
         }
     }
-    visualizationCandidates();
 }
 
 /*-----------------------------
@@ -280,7 +276,7 @@ void GeneratingCandidatesServer::visualizationCandidates(void) {
     marker_array.markers.resize(candidates.size());
     int id = 0;
     for(geometry_msgs::Pose candidate : candidates) {
-        marker_array.markers[id].header.frame_id = "world";
+        marker_array.markers[id].header.frame_id = "/map";
         marker_array.markers[id].header.stamp = ros::Time::now();
         marker_array.markers[id].ns = "/candidate";
         marker_array.markers[id].id = id;

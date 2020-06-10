@@ -2,7 +2,7 @@
     <!-- Map update frequency([s]) -->
     <arg name="map_update_frequency" default="1.0"/>
     <!-- Distance between candidate viewpoints ([m]) -->
-    <arg name="distance_between_candidates" default="0.4"/>
+    <arg name="distance_between_candidates" default="0.5"/>
     <!-- Candidate orientation resolution ([deg]) -->
     <arg name="candidate_yaw_resolution" default="60.0"/>
     <!-- Minimum distance between obstacle and viewpoint candidate -->
