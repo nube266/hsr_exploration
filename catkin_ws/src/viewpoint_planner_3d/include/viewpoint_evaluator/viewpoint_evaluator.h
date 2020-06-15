@@ -11,6 +11,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
+#include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <tf/tf.h>
@@ -38,22 +39,37 @@ namespace viewpoint_evaluator_server {
 class ViewpointEvaluatorServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;                      // ROS node handle
-    ros::ServiceServer get_nbv_srv_;             // ROS service that gets next viewpoint
-    ros::ServiceClient get_candidates_cli_;      // ROS service client that gets view viewpoint candidates
-    ros::Publisher candidates_marker_pub_;       // ROS publisher that candidates marker
-    std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidate
+    ros::NodeHandlePtr nh_;                 // ROS node handle
+    ros::ServiceServer get_nbv_srv_;        // ROS service that gets next viewpoint
+    ros::ServiceClient get_candidates_cli_; // ROS service client that gets view viewpoint candidates
+    ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
+    ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
+
+    /* Variables used to evaluate viewpoint candidates */
+    geometry_msgs::Pose current_robot_pose_;     // Current robot pose
+    std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidates
+    std::vector<double> distances;               // Distance to each viewpoint candidates
 
     /* Parameter */
     double timeout = 10.0; // Timeout time when stopped by some processing[s]
     double candidate_marker_lifetime = 5.0;
+    std::string odom_topic = "/hsrb/odom";
 
     /*-----------------------------
     overview: Set of ROS parameters
     argument: None
     Return: None
     -----------------------------*/
-    void setParam(void);
+    void
+    setParam(void);
+
+    /*-----------------------------
+    overview: Get current robot position
+    argument: None
+    Return: None
+    Set: odom_
+    -----------------------------*/
+    void odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg);
 
   public:
     /*-----------------------------

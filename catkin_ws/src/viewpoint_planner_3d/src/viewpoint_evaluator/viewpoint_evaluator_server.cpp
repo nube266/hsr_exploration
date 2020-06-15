@@ -14,6 +14,8 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
                                          &ViewpointEvaluatorServer::getNBV, this);
     get_candidates_cli_ = nh_->serviceClient<viewpoint_planner_3d::get_candidates>("/viewpoint_planner_3d/get_candidates");
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
+    // Initialize Subscriber and Publisher
+    odom_sub_ = nh_->subscribe(odom_topic, 1, &ViewpointEvaluatorServer::odomCallback, this);
     ROS_INFO("Ready to viewpoint_evaluator_server");
 }
 
@@ -33,6 +35,18 @@ Return: None
 void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/timeout", timeout);
     ros::param::get("/viewpoint_evaluator/candidate_marker_lifetime", candidate_marker_lifetime);
+    ros::param::get("/viewpoint_evaluator/odom_topic", odom_topic);
+}
+
+/*-----------------------------
+overview: Get current robot position
+argument: None
+Return: None
+Set: odom
+-----------------------------*/
+void ViewpointEvaluatorServer::odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg) {
+    nav_msgs::Odometry odom = *odom_msg;
+    current_robot_pose_ = odom.pose.pose;
 }
 
 /*-----------------------------
@@ -54,6 +68,8 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
         return false;
     }
     visualizationCandidates();
+    geometry_msgs::Pose robot_pose = current_robot_pose_;
+    std::cout << "robot_pose: " << robot_pose << std::endl;
     res.is_succeeded = true;
     return true;
 }

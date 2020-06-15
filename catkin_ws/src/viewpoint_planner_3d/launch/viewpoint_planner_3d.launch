@@ -19,6 +19,8 @@
     <arg name="timeout" default="10.0"/>
     <!-- Display time when visualizing the viewpoint candidate (it will not disappear if set to 0)-->
     <arg name="candidate_marker_lifetime" default="5.0"/>
+    <!-- Robot odom topic name -->
+    <arg name="odom_topic" default="/hsrb/odom"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -34,6 +36,7 @@
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
         <param name="timeout" value="$(arg timeout)" type="double"/>
+        <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
         <param name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)" type="double"/>
     </node>
 </launch>
