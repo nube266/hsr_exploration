@@ -36,6 +36,7 @@ Return: None
 void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/timeout", timeout);
     ros::param::get("/viewpoint_evaluator/candidate_marker_lifetime", candidate_marker_lifetime);
+    ros::param::get("/viewpoint_evaluator/path_planning_tolerance", path_planning_tolerance);
     ros::param::get("/viewpoint_evaluator/odom_topic", odom_topic);
 }
 
@@ -83,7 +84,7 @@ bool ViewpointEvaluatorServer::makePathPlan(const geometry_msgs::Pose &start, co
     nav_msgs::GetPlan make_plan_srv;
     make_plan_srv.request.start = start_stamped;
     make_plan_srv.request.goal = goal_stamped;
-    make_plan_srv.request.tolerance = 0.3;
+    make_plan_srv.request.tolerance = path_planning_tolerance;
     std::cout << "request:" << make_plan_srv.request << std::endl;
 
     if(make_path_cli_.call(make_plan_srv)) {
@@ -135,7 +136,7 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
         return false;
     }
     visualizationCandidates();
-    // calcViewpointDistances();
+    calcViewpointDistances();
 
     res.is_succeeded = true;
     return true;

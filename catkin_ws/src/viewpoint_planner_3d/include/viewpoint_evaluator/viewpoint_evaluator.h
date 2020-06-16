@@ -57,17 +57,17 @@ class ViewpointEvaluatorServer {
     navfn::NavfnROS planner_;                    // Path planner
 
     /* Parameter */
-    double timeout = 10.0; // Timeout time when stopped by some processing[s]
-    double candidate_marker_lifetime = 5.0;
-    std::string odom_topic = "/hsrb/odom";
+    double timeout = 10.0;                  // Timeout time when stopped by some processing[s]
+    double candidate_marker_lifetime = 5.0; //Display time when the marker is visualized
+    double path_planning_tolerance = 0.3;   // Path planning tolerance
+    std::string odom_topic = "/hsrb/odom";  // Odometry topic name
 
     /*-----------------------------
     overview: Set of ROS parameters
     argument: None
     return: None
     -----------------------------*/
-    void
-    setParam(void);
+    void setParam(void);
 
     /*-----------------------------
     overview: Get current robot position

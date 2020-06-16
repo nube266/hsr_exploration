@@ -23,6 +23,8 @@
     <arg name="odom_topic" default="/hsrb/odom"/>
     <!-- Size of free space removed as noise by the opening process[m]-->
     <arg name="max_free_space_noize_size" default="0.1"/>
+    <!-- tolerance in make_plan of move_base -->
+    <arg name="path_planning_tolerance" default="0.3"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -41,5 +43,6 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
         <param name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)" type="double"/>
+        <param name="path_planning_tolerance" value="$(arg path_planning_tolerance)" type="double"/>
     </node>
 </launch>
