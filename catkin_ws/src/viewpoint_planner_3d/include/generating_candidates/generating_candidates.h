@@ -14,6 +14,7 @@
 #include <nav_msgs/GetMap.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <std_srvs/Empty.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
@@ -40,13 +41,13 @@ namespace generating_candidates_server {
 class GeneratingCandidatesServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;                // ROS node handle
-    ros::ServiceServer gen_srv_;           // ROS service that generates viewpoint candidates
-    ros::ServiceServer get_srv_;           // ROS service that getter(viewpoint candidates)
-    ros::Subscriber map_sub_;              // Subscriber updating map
-    ros::Subscriber grobal_costmap_sub_;   // Subscriber updating grobal costmap
-    ros::Subscriber local_costmap_sub_;    // Subscriber updating local costmap
-    ros::Publisher candidates_marker_pub_; // ROS publisher that candidates marker
+    ros::NodeHandlePtr nh_;                 // ROS node handle
+    ros::ServiceServer gen_srv_;            // ROS service that generates viewpoint candidates
+    ros::ServiceServer get_srv_;            // ROS service that getter(viewpoint candidates)
+    ros::Subscriber map_sub_;               // Subscriber updating map
+    ros::Subscriber grobal_costmap_sub_;    // Subscriber updating grobal costmap
+    ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
+    ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates;     // Viewpoint candidate
@@ -104,20 +105,11 @@ class GeneratingCandidatesServer {
     void grobalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &grobal_costmap);
 
     /*-----------------------------
-    overview: Update local_costmap (local_costmap_) (using ROS subscribe)
-    argument: local_costmap(Occupancy grid map)
-    return: None
-    set: local_costmap_(Occupancy grid map)
-    -----------------------------*/
-    void localCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &local_costmap);
-
-    /*-----------------------------
     overview: Convert map from occupied grid map format to image format
-    argument: None
+    argument: map(Occupancy grid map)
     return: map(Image format)
-    using: map_(Occupancy grid map format)
     -----------------------------*/
-    cv::Mat map2img(void);
+    cv::Mat map2img(nav_msgs::OccupancyGridConstPtr map);
 
     /*-----------------------------
     overview: Detect and cluster frontiers
