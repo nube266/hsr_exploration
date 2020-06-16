@@ -42,6 +42,7 @@ void GeneratingCandidatesServer::setParam() {
     ros::param::get("/generating_candidates/robot_head_pos_min", robot_head_pos_min);
     ros::param::get("/generating_candidates/robot_head_pos_max", robot_head_pos_max);
     ros::param::get("/generating_candidates/robot_head_candidate_resolution", robot_head_candidate_resolution);
+    ros::param::get("/generating_candidates/max_free_space_noize_size", max_free_space_noize_size);
     ros::param::get("/generating_candidates/timeout", timeout);
 }
 
@@ -256,9 +257,14 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     // Initialize viewpoint candidates
     candidates.clear();
     cv::Mat map_img = map2img(map_);
+    // Opening process(noise removal)
+    cv::erode(map_img, map_img, cv::Mat(), cv::Point(-1, 1), meter2pix(max_free_space_noize_size));
+    cv::dilate(map_img, map_img, cv::Mat(), cv::Point(-1, 1), meter2pix(max_free_space_noize_size));
+    // Convert Costmap to image and contract
     cv::Mat occupancy_img;
     cv::threshold(map2img(grobal_costmap_), occupancy_img, 5, 255, cv::THRESH_BINARY);
     cv::erode(occupancy_img, occupancy_img, cv::Mat(), cv::Point(-1, 1), meter2pix(distance_obstacle_candidate));
+    // Generation of viewpoint candidates
     int grid_size = meter2pix(distance_between_candidates);
     for(int y = 0; y < map_img.rows; y += grid_size) {
         for(int x = 0; x < map_img.cols; x += grid_size) {

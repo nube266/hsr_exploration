@@ -61,6 +61,7 @@ class GeneratingCandidatesServer {
     double robot_head_pos_min = 1.00;                // Minimum of robot head position([m])
     double robot_head_pos_max = 1.69;                // Maximum of robot head position([m])
     double robot_head_candidate_resolution = 0.2;    // Resolution of viewpoint candidates in the height direction
+    double max_free_space_noize_size = 0.1;          // Size of free space removed as noise by the opening process[m]
     double timeout = 10.0;                           // Timeout time when stopped by some processing[s]
 
     /*-----------------------------

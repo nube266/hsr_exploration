@@ -21,6 +21,8 @@
     <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- Robot odom topic name -->
     <arg name="odom_topic" default="/hsrb/odom"/>
+    <!-- Size of free space removed as noise by the opening process[m]-->
+    <arg name="max_free_space_noize_size" default="0.1"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -32,6 +34,7 @@
         <param name="robot_head_pos_max" value="$(arg robot_head_pos_max)" type="double"/>
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
+        <param name="max_free_space_noize_size" value="$(arg max_free_space_noize_size)" type="double"/>
     </node>
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
