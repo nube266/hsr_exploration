@@ -11,6 +11,8 @@ GeneratingCandidatesServer::GeneratingCandidatesServer(ros::NodeHandlePtr node_h
     nh_ = node_handle;
     setParam();
     map_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::mapUpdate, this);
+    grobal_costmap_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::grobalCostmapUpdate, this);
+    local_costmap_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::localCostmapUpdate, this);
     gen_srv_ = nh_->advertiseService("/viewpoint_planner_3d/generating_candidates", &GeneratingCandidatesServer::generatingCandidates, this);
     get_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_candidates", &GeneratingCandidatesServer::getCandidates, this);
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
@@ -89,6 +91,26 @@ set: map_(Occupancy grid map)
 -----------------------------*/
 void GeneratingCandidatesServer::mapUpdate(const nav_msgs::OccupancyGridConstPtr &map) {
     map_ = map;
+}
+
+/*-----------------------------
+overview: Update grobal_costmap (grobal_costmap_) (using ROS subscribe)
+argument: grobal_costmap(Occupancy grid map)
+return: None
+set: grobal_costmap_(Occupancy grid map)
+-----------------------------*/
+void GeneratingCandidatesServer::grobalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &grobal_costmap) {
+    grobal_costmap_ = grobal_costmap;
+}
+
+/*-----------------------------
+overview: Update local_costmap (local_costmap_) (using ROS subscribe)
+argument: local_costmap(Occupancy grid map)
+return: None
+set: local_costmap_(Occupancy grid map)
+-----------------------------*/
+void GeneratingCandidatesServer::localCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &local_costmap) {
+    local_costmap_ = local_costmap;
 }
 
 /*-----------------------------
