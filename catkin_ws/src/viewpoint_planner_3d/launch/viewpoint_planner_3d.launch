@@ -5,8 +5,8 @@
     <arg name="distance_between_candidates" default="0.5"/>
     <!-- Candidate orientation resolution ([deg]) -->
     <arg name="candidate_yaw_resolution" default="60.0"/>
-    <!-- Minimum distance between obstacle and viewpoint candidate -->
-    <arg name="distance_obstacle_candidate" default="0.5"/>
+    <!-- Size to expand Costmap [m] -->
+    <arg name="distance_obstacle_candidate" default="0.2"/>
     <!-- Minimum Frontier length ([m]) -->
     <arg name="min_frontier_length" default="0.3"/>
     <!--  Minimum of robot head position([m]) -->

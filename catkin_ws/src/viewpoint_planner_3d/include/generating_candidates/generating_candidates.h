@@ -53,11 +53,10 @@ class GeneratingCandidatesServer {
     std::vector<geometry_msgs::Pose> candidates;     // Viewpoint candidate
     nav_msgs::OccupancyGridConstPtr map_;            // Occupancy grid map
     nav_msgs::OccupancyGridConstPtr grobal_costmap_; // Occupancy grid map(move_base)
-    nav_msgs::OccupancyGridConstPtr local_costmap_;  // Occupancy grid map(move_base)
     std::vector<cv::Point> frontier_centroids;       // Centroid of gravity of the frontier
     double distance_between_candidates = 0.3;        // Distance between center of gravity of frontier and viewpoint candidates[m]
     double candidate_yaw_resolution = 0.6;           // Candidate orientation resolution
-    double distance_obstacle_candidate = 0.50;       // Minimum distance between obstacle and viewpoint candidate
+    double distance_obstacle_candidate = 0.1;        // Size to expand Costmap [m]
     double min_frontier_length = 0.6;                // Minimum frontier size[m]
     double robot_head_pos_min = 1.00;                // Minimum of robot head position([m])
     double robot_head_pos_max = 1.69;                // Maximum of robot head position([m])

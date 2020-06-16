@@ -37,6 +37,7 @@ void GeneratingCandidatesServer::setParam() {
     // Distance between candidate viewpoints [m]
     ros::param::get("/generating_candidates/distance_between_candidates", distance_between_candidates);
     ros::param::get("/generating_candidates/candidate_yaw_resolution", candidate_yaw_resolution);
+    ros::param::get("/generating_candidates/distance_obstacle_candidate", distance_obstacle_candidate);
     ros::param::get("/generating_candidates/min_frontier_length", min_frontier_length);
     ros::param::get("/generating_candidates/robot_head_pos_min", robot_head_pos_min);
     ros::param::get("/generating_candidates/robot_head_pos_max", robot_head_pos_max);
@@ -256,7 +257,7 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     candidates.clear();
     cv::Mat map_img = map2img(map_);
     cv::Mat occupancy_img;
-    cv::threshold(map_img, occupancy_img, 2, 255, cv::THRESH_BINARY);
+    cv::threshold(map2img(grobal_costmap_), occupancy_img, 5, 255, cv::THRESH_BINARY);
     cv::erode(occupancy_img, occupancy_img, cv::Mat(), cv::Point(-1, 1), meter2pix(distance_obstacle_candidate));
     int grid_size = meter2pix(distance_between_candidates);
     for(int y = 0; y < map_img.rows; y += grid_size) {
@@ -274,11 +275,6 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             }
         }
     }
-    cv::namedWindow("map", cv::WINDOW_NORMAL);
-    cv::imshow("map", map2img(map_));
-    cv::namedWindow("grobal_costmap", cv::WINDOW_NORMAL);
-    cv::imshow("grobal_costmap", map2img(grobal_costmap_));
-    cv::waitKey(0);
 }
 
 /*-----------------------------
