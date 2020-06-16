@@ -44,6 +44,8 @@ class GeneratingCandidatesServer {
     ros::ServiceServer gen_srv_;           // ROS service that generates viewpoint candidates
     ros::ServiceServer get_srv_;           // ROS service that getter(viewpoint candidates)
     ros::Subscriber map_sub_;              // Subscriber updating map
+    ros::Subscriber grobal_map_sub_;       // Subscriber updating grobal costmap
+    ros::Subscriber local_map_sub_;        // Subscriber updating local costmap
     ros::Publisher candidates_marker_pub_; // ROS publisher that candidates marker
 
     /* Variables for occupied grid map */

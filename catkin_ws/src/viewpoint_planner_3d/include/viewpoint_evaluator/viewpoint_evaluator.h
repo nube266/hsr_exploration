@@ -12,8 +12,11 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
 #include <nav_msgs/Odometry.h>
+#include <nav_msgs/Path.h>
+#include <navfn/navfn_ros.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <std_srvs/Empty.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
@@ -44,11 +47,14 @@ class ViewpointEvaluatorServer {
     ros::ServiceClient get_candidates_cli_; // ROS service client that gets view viewpoint candidates
     ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
     ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
+    ros::ServiceClient make_path_cli_;      // move_base route planning service client
+    ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
 
     /* Variables used to evaluate viewpoint candidates */
     geometry_msgs::Pose current_robot_pose_;     // Current robot pose
     std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidates
     std::vector<double> distances;               // Distance to each viewpoint candidates
+    navfn::NavfnROS planner_;                    // Path planner
 
     /* Parameter */
     double timeout = 10.0; // Timeout time when stopped by some processing[s]
@@ -58,7 +64,7 @@ class ViewpointEvaluatorServer {
     /*-----------------------------
     overview: Set of ROS parameters
     argument: None
-    Return: None
+    return: None
     -----------------------------*/
     void
     setParam(void);
@@ -66,10 +72,32 @@ class ViewpointEvaluatorServer {
     /*-----------------------------
     overview: Get current robot position
     argument: None
-    Return: None
-    Set: odom_
+    return: None
+    set: odom_
     -----------------------------*/
     void odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg);
+
+    /*-----------------------------
+    overview: Returns the total travel distance in the entered travel plan
+    argument: plan(toravel plan)
+    return: distance[m]
+    -----------------------------*/
+    double calcTravelDistance(const nav_msgs::Path &plan);
+
+    /*-----------------------------
+    overview: Return travel planning results using move_base's ROS service
+    argument: Start point of movement, end point of movement, travel planning
+    return: travel planning, returns true if route planning succeeds
+    -----------------------------*/
+    bool makePathPlan(const geometry_msgs::Pose &start, const geometry_msgs::Pose &goal, nav_msgs::Path &plan);
+
+    /*-----------------------------
+    overview: Calculate the distance traveled to each viewpoint candidate and set it in 'distances'
+    argument: None
+    return: None
+    set: distances
+    -----------------------------*/
+    void calcViewpointDistances(void);
 
   public:
     /*-----------------------------

@@ -264,6 +264,9 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             }
         }
     }
+    cv::namedWindow("map", cv::WINDOW_NORMAL);
+    cv::imshow("map", map_img);
+    cv::waitKey(0);
 }
 
 /*-----------------------------
