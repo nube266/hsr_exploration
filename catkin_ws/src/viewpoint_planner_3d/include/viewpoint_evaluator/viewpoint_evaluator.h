@@ -99,6 +99,15 @@ class ViewpointEvaluatorServer {
     -----------------------------*/
     void calcViewpointDistances(void);
 
+    /*-----------------------------
+    overview: Get viewpoint from 'generating_candidates' by service call
+    argument: None
+    return: None
+    set: candidates
+    using: get_candidates_cli_(generating_candidates)
+    -----------------------------*/
+    bool getCandidates(void);
+
   public:
     /*-----------------------------
     overview: Initialize a set of parameters and ROS services and subscribers

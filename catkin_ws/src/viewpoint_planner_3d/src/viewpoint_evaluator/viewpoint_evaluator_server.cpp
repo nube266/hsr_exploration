@@ -116,6 +116,26 @@ void ViewpointEvaluatorServer::calcViewpointDistances(void) {
 }
 
 /*-----------------------------
+overview: Get viewpoint from 'generating_candidates' by service call
+argument: None
+return: Returns true if acquisition of viewpoint is successful
+set: candidates
+using: get_candidates_cli_(generating_candidates)
+-----------------------------*/
+bool ViewpointEvaluatorServer::getCandidates(void) {
+    viewpoint_planner_3d::get_candidates srv;
+    get_candidates_cli_.call(srv);
+    if(srv.response.is_succeeded == true) {
+        candidates = srv.response.candidates;
+        ROS_INFO("Successful acquisition of viewpoint candidates");
+        return true;
+    } else {
+        ROS_ERROR("Failed to call get_candidates");
+        return false;
+    }
+}
+
+/*-----------------------------
 overview: Get next viewpoint(using ROS service)
 argument: req, res (Take a look at get_next_viewpoint.srv)
 return: is_succeeded - True if NBV (Next viewpoint) can be acquired normally
@@ -123,19 +143,12 @@ Ros searvice to use: get_viewpoint_candidates
 -----------------------------*/
 bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                                       viewpoint_planner_3d::get_next_viewpoint::Response &res) {
-    viewpoint_planner_3d::get_candidates srv;
-    get_candidates_cli_.call(srv);
-    if(srv.response.is_succeeded == true) {
-        candidates = srv.response.candidates;
-        ROS_INFO("Successful acquisition of viewpoint candidates");
-    } else {
-        ROS_ERROR("Failed to call get_candidates");
+    if(!getCandidates()) {
         res.is_succeeded = false;
         return false;
     }
     visualizationCandidates();
     calcViewpointDistances();
-
     res.is_succeeded = true;
     return true;
 }
