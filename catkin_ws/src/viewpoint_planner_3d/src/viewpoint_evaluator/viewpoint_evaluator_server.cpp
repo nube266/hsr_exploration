@@ -104,13 +104,27 @@ set: distances
 -----------------------------*/
 void ViewpointEvaluatorServer::calcViewpointDistances(void) {
     geometry_msgs::Pose robot_pose = current_robot_pose_;
-    // Make a path plan using a rosservie of move_base
+    geometry_msgs::Pose previous_pose = geometry_msgs::Pose();
+    double previous_distance = 0.0;
     for(geometry_msgs::Pose candidate : candidates) {
+        if(previous_distance != 0.0) { // Other than the first time
+            /* If the xy coordinates are the same as the last time, use the distance calculated last */
+            if(previous_pose.position.x == candidate.position.x && previous_pose.position.y == candidate.position.y) {
+                distances.push_back(previous_distance);
+                continue;
+            }
+        }
+        // Make a path plan using a rosservie of move_base
         nav_msgs::Path plan;
         if(makePathPlan(robot_pose, candidate, plan)) {
-            distances.push_back(calcTravelDistance(plan));
+            double distance = calcTravelDistance(plan);
+            distances.push_back(distance);
+            previous_pose = candidate;
+            previous_distance = distance;
         } else {
             distances.push_back(-1.0);
+            previous_pose = candidate;
+            previous_distance = -1.0;
         }
     }
 }
