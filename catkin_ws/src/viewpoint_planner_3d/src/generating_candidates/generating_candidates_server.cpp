@@ -11,7 +11,7 @@ GeneratingCandidatesServer::GeneratingCandidatesServer(ros::NodeHandlePtr node_h
     nh_ = node_handle;
     setParam();
     map_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::mapUpdate, this);
-    grobal_costmap_sub_ = nh_->subscribe("/move_base/global_costmap/costmap", 1, &GeneratingCandidatesServer::grobalCostmapUpdate, this);
+    global_costmap_sub_ = nh_->subscribe("/move_base/global_costmap/costmap", 1, &GeneratingCandidatesServer::globalCostmapUpdate, this);
     gen_srv_ = nh_->advertiseService("/viewpoint_planner_3d/generating_candidates", &GeneratingCandidatesServer::generatingCandidates, this);
     get_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_candidates", &GeneratingCandidatesServer::getCandidates, this);
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
@@ -96,13 +96,13 @@ void GeneratingCandidatesServer::mapUpdate(const nav_msgs::OccupancyGridConstPtr
 }
 
 /*-----------------------------
-overview: Update grobal_costmap (grobal_costmap_) (using ROS subscribe)
-argument: grobal_costmap(Occupancy grid map)
+overview: Update global_costmap (global_costmap_) (using ROS subscribe)
+argument: global_costmap(Occupancy grid map)
 return: None
-set: grobal_costmap_(Occupancy grid map)
+set: global_costmap_(Occupancy grid map)
 -----------------------------*/
-void GeneratingCandidatesServer::grobalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &grobal_costmap) {
-    grobal_costmap_ = grobal_costmap;
+void GeneratingCandidatesServer::globalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &global_costmap) {
+    global_costmap_ = global_costmap;
 }
 
 /*-----------------------------
@@ -262,7 +262,7 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     cv::dilate(map_img, map_img, cv::Mat(), cv::Point(-1, 1), meter2pix(max_free_space_noize_size));
     // Convert Costmap to image and contract
     cv::Mat occupancy_img;
-    cv::threshold(map2img(grobal_costmap_), occupancy_img, 5, 255, cv::THRESH_BINARY);
+    cv::threshold(map2img(global_costmap_), occupancy_img, 5, 255, cv::THRESH_BINARY);
     cv::erode(occupancy_img, occupancy_img, cv::Mat(), cv::Point(-1, 1), meter2pix(distance_obstacle_candidate));
     // Generation of viewpoint candidates
     int grid_size = meter2pix(distance_between_candidates);

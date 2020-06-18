@@ -85,7 +85,6 @@ bool ViewpointEvaluatorServer::makePathPlan(const geometry_msgs::Pose &start, co
     make_plan_srv.request.start = start_stamped;
     make_plan_srv.request.goal = goal_stamped;
     make_plan_srv.request.tolerance = path_planning_tolerance;
-    std::cout << "request:" << make_plan_srv.request << std::endl;
 
     if(make_path_cli_.call(make_plan_srv)) {
         plan = make_plan_srv.response.plan;
@@ -95,7 +94,6 @@ bool ViewpointEvaluatorServer::makePathPlan(const geometry_msgs::Pose &start, co
     }
 
     return true;
-    // TODO: Allow changing tolerance parameter with rosparam
 }
 
 /*-----------------------------

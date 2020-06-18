@@ -45,14 +45,14 @@ class GeneratingCandidatesServer {
     ros::ServiceServer gen_srv_;            // ROS service that generates viewpoint candidates
     ros::ServiceServer get_srv_;            // ROS service that getter(viewpoint candidates)
     ros::Subscriber map_sub_;               // Subscriber updating map
-    ros::Subscriber grobal_costmap_sub_;    // Subscriber updating grobal costmap
+    ros::Subscriber global_costmap_sub_;    // Subscriber updating global costmap
     ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
     ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates;     // Viewpoint candidate
     nav_msgs::OccupancyGridConstPtr map_;            // Occupancy grid map
-    nav_msgs::OccupancyGridConstPtr grobal_costmap_; // Occupancy grid map(move_base)
+    nav_msgs::OccupancyGridConstPtr global_costmap_; // Occupancy grid map(move_base)
     std::vector<cv::Point> frontier_centroids;       // Centroid of gravity of the frontier
     double distance_between_candidates = 0.3;        // Distance between center of gravity of frontier and viewpoint candidates[m]
     double candidate_yaw_resolution = 0.6;           // Candidate orientation resolution
@@ -97,12 +97,12 @@ class GeneratingCandidatesServer {
     void mapUpdate(const nav_msgs::OccupancyGridConstPtr &map);
 
     /*-----------------------------
-    overview: Update grobal_costmap (grobal_costmap_) (using ROS subscribe)
-    argument: grobal_costmap(Occupancy grid map)
+    overview: Update global_costmap (global_costmap_) (using ROS subscribe)
+    argument: global_costmap(Occupancy grid map)
     return: None
-    set: grobal_costmap_(Occupancy grid map)
+    set: global_costmap_(Occupancy grid map)
     -----------------------------*/
-    void grobalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &grobal_costmap);
+    void globalCostmapUpdate(const nav_msgs::OccupancyGridConstPtr &global_costmap);
 
     /*-----------------------------
     overview: Convert map from occupied grid map format to image format
