@@ -23,6 +23,11 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
+// OpenMP
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 // opencv
 #include "opencv2/highgui/highgui.hpp"
 #include <cv_bridge/cv_bridge.h>
@@ -107,6 +112,14 @@ class ViewpointEvaluatorServer {
     using: get_candidates_cli_(generating_candidates)
     -----------------------------*/
     bool getCandidates(void);
+
+    /*-----------------------------
+    overview: Evaluate viewpoint candidates
+    argument: None
+    return: None
+    using: candidates, distances
+    -----------------------------*/
+    void evaluateViewpoints(void);
 
   public:
     /*-----------------------------

@@ -150,6 +150,15 @@ bool ViewpointEvaluatorServer::getCandidates(void) {
 }
 
 /*-----------------------------
+overview: Evaluate viewpoint candidates
+argument: None
+return: None
+using: candidates, distances
+-----------------------------*/
+void evaluateViewpoints(void) {
+}
+
+/*-----------------------------
 overview: Get next viewpoint(using ROS service)
 argument: req, res (Take a look at get_next_viewpoint.srv)
 return: is_succeeded - True if NBV (Next viewpoint) can be acquired normally
@@ -163,6 +172,7 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
     }
     visualizationCandidates();
     calcViewpointDistances();
+    evaluateViewpoints();
     res.is_succeeded = true;
     return true;
 }
