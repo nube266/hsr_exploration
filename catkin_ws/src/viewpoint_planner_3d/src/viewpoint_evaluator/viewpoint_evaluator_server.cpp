@@ -155,7 +155,7 @@ argument: None
 return: None
 using: candidates, distances
 -----------------------------*/
-void evaluateViewpoints(void) {
+void ViewpointEvaluatorServer::evaluateViewpoints(void) {
 }
 
 /*-----------------------------
