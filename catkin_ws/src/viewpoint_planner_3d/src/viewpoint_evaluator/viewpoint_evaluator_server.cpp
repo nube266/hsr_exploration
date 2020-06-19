@@ -19,8 +19,8 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
     odom_sub_ = nh_->subscribe(odom_topic, 1, &ViewpointEvaluatorServer::odomCallback, this);
     octomap_sub_ = nh_->subscribe("/octomap_binary", 1, &ViewpointEvaluatorServer::subscribeOctomap, this);
     // Initialize get tree time
-    current_get_tree_time = std::chrono::system_clock::now();
-    previous_get_tree_time = current_get_tree_time;
+    current_get_octree_time = std::chrono::system_clock::now();
+    previous_get_octree_time = current_get_octree_time;
     ROS_INFO("Ready to viewpoint_evaluator_server");
 }
 
@@ -59,18 +59,47 @@ void ViewpointEvaluatorServer::odomCallback(const nav_msgs::Odometry::ConstPtr &
 overview: Get the octomap
 argument: None
 return: None
-set: tree_(Octree)
+set: octree_(Octree)
 -----------------------------*/
 void ViewpointEvaluatorServer::subscribeOctomap(const octomap_msgs::Octomap &msg) {
-    tree_mutex.lock();
+    octree_mutex.lock();
     // Convert the binary message of OctoMap into an octomap::Octee
-    if(tree_ != nullptr) {
-        delete tree_;
+    if(octree_ != nullptr) {
+        delete octree_;
     }
     octomap::AbstractOcTree *tmp = octomap_msgs::binaryMsgToMap(msg);
-    tree_ = dynamic_cast<octomap::OcTree *>(tmp);
-    current_get_tree_time = std::chrono::system_clock::now();
-    tree_mutex.unlock();
+    octree_ = dynamic_cast<octomap::OcTree *>(tmp);
+    current_get_octree_time = std::chrono::system_clock::now();
+    octree_mutex.unlock();
+}
+
+/*-----------------------------
+overview: Wait until Octomap can be acquired
+argument: None
+return: Returns false if Octomap cannot be obtained
+set: octree_(Octree)
+-----------------------------*/
+bool ViewpointEvaluatorServer::waitGetOctomap(void) {
+    // Wait for Octomap to be updated
+    std::chrono::system_clock::time_point start, current;
+    start = std::chrono::system_clock::now();
+    float elapsed_time = 0.0;
+    while(elapsed_time < timeout) {
+        if(current_get_octree_time != previous_get_octree_time) {
+            previous_get_octree_time = current_get_octree_time;
+            break;
+        }
+        current = std::chrono::system_clock::now();
+        elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
+    }
+    if(elapsed_time >= timeout) {
+        std::cout << "[Warning] map is not updated" << std::endl;
+    }
+    if(octree_ == nullptr) {
+        std::cout << "Failed to get to octree" << std::endl;
+        return false;
+    }
+    return true;
 }
 
 /*-----------------------------
@@ -174,34 +203,28 @@ bool ViewpointEvaluatorServer::getCandidates(void) {
 /*-----------------------------
 overview: Evaluate viewpoint candidates
 argument: None
-return: None
+return: Returns true if the viewpoint candidate is evaluated successfully
 using: candidates, distances
 -----------------------------*/
-void ViewpointEvaluatorServer::evaluateViewpoints(void) {
-    // Wait for Octomap to be updated
+bool ViewpointEvaluatorServer::evaluateViewpoints(void) {
+    // Initialize
     std::chrono::system_clock::time_point start, current;
     start = std::chrono::system_clock::now();
-    float elapsed_time = 0.0;
-    while(elapsed_time < timeout) {
-        if(current_get_tree_time != previous_get_tree_time) {
-            previous_get_tree_time = current_get_tree_time;
-            break;
-        }
-        current = std::chrono::system_clock::now();
-        elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
-    }
-    if(elapsed_time >= timeout) {
-        std::cout << "[Warning] map is not updated" << std::endl;
-    }
-    // Initialize
     std::vector<double> gains;
     gains.resize(candidates.size());
 #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
-
         // int unknwonNum = countUnknownObservable(viewpoint, depth);
         // gains[i] = unknwonNum * std::exp(-1.0 * lambda_ * distance);
     }
+    /*
+    current = std::chrono::system_clock::now();
+    float elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
+    std::cout << "------------" << std::endl;
+    std::cout << "elapsed time: " << elapsed_time << std::endl;
+    std::cout << "------------" << std::endl;
+    */
+    return true;
 }
 
 /*-----------------------------
@@ -212,13 +235,20 @@ Ros searvice to use: get_viewpoint_candidates
 -----------------------------*/
 bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                                       viewpoint_planner_3d::get_next_viewpoint::Response &res) {
+    if(!waitGetOctomap()) {
+        res.is_succeeded = false;
+        return false;
+    }
     if(!getCandidates()) {
         res.is_succeeded = false;
         return false;
     }
     visualizationCandidates();
     calcViewpointDistances();
-    evaluateViewpoints();
+    if(!evaluateViewpoints()) {
+        res.is_succeeded = false;
+        return false;
+    }
     res.is_succeeded = true;
     return true;
 }

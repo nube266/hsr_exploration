@@ -70,10 +70,10 @@ class ViewpointEvaluatorServer {
     navfn::NavfnROS planner_;                    // Path planner
 
     /* Octomap */
-    octomap::OcTree *tree_ = nullptr;
-    std::mutex tree_mutex;
-    std::chrono::system_clock::time_point current_get_tree_time;  // Time to get the latest Octree
-    std::chrono::system_clock::time_point previous_get_tree_time; // 前回視点計画
+    octomap::OcTree *octree_ = nullptr;
+    std::mutex octree_mutex;
+    std::chrono::system_clock::time_point current_get_octree_time;  // Time to get the latest Octree
+    std::chrono::system_clock::time_point previous_get_octree_time; // 前回視点計画
 
     /* Parameter */
     double timeout = 10.0;                  // Timeout time when stopped by some processing[s]
@@ -100,9 +100,17 @@ class ViewpointEvaluatorServer {
     overview: Get the octomap
     argument: None
     return: None
-    set: tree_(Octree)
+    set: octree_(Octree)
     -----------------------------*/
     void subscribeOctomap(const octomap_msgs::Octomap &msg);
+
+    /*-----------------------------
+    overview: Wait until Octomap can be acquired
+    argument: None
+    return: Returns false if Octomap cannot be obtained
+    set: octree_(Octree)
+    -----------------------------*/
+    bool waitGetOctomap(void);
 
     /*-----------------------------
     overview: Returns the total travel distance in the entered travel plan
@@ -138,10 +146,10 @@ class ViewpointEvaluatorServer {
     /*-----------------------------
     overview: Evaluate viewpoint candidates
     argument: None
-    return: None
+    return: Returns true if the viewpoint candidate is evaluated successfully
     using: candidates, distances
     -----------------------------*/
-    void evaluateViewpoints(void);
+    bool evaluateViewpoints(void);
 
   public:
     /*-----------------------------
