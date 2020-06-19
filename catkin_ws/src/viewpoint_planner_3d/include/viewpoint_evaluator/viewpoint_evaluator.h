@@ -23,6 +23,13 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
+// OctoMap
+#include <octomap/OcTree.h>
+#include <octomap/octomap.h>
+#include <octomap_msgs/GetOctomap.h>
+#include <octomap_msgs/Octomap.h>
+#include <octomap_msgs/conversions.h>
+
 // OpenMP
 #ifdef _OPENMP
 #include <omp.h>
@@ -52,6 +59,7 @@ class ViewpointEvaluatorServer {
     ros::ServiceClient get_candidates_cli_; // ROS service client that gets view viewpoint candidates
     ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
     ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
+    ros::Subscriber octomap_sub_;           // ROS subscriber to get the Octomap(Octree)
     ros::ServiceClient make_path_cli_;      // move_base route planning service client
     ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
 
@@ -60,6 +68,12 @@ class ViewpointEvaluatorServer {
     std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidates
     std::vector<double> distances;               // Distance to each viewpoint candidates
     navfn::NavfnROS planner_;                    // Path planner
+
+    /* Octomap */
+    octomap::OcTree *tree_ = nullptr;
+    std::mutex tree_mutex;
+    std::chrono::system_clock::time_point current_get_tree_time;  // Time to get the latest Octree
+    std::chrono::system_clock::time_point previous_get_tree_time; // 前回視点計画
 
     /* Parameter */
     double timeout = 10.0;                  // Timeout time when stopped by some processing[s]
@@ -81,6 +95,14 @@ class ViewpointEvaluatorServer {
     set: odom_
     -----------------------------*/
     void odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg);
+
+    /*-----------------------------
+    overview: Get the octomap
+    argument: None
+    return: None
+    set: tree_(Octree)
+    -----------------------------*/
+    void subscribeOctomap(const octomap_msgs::Octomap &msg);
 
     /*-----------------------------
     overview: Returns the total travel distance in the entered travel plan

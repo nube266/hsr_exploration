@@ -17,6 +17,10 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
     // Initialize Subscriber and Publisher
     odom_sub_ = nh_->subscribe(odom_topic, 1, &ViewpointEvaluatorServer::odomCallback, this);
+    octomap_sub_ = nh_->subscribe("/octomap_binary", 1, &ViewpointEvaluatorServer::subscribeOctomap, this);
+    // Initialize get tree time
+    current_get_tree_time = std::chrono::system_clock::now();
+    previous_get_tree_time = current_get_tree_time;
     ROS_INFO("Ready to viewpoint_evaluator_server");
 }
 
@@ -31,7 +35,7 @@ ViewpointEvaluatorServer::~ViewpointEvaluatorServer() {
 /*-----------------------------
 overview: Set of ROS parameters
 argument: None
-Return: None
+return: None
 -----------------------------*/
 void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/timeout", timeout);
@@ -43,8 +47,8 @@ void ViewpointEvaluatorServer::setParam() {
 /*-----------------------------
 overview: Get current robot position
 argument: None
-Return: None
-Set: odom
+return: None
+set: odom
 -----------------------------*/
 void ViewpointEvaluatorServer::odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg) {
     nav_msgs::Odometry odom = *odom_msg;
@@ -52,9 +56,27 @@ void ViewpointEvaluatorServer::odomCallback(const nav_msgs::Odometry::ConstPtr &
 }
 
 /*-----------------------------
+overview: Get the octomap
+argument: None
+return: None
+set: tree_(Octree)
+-----------------------------*/
+void ViewpointEvaluatorServer::subscribeOctomap(const octomap_msgs::Octomap &msg) {
+    tree_mutex.lock();
+    // Convert the binary message of OctoMap into an octomap::Octee
+    if(tree_ != nullptr) {
+        delete tree_;
+    }
+    octomap::AbstractOcTree *tmp = octomap_msgs::binaryMsgToMap(msg);
+    tree_ = dynamic_cast<octomap::OcTree *>(tmp);
+    current_get_tree_time = std::chrono::system_clock::now();
+    tree_mutex.unlock();
+}
+
+/*-----------------------------
 overview: Returns the total travel distance in the entered travel plan
 argument: plan(toravel plan)
-Return: distance[m]
+return: distance[m]
 -----------------------------*/
 double ViewpointEvaluatorServer::calcTravelDistance(const nav_msgs::Path &plan) {
     double distance = 0.0;
@@ -156,6 +178,30 @@ return: None
 using: candidates, distances
 -----------------------------*/
 void ViewpointEvaluatorServer::evaluateViewpoints(void) {
+    // Wait for Octomap to be updated
+    std::chrono::system_clock::time_point start, current;
+    start = std::chrono::system_clock::now();
+    float elapsed_time = 0.0;
+    while(elapsed_time < timeout) {
+        if(current_get_tree_time != previous_get_tree_time) {
+            previous_get_tree_time = current_get_tree_time;
+            break;
+        }
+        current = std::chrono::system_clock::now();
+        elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
+    }
+    if(elapsed_time >= timeout) {
+        std::cout << "[Warning] map is not updated" << std::endl;
+    }
+    // Initialize
+    std::vector<double> gains;
+    gains.resize(candidates.size());
+#pragma omp parallel for schedule(guided, 1), default(shared)
+    for(int i = 0; i < candidates.size(); ++i) {
+
+        // int unknwonNum = countUnknownObservable(viewpoint, depth);
+        // gains[i] = unknwonNum * std::exp(-1.0 * lambda_ * distance);
+    }
 }
 
 /*-----------------------------
