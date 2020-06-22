@@ -144,6 +144,34 @@ class ViewpointEvaluatorServer {
     bool getCandidates(void);
 
     /*-----------------------------
+    overview: Convert euler angle to quaternion
+    argument: Euler(roll, pitch, yaw)
+    return: quaternion
+    -----------------------------*/
+    geometry_msgs::Quaternion rpy_to_geometry_quat(double roll, double pitch, double yaw);
+
+    /*-----------------------------
+    overview: Convert quaternion to euler angle
+    argument: quaternion
+    return: Euler(roll, pitch, yaw)
+    -----------------------------*/
+    void geometry_quat_to_rpy(double &roll, double &pitch, double &yaw, geometry_msgs::Quaternion geometry_quat);
+
+    /*-----------------------------
+    overview: Returns the end points of the raycast
+    argument: viewpoint(pose),
+    return: End points of the raycast
+    -----------------------------*/
+    std::vector<geometry_msgs::Point> computeRayDirections(geometry_msgs::Pose viewpoint);
+
+    /*-----------------------------
+    overview: Calculate the region of ​​the unknown that can be observed from the viewpoint candidate
+    argument: viewpoint(pose), distance(double)
+    return: Number of Unknown voxels
+    -----------------------------*/
+    int countUnknownObservable(geometry_msgs::Pose viewpoint, double distance);
+
+    /*-----------------------------
     overview: Evaluate viewpoint candidates
     argument: None
     return: Returns true if the viewpoint candidate is evaluated successfully

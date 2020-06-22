@@ -201,6 +201,53 @@ bool ViewpointEvaluatorServer::getCandidates(void) {
 }
 
 /*-----------------------------
+overview: Convert euler angle to quaternion
+argument: Euler(roll, pitch, yaw)
+return: quaternion
+-----------------------------*/
+geometry_msgs::Quaternion ViewpointEvaluatorServer::rpy_to_geometry_quat(double roll, double pitch, double yaw) {
+    tf::Quaternion quat = tf::createQuaternionFromRPY(roll, pitch, yaw);
+    geometry_msgs::Quaternion geometry_quat;
+    quaternionTFToMsg(quat, geometry_quat);
+    return geometry_quat;
+}
+
+/*-----------------------------
+overview: Convert quaternion to euler angle
+argument: quaternion
+return: Euler(roll, pitch, yaw)
+-----------------------------*/
+void ViewpointEvaluatorServer::geometry_quat_to_rpy(double &roll, double &pitch, double &yaw, geometry_msgs::Quaternion geometry_quat) {
+    tf::Quaternion quat;
+    quaternionMsgToTF(geometry_quat, quat);
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+}
+
+/*-----------------------------
+overview: Returns the end points of the raycast
+argument: viewpoint(pose),
+return: End points of the raycast
+-----------------------------*/
+std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections(geometry_msgs::Pose viewpoint) {
+    // TODO: Make this part variable with rosparam
+    double horizotal_range = 58.0;
+    double vertical_range = 45.0;
+    // Convert viewpoint direction to Euler angle
+    double roll, pitch, yaw;
+    geometry_quat_to_rpy(roll, pitch, yaw, viewpoint.orientation);
+}
+
+/*-----------------------------
+overview: Calculate the region of ​​the unknown that can be observed from the viewpoint candidate
+argument: viewpoint(pose), distance(double)
+return: Number of Unknown voxels
+-----------------------------*/
+int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoint, double distance) {
+    int result = 0;
+    return result;
+}
+
+/*-----------------------------
 overview: Evaluate viewpoint candidates
 argument: None
 return: Returns true if the viewpoint candidate is evaluated successfully
