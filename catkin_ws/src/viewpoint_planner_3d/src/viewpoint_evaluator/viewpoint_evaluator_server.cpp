@@ -92,6 +92,7 @@ bool ViewpointEvaluatorServer::waitGetOctomap(void) {
         }
         current = std::chrono::system_clock::now();
         elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
+        ros::spinOnce();
     }
     if(elapsed_time >= timeout) {
         std::cout << "[Warning] map is not updated" << std::endl;
@@ -397,10 +398,10 @@ Ros searvice to use: get_viewpoint_candidates
 bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                                       viewpoint_planner_3d::get_next_viewpoint::Response &res) {
     // Changed to decide whether to wait for Octomap update with ROS param
-    // if(!waitGetOctomap()) {
-    //     res.is_succeeded = false;
-    //     return false;
-    // }
+    if(!waitGetOctomap()) {
+        res.is_succeeded = false;
+        return false;
+    }
     if(!getCandidates()) {
         res.is_succeeded = false;
         return false;
