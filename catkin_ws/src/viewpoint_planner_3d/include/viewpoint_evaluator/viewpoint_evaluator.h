@@ -58,6 +58,7 @@ class ViewpointEvaluatorServer {
     ros::ServiceServer get_nbv_srv_;        // ROS service that gets next viewpoint
     ros::ServiceClient get_candidates_cli_; // ROS service client that gets view viewpoint candidates
     ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
+    ros::Publisher raycast_marker_pub_;     // ROS publisher for displaying raycast markers
     ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
     ros::Subscriber octomap_sub_;           // ROS subscriber to get the Octomap(Octree)
     ros::ServiceClient make_path_cli_;      // move_base route planning service client
@@ -156,6 +157,20 @@ class ViewpointEvaluatorServer {
     return: Euler(roll, pitch, yaw)
     -----------------------------*/
     void geometry_quat_to_rpy(double &roll, double &pitch, double &yaw, geometry_msgs::Quaternion geometry_quat);
+
+    /*-----------------------------
+    overview: Convert degree to radian
+    argument: degree
+    return: radian
+    -----------------------------*/
+    double deg2rad(double deg);
+
+    /*-----------------------------
+    overview: Raycast endpoint visualization
+    argument: viewpoint and the end point of the raycast at this point
+    return: None
+    -----------------------------*/
+    void visualizationRaycastEndpoint(geometry_msgs::Pose viewpoint, std::vector<geometry_msgs::Point> end_points);
 
     /*-----------------------------
     overview: Returns the end points of the raycast

@@ -13,6 +13,7 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
     get_nbv_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_next_viewpoint", &ViewpointEvaluatorServer::getNBV, this);
     get_candidates_cli_ = nh_->serviceClient<viewpoint_planner_3d::get_candidates>("/viewpoint_planner_3d/get_candidates");
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
+    raycast_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/raycast_marker", 1);
     make_path_cli_ = nh_->serviceClient<nav_msgs::GetPlan>("/move_base/make_plan", true);
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
     // Initialize Subscriber and Publisher
@@ -224,17 +225,129 @@ void ViewpointEvaluatorServer::geometry_quat_to_rpy(double &roll, double &pitch,
 }
 
 /*-----------------------------
+overview: Convert degree to radian
+argument: degree
+return: radian
+-----------------------------*/
+double ViewpointEvaluatorServer::deg2rad(double deg) {
+    return deg * (M_PI / 180);
+}
+
+/*-----------------------------
+overview: Raycast endpoint visualization
+argument: viewpoint and the end point of the raycast at this point
+return: None
+-----------------------------*/
+void ViewpointEvaluatorServer::visualizationRaycastEndpoint(geometry_msgs::Pose viewpoint, std::vector<geometry_msgs::Point> end_points) {
+    visualization_msgs::MarkerArray marker_array;
+    marker_array.markers.resize(end_points.size() + 1);
+    int id = 0;
+    for(geometry_msgs::Point end_point : end_points) {
+        visualization_msgs::Marker marker;
+        marker_array.markers[id].header.frame_id = "/map";
+        marker_array.markers[id].header.stamp = ros::Time::now();
+        marker_array.markers[id].ns = "/end_points";
+        marker_array.markers[id].id = id;
+        marker_array.markers[id].type = visualization_msgs::Marker::CUBE;
+        marker_array.markers[id].action = visualization_msgs::Marker::ADD;
+        marker_array.markers[id].lifetime = ros::Duration(5.0);
+        marker_array.markers[id].pose = viewpoint;
+        marker_array.markers[id].pose.position.x = end_point.x;
+        marker_array.markers[id].pose.position.y = end_point.y;
+        marker_array.markers[id].pose.position.z = end_point.z;
+        marker_array.markers[id].scale.x = 0.05;
+        marker_array.markers[id].scale.y = 0.05;
+        marker_array.markers[id].scale.z = 0.05;
+        marker_array.markers[id].color.r = 0.0f;
+        marker_array.markers[id].color.g = 1.0f;
+        marker_array.markers[id].color.b = 0.0f;
+        marker_array.markers[id].color.a = 1.0f;
+        id++;
+    }
+    visualization_msgs::Marker marker;
+    marker_array.markers[id].header.frame_id = "/map";
+    marker_array.markers[id].header.stamp = ros::Time::now();
+    marker_array.markers[id].ns = "/viewpoint";
+    marker_array.markers[id].id = id;
+    marker_array.markers[id].type = visualization_msgs::Marker::ARROW;
+    marker_array.markers[id].action = visualization_msgs::Marker::ADD;
+    marker_array.markers[id].lifetime = ros::Duration(5.0);
+    marker_array.markers[id].pose = viewpoint;
+    marker_array.markers[id].scale.x = 0.5;
+    marker_array.markers[id].scale.y = 0.05;
+    marker_array.markers[id].scale.z = 0.05;
+    marker_array.markers[id].color.r = 1.0f;
+    marker_array.markers[id].color.g = 0.0f;
+    marker_array.markers[id].color.b = 0.0f;
+    marker_array.markers[id].color.a = 1.0f;
+    raycast_marker_pub_.publish(marker_array);
+}
+
+/*-----------------------------
 overview: Returns the end points of the raycast
 argument: viewpoint(pose),
 return: End points of the raycast
 -----------------------------*/
 std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections(geometry_msgs::Pose viewpoint) {
-    // TODO: Make this part variable with rosparam
-    double horizotal_range = 58.0;
-    double vertical_range = 45.0;
     // Convert viewpoint direction to Euler angle
     double roll, pitch, yaw;
     geometry_quat_to_rpy(roll, pitch, yaw, viewpoint.orientation);
+    // TODO: Make this part variable with rosparam
+    double horizotal_range = deg2rad(58.0);
+    double vertical_range = deg2rad(45.0);
+    double horizotal_resolution = deg2rad(1.0);
+    double vertical_resolution = deg2rad(1.0);
+    double max_range = 3.5;
+    // Upper and lower limits of vertical angle
+    double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
+    double theta_max = M_PI / 2 + vertical_range / 2 + pitch;
+    // Upper and lower limits of horizontal angle
+    double fai_min = yaw - horizotal_range / 2;
+    double fai_max = yaw + horizotal_range / 2;
+    if(fai_max >= 2 * M_PI)
+        fai_max = fai_max - 2 * M_PI;
+    if(fai_max < 0.0)
+        fai_max = fai_max + 2 * M_PI;
+    if(fai_min >= 2 * M_PI)
+        fai_min = fai_min - 2 * M_PI;
+    if(fai_min < 0.0)
+        fai_min = fai_min + 2 * M_PI;
+    if(fai_max < fai_min) {
+        double temp = fai_max;
+        fai_max = fai_min;
+        fai_min = temp;
+    }
+    // Calculate end points of ray_cast
+    std::vector<geometry_msgs::Point> end_points;
+    if(abs(fai_max - fai_min - horizotal_range) > abs(fai_min + 2 * M_PI - fai_max - horizotal_range)) {
+        // When the sensor range passes the singular point (0[deg])
+        double fai = fai_max;
+        while(fai < fai_min && fai >= fai_max) {
+            for(double theta = theta_min; theta < theta_max; theta += vertical_resolution) {
+                geometry_msgs::Point end_point;
+                end_point.x = viewpoint.position.x + max_range * sin(theta) * cos(fai);
+                end_point.y = viewpoint.position.y + max_range * sin(theta) * sin(fai);
+                end_point.z = viewpoint.position.z + max_range * cos(theta);
+                end_points.push_back(end_point);
+            }
+            fai += horizotal_resolution;
+        }
+    } else {
+        double fai = fai_min;
+        while(fai >= fai_min && fai < fai_max) {
+            for(double theta = theta_min; theta < theta_max; theta += vertical_resolution) {
+                geometry_msgs::Point end_point;
+                end_point.x = viewpoint.position.x + max_range * sin(theta) * cos(fai);
+                end_point.y = viewpoint.position.y + max_range * sin(theta) * sin(fai);
+                end_point.z = viewpoint.position.z + max_range * cos(theta);
+                end_points.push_back(end_point);
+            }
+            fai += horizotal_resolution;
+        }
+    }
+    // TODO: Make it possible to change whether to visualize with ROS param
+    // visualizationRaycastEndpoint(viewpoint, end_points);
+    return end_points;
 }
 
 /*-----------------------------
@@ -244,6 +357,7 @@ return: Number of Unknown voxels
 -----------------------------*/
 int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoint, double distance) {
     int result = 0;
+    std::vector<geometry_msgs::Point> ray_end_points = computeRayDirections(viewpoint);
     return result;
 }
 
@@ -259,9 +373,9 @@ bool ViewpointEvaluatorServer::evaluateViewpoints(void) {
     start = std::chrono::system_clock::now();
     std::vector<double> gains;
     gains.resize(candidates.size());
-#pragma omp parallel for schedule(guided, 1), default(shared)
+    // #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
-        // int unknwonNum = countUnknownObservable(viewpoint, depth);
+        int unknwonNum = countUnknownObservable(candidates[i], distances[i]);
         // gains[i] = unknwonNum * std::exp(-1.0 * lambda_ * distance);
     }
     /*
@@ -282,10 +396,11 @@ Ros searvice to use: get_viewpoint_candidates
 -----------------------------*/
 bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                                       viewpoint_planner_3d::get_next_viewpoint::Response &res) {
-    if(!waitGetOctomap()) {
-        res.is_succeeded = false;
-        return false;
-    }
+    // Changed to decide whether to wait for Octomap update with ROS param
+    // if(!waitGetOctomap()) {
+    //     res.is_succeeded = false;
+    //     return false;
+    // }
     if(!getCandidates()) {
         res.is_succeeded = false;
         return false;
