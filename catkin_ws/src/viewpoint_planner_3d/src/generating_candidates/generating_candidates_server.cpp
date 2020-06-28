@@ -225,6 +225,7 @@ bool GeneratingCandidatesServer::waitMap(void) {
     std::chrono::system_clock::time_point start, current;
     start = std::chrono::system_clock::now();
     while(1) {
+        ros::spinOnce();
         if(map_ != NULL)
             return true;
         current = std::chrono::system_clock::now();

@@ -86,13 +86,13 @@ bool ViewpointEvaluatorServer::waitGetOctomap(void) {
     start = std::chrono::system_clock::now();
     float elapsed_time = 0.0;
     while(elapsed_time < timeout) {
+        ros::spinOnce();
         if(current_get_octree_time != previous_get_octree_time) {
             previous_get_octree_time = current_get_octree_time;
             break;
         }
         current = std::chrono::system_clock::now();
         elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
-        ros::spinOnce();
     }
     if(elapsed_time >= timeout) {
         std::cout << "[Warning] map is not updated" << std::endl;
@@ -294,11 +294,13 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
     double roll, pitch, yaw;
     geometry_quat_to_rpy(roll, pitch, yaw, viewpoint.orientation);
     // TODO: Make this part variable with rosparam
+    double max_range = 3.5;
     double horizotal_range = deg2rad(58.0);
     double vertical_range = deg2rad(45.0);
-    double horizotal_resolution = deg2rad(1.0);
-    double vertical_resolution = deg2rad(1.0);
-    double max_range = 3.5;
+    double octomap_resolution = 0.05;
+    ros::param::get("/octomap_server/resolution", octomap_resolution);
+    double horizotal_resolution = deg2rad(360 * octomap_resolution / max_range);
+    double vertical_resolution = deg2rad(360 * octomap_resolution / max_range);
     // Upper and lower limits of vertical angle
     double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
     double theta_max = M_PI / 2 + vertical_range / 2 + pitch;
@@ -346,8 +348,10 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
             fai += horizotal_resolution;
         }
     }
-    // TODO: Make it possible to change whether to visualize with ROS param
     // visualizationRaycastEndpoint(viewpoint, end_points);
+    // cv::Mat image = cv::Mat::zeros(500, 500, CV_8UC3);
+    // cv::imshow("image", image);
+    // cv::waitKey(0);
     return end_points;
 }
 
