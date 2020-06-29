@@ -43,6 +43,9 @@ void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/candidate_marker_lifetime", candidate_marker_lifetime);
     ros::param::get("/viewpoint_evaluator/path_planning_tolerance", path_planning_tolerance);
     ros::param::get("/viewpoint_evaluator/odom_topic", odom_topic);
+    ros::param::get("/viewpoint_evaluator/sensor_max_range", sensor_max_range);
+    ros::param::get("/viewpoint_evaluator/sensor_horizotal_range", sensor_horizontal_range);
+    ros::param::get("/viewpoint_evaluator/sensor_vertical_range", sensor_vertical_range);
 }
 
 /*-----------------------------
@@ -293,14 +296,14 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
     // Convert viewpoint direction to Euler angle
     double roll, pitch, yaw;
     geometry_quat_to_rpy(roll, pitch, yaw, viewpoint.orientation);
-    // TODO: Make this part variable with rosparam
-    double max_range = 3.5;
-    double horizotal_range = deg2rad(58.0);
-    double vertical_range = deg2rad(45.0);
-    double octomap_resolution = 0.05;
+    // Set sensor parameter and resolution
+    double max_range = sensor_max_range;
+    double horizotal_range = deg2rad(sensor_horizontal_range);
+    double vertical_range = deg2rad(sensor_vertical_range);
+    double octomap_resolution;
     ros::param::get("/octomap_server/resolution", octomap_resolution);
-    double horizotal_resolution = deg2rad(360 * octomap_resolution / max_range);
-    double vertical_resolution = deg2rad(360 * octomap_resolution / max_range);
+    double horizotal_resolution = deg2rad(octomap_resolution * 2 * M_PI / max_range);
+    double vertical_resolution = deg2rad(octomap_resolution * 2 * M_PI / max_range);
     // Upper and lower limits of vertical angle
     double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
     double theta_max = M_PI / 2 + vertical_range / 2 + pitch;

@@ -25,6 +25,12 @@
     <arg name="max_free_space_noize_size" default="0.1"/>
     <!-- tolerance in make_plan of move_base -->
     <arg name="path_planning_tolerance" default="0.3"/>
+    <!-- Maximum sensor range (distance) [m] -->
+    <arg name="sensor_max_range" default="3.5"/>
+    <!-- Horizontal sensor viewing angle [deg] -->
+    <arg name="sensor_horizontal_range" default="58.0"/>
+    <!-- Vertical sensor viewing angle [deg] -->
+    <arg name="sensor_vertical_range" default="45.0"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -37,6 +43,9 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
         <param name="max_free_space_noize_size" value="$(arg max_free_space_noize_size)" type="double"/>
+        <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
+        <param name="sensor_horizontal_range" value="$(arg horizontal_range)" type="double"/>
+        <param name="sensor_vertical_range" value="$(arg vertical_range)" type="double"/>
     </node>
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
