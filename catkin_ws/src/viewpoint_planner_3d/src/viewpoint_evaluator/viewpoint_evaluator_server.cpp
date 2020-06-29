@@ -302,8 +302,8 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
     double vertical_range = deg2rad(sensor_vertical_range);
     double octomap_resolution;
     ros::param::get("/octomap_server/resolution", octomap_resolution);
-    double horizotal_resolution = deg2rad(octomap_resolution * 2 * M_PI / max_range);
-    double vertical_resolution = deg2rad(octomap_resolution * 2 * M_PI / max_range);
+    double horizotal_resolution = deg2rad(1.0);
+    double vertical_resolution = deg2rad(1.0);
     // Upper and lower limits of vertical angle
     double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
     double theta_max = M_PI / 2 + vertical_range / 2 + pitch;

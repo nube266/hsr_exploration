@@ -43,9 +43,6 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
         <param name="max_free_space_noize_size" value="$(arg max_free_space_noize_size)" type="double"/>
-        <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
-        <param name="sensor_horizontal_range" value="$(arg horizontal_range)" type="double"/>
-        <param name="sensor_vertical_range" value="$(arg vertical_range)" type="double"/>
     </node>
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">
@@ -53,5 +50,8 @@
         <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
         <param name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)" type="double"/>
         <param name="path_planning_tolerance" value="$(arg path_planning_tolerance)" type="double"/>
+        <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
+        <param name="sensor_horizontal_range" value="$(arg sensor_horizontal_range)" type="double"/>
+        <param name="sensor_vertical_range" value="$(arg sensor_vertical_range)" type="double"/>
     </node>
 </launch>
