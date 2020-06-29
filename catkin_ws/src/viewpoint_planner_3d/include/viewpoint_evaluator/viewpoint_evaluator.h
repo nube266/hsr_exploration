@@ -16,6 +16,7 @@
 #include <navfn/navfn_ros.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <std_msgs/ColorRGBA.h>
 #include <std_srvs/Empty.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
@@ -181,6 +182,13 @@ class ViewpointEvaluatorServer {
     return: End points of the raycast
     -----------------------------*/
     std::vector<geometry_msgs::Point> computeRayDirections(geometry_msgs::Pose viewpoint);
+
+    /*-----------------------------
+    overview: Voxel visualization
+    argument: octomap node key
+    return: None
+    -----------------------------*/
+    void visualizationVoxel(octomap::OcTreeKey key);
 
     /*-----------------------------
     overview: Calculate the region of ​​the unknown that can be observed from the viewpoint candidate
