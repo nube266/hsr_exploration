@@ -379,33 +379,32 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
     octomap::OcTreeKey justRay, previousRay;
     bool isFirst = true;
     // Count the number of unknown voxels with raycast
-    for (auto it = ray_end_points.begin(); it != ray_end_points.end(); ++it) {
+    for(auto it = ray_end_points.begin(); it != ray_end_points.end(); ++it) {
         octomap::point3d end(it->x, it->y, it->z);
         // If the ray passes through the same cell as the previous time, skip the following process
         justRay = octree_->coordToKey(end);
-        if (isFirst) {
+        if(isFirst) {
             previousRay = justRay;
             isFirst = false;
-        }
-        else {
-            if (justRay == previousRay)  continue;
-            else                         previousRay = justRay;
+        } else {
+            if(justRay == previousRay)
+                continue;
+            else
+                previousRay = justRay;
         }
         // Ray casting
-        octomap::KeyRay  ray;
+        octomap::KeyRay ray;
         octomap::point3d origin(viewpoint.position.x, viewpoint.position.y, viewpoint.position.z);
         bool success = octree_->computeRayKeys(origin, end, ray);
         // Count the number of unknown cell observable
-        if (success && ray.size() != 0) {
-            int id = 0;
-            for (auto _it = ray.begin(); _it != ray.end(); ++_it) {
+        if(success && ray.size() != 0) {
+            for(auto _it = ray.begin(); _it != ray.end(); ++_it) {
                 // Check whether ray hits an unknown cell or occupied cell
-                octomap::OcTreeNode* node = nullptr;
+                octomap::OcTreeNode *node = nullptr;
                 node = octree_->search(*_it);
-                if (node == nullptr) {
-                        unknown.insert(*_it);
-                }
-                else if (octree_->isNodeOccupied(node)) {
+                if(node == nullptr) {
+                    unknown.insert(*_it);
+                } else if(octree_->isNodeOccupied(node)) {
                     break;
                 }
                 id++;
