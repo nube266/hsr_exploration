@@ -1,3 +1,4 @@
 ---
 bool is_succeeded
 geometry_msgs/Pose next_viewpoint
+float32 viewpoint_height

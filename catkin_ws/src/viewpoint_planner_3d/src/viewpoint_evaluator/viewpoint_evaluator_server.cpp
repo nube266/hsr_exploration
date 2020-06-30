@@ -504,7 +504,10 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
     }
     visualizationCandidates();
     calcViewpointDistances();
-    res.next_viewpoint = evaluateViewpoints();
+    geometry_msgs::Pose next_viewpoint = evaluateViewpoints();
+    double viewpoint_height = next_viewpoint.position.z;
+    next_viewpoint.position.z = 0.0;
+    res.next_viewpoint = next_viewpoint;
     res.is_succeeded = true;
     return true;
 } // namespace viewpoint_evaluator_server

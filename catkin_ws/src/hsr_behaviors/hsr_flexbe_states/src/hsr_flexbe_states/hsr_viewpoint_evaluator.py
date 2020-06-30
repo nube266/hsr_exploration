@@ -28,6 +28,9 @@ class hsr_ViewpointEvaluatorState(EventState):
     def execute(self, userdata):
         rospy.loginfo("Select next viewpoint")
         res = self._service()
+        userdata.pose = res.next_viewpoint
+        print("pose: ")
+        print(res.next_viewpoint)
         if res.is_succeeded:
             rospy.loginfo("Successfully selected next viewpoint")
             return "succeeded"
