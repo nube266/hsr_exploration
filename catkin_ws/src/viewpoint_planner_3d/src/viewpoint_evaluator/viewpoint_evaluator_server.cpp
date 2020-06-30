@@ -302,8 +302,8 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
     double vertical_range = deg2rad(sensor_vertical_range);
     double octomap_resolution;
     ros::param::get("/octomap_server/resolution", octomap_resolution);
-    double horizotal_resolution = deg2rad(1.0);
-    double vertical_resolution = deg2rad(1.0);
+    double horizotal_resolution = deg2rad(5.0);
+    double vertical_resolution = deg2rad(5.0);
     // Upper and lower limits of vertical angle
     double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
     double theta_max = M_PI / 2 + vertical_range / 2 + pitch;
@@ -359,25 +359,55 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
 }
 
 /*-----------------------------
-overview: Voxel visualization
-argument: octomap node key
+overview: raycast visualization
+argument: octomap node keys
 return: None
 -----------------------------*/
-void ViewpointEvaluatorServer::visualizationVoxel(octomap::OcTreeKey key) {
+void ViewpointEvaluatorServer::raycastVisualization(octomap::KeySet keys) {
+    visualization_msgs::MarkerArray marker_array;
+    int id = 0;
+    marker_array.markers.resize(keys.size());
+    for(auto key = keys.begin(); key != keys.end(); ++key) {
+        octomap::point3d point = octree_->keyToCoord(*key);
+        marker_array.markers[id].header.frame_id = "/map";
+        marker_array.markers[id].header.stamp = ros::Time::now();
+        marker_array.markers[id].ns = "/raycast";
+        marker_array.markers[id].id = id;
+        marker_array.markers[id].type = visualization_msgs::Marker::CUBE;
+        marker_array.markers[id].action = visualization_msgs::Marker::ADD;
+        marker_array.markers[id].lifetime = ros::Duration(5.0);
+        marker_array.markers[id].pose.position.x = point.x();
+        marker_array.markers[id].pose.position.y = point.y();
+        marker_array.markers[id].pose.position.z = point.z();
+        double octomap_resolution;
+        ros::param::get("/octomap_server/resolution", octomap_resolution);
+        marker_array.markers[id].scale.x = octomap_resolution;
+        marker_array.markers[id].scale.y = octomap_resolution;
+        marker_array.markers[id].scale.z = octomap_resolution;
+        marker_array.markers[id].color.r = 0.0f;
+        marker_array.markers[id].color.g = 1.0f;
+        marker_array.markers[id].color.b = 0.0f;
+        marker_array.markers[id].color.a = 1.0f;
+        raycast_marker_pub_.publish(marker_array);
+        id++;
+    }
+    raycast_marker_pub_.publish(marker_array);
 }
 
 /*-----------------------------
 overview: Calculate the region of ​​the unknown that can be observed from the viewpoint candidate
-argument: viewpoint(pose), distance(double)
+argument: viewpoint(pose)
 return: Number of Unknown voxels
 -----------------------------*/
-int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoint, double distance) {
+int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoint) {
     octomap::KeySet unknown;
     // Get end points of raycast
     std::vector<geometry_msgs::Point> ray_end_points = computeRayDirections(viewpoint);
     // Preparing for speed up ray casting
     octomap::OcTreeKey justRay, previousRay;
     bool isFirst = true;
+    // Preparing for visualization
+    octomap::KeySet visualization_voxel_key;
     // Count the number of unknown voxels with raycast
     for(auto it = ray_end_points.begin(); it != ray_end_points.end(); ++it) {
         octomap::point3d end(it->x, it->y, it->z);
@@ -402,18 +432,22 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
                 // Check whether ray hits an unknown cell or occupied cell
                 octomap::OcTreeNode *node = nullptr;
                 node = octree_->search(*_it);
+                visualization_voxel_key.insert(*_it);
                 if(node == nullptr) {
                     unknown.insert(*_it);
                 } else if(octree_->isNodeOccupied(node)) {
                     break;
                 }
-                id++;
             }
         }
     }
+    // raycastVisualization(visualization_voxel_key);
+    // cv::Mat image = cv::Mat::zeros(500, 500, CV_8UC3);
+    // cv::imshow("image", image);
+    // cv::waitKey(0);
 
     return unknown.size();
-}
+} // namespace viewpoint_evaluator_server
 
 /*-----------------------------
 overview: Evaluate viewpoint candidates
@@ -423,22 +457,21 @@ using: candidates, distances
 -----------------------------*/
 bool ViewpointEvaluatorServer::evaluateViewpoints(void) {
     // Initialize
-    std::chrono::system_clock::time_point start, current;
-    start = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
     std::vector<double> gains;
     gains.resize(candidates.size());
-    // #pragma omp parallel for schedule(guided, 1), default(shared)
+    double lamda_ = 0.02;
+#pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
-        int unknwonNum = countUnknownObservable(candidates[i], distances[i]);
-        // gains[i] = unknwonNum * std::exp(-1.0 * lambda_ * distance);
+        int unknwonNum = countUnknownObservable(candidates[i]);
+        gains[i] = unknwonNum * std::exp(-1.0 * lamda_ * distances[i]);
     }
-    /*
-    current = std::chrono::system_clock::now();
-    float elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
     std::cout << "------------" << std::endl;
+    std::chrono::system_clock::time_point current = std::chrono::system_clock::now();
+    float elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
+    std::cout << "candidate num: " << candidates.size() << std::endl;
     std::cout << "elapsed time: " << elapsed_time << std::endl;
     std::cout << "------------" << std::endl;
-    */
     return true;
 }
 

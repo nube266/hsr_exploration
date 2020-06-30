@@ -184,18 +184,18 @@ class ViewpointEvaluatorServer {
     std::vector<geometry_msgs::Point> computeRayDirections(geometry_msgs::Pose viewpoint);
 
     /*-----------------------------
-    overview: Voxel visualization
-    argument: octomap node key
+    overview: raycast visualization
+    argument: octomap node keys
     return: None
     -----------------------------*/
-    void visualizationVoxel(octomap::OcTreeKey key);
+    void raycastVisualization(octomap::KeySet keys);
 
     /*-----------------------------
     overview: Calculate the region of ​​the unknown that can be observed from the viewpoint candidate
-    argument: viewpoint(pose), distance(double)
+    argument: viewpoint(pose)
     return: Number of Unknown voxels
     -----------------------------*/
-    int countUnknownObservable(geometry_msgs::Pose viewpoint, double distance);
+    int countUnknownObservable(geometry_msgs::Pose viewpoint);
 
     /*-----------------------------
     overview: Evaluate viewpoint candidates
