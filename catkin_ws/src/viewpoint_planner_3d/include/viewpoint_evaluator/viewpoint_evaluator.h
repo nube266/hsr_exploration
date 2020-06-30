@@ -200,10 +200,10 @@ class ViewpointEvaluatorServer {
     /*-----------------------------
     overview: Evaluate viewpoint candidates
     argument: None
-    return: Returns true if the viewpoint candidate is evaluated successfully
+    return: Next viewpoint
     using: candidates, distances
     -----------------------------*/
-    bool evaluateViewpoints(void);
+    geometry_msgs::Pose evaluateViewpoints(void);
 
   public:
     /*-----------------------------

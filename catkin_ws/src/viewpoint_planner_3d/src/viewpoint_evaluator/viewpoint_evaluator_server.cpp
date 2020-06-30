@@ -452,10 +452,10 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
 /*-----------------------------
 overview: Evaluate viewpoint candidates
 argument: None
-return: Returns true if the viewpoint candidate is evaluated successfully
+return: Next viewpoint
 using: candidates, distances
 -----------------------------*/
-bool ViewpointEvaluatorServer::evaluateViewpoints(void) {
+geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     // Initialize
     std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
     std::vector<double> gains;
@@ -466,13 +466,21 @@ bool ViewpointEvaluatorServer::evaluateViewpoints(void) {
         int unknwonNum = countUnknownObservable(candidates[i]);
         gains[i] = unknwonNum * std::exp(-1.0 * lamda_ * distances[i]);
     }
+    double max_gain = 0;
+    geometry_msgs::Pose next_viewpoint;
+    for(int i = 0; i < candidates.size(); ++i) {
+        if(gains[i] >= max_gain) {
+            max_gain = gains[i];
+            next_viewpoint = candidates[i];
+        }
+    }
     std::cout << "------------" << std::endl;
     std::chrono::system_clock::time_point current = std::chrono::system_clock::now();
     float elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
     std::cout << "candidate num: " << candidates.size() << std::endl;
     std::cout << "elapsed time: " << elapsed_time << std::endl;
     std::cout << "------------" << std::endl;
-    return true;
+    return next_viewpoint;
 }
 
 /*-----------------------------
@@ -494,13 +502,10 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
     }
     visualizationCandidates();
     calcViewpointDistances();
-    if(!evaluateViewpoints()) {
-        res.is_succeeded = false;
-        return false;
-    }
+    res.next_viewpoint = evaluateViewpoints();
     res.is_succeeded = true;
     return true;
-}
+} // namespace viewpoint_evaluator_server
 
 /*-----------------------------
 overview: Visualization of viewpoint candidates
