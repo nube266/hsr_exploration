@@ -78,13 +78,16 @@ class ViewpointEvaluatorServer {
     std::chrono::system_clock::time_point previous_get_octree_time; // 前回視点計画
 
     /* Parameter */
-    double sensor_max_range = 3.5;          // Maximum sensor range (distance) [m]
-    double sensor_horizontal_range = 58.0;  // Horizontal sensor viewing angle [deg]
-    double sensor_vertical_range = 45.0;    // Vertical sensor viewing angle [deg]
-    double timeout = 10.0;                  // Timeout time when stopped by some processing[s]
-    double candidate_marker_lifetime = 5.0; //Display time when the marker is visualized
-    double path_planning_tolerance = 0.3;   // Path planning tolerance
-    std::string odom_topic = "/hsrb/odom";  // Odometry topic name
+    double sensor_max_range = 3.5;               // Maximum sensor range (distance) [m]
+    double sensor_horizontal_range = 58.0;       // Horizontal sensor viewing angle [deg]
+    double sensor_vertical_range = 45.0;         // Vertical sensor viewing angle [deg]
+    double timeout = 10.0;                       // Timeout time when stopped by some processing[s]
+    double candidate_marker_lifetime = 5.0;      //Display time when the marker is visualized
+    double path_planning_tolerance = 0.3;        // Path planning tolerance
+    std::string odom_topic = "/hsrb/odom";       // Odometry topic name
+    double lamda_ = 0.02;                        // This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.
+    double raycast_horizontal_resolution_ = 5.0; // Horizontal resolution of raycast
+    double raycast_vertical_resolution_ = 5.0;   // Vertical resolution of raycast
 
     /*-----------------------------
     overview: Set of ROS parameters

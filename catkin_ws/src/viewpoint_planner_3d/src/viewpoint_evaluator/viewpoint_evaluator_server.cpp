@@ -46,6 +46,9 @@ void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/sensor_max_range", sensor_max_range);
     ros::param::get("/viewpoint_evaluator/sensor_horizotal_range", sensor_horizontal_range);
     ros::param::get("/viewpoint_evaluator/sensor_vertical_range", sensor_vertical_range);
+    ros::param::get("/viewpoint_evaluator/lamda", lamda_);
+    ros::param::get("/viewpoint_evaluator/raycast_horizotal_resolution", raycast_horizontal_resolution_);
+    ros::param::get("/viewpoint_evaluator/raycast_vertical_resolution", raycast_vertical_resolution_);
 }
 
 /*-----------------------------
@@ -302,8 +305,8 @@ std::vector<geometry_msgs::Point> ViewpointEvaluatorServer::computeRayDirections
     double vertical_range = deg2rad(sensor_vertical_range);
     double octomap_resolution;
     ros::param::get("/octomap_server/resolution", octomap_resolution);
-    double horizotal_resolution = deg2rad(5.0);
-    double vertical_resolution = deg2rad(5.0);
+    double horizotal_resolution = deg2rad(raycast_horizontal_resolution_);
+    double vertical_resolution = deg2rad(raycast_vertical_resolution_);
     // Upper and lower limits of vertical angle
     double theta_min = M_PI / 2 - vertical_range / 2 + pitch;
     double theta_max = M_PI / 2 + vertical_range / 2 + pitch;
@@ -460,7 +463,6 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
     std::vector<double> gains;
     gains.resize(candidates.size());
-    double lamda_ = 0.02;
 #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
         int unknwonNum = countUnknownObservable(candidates[i]);

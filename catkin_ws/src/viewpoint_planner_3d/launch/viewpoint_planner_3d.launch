@@ -31,6 +31,12 @@
     <arg name="sensor_horizontal_range" default="58.0"/>
     <!-- Vertical sensor viewing angle [deg] -->
     <arg name="sensor_vertical_range" default="45.0"/>
+    <!-- This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.-->
+    <arg name="lamda" default="0.02"/>
+    <!-- Horizontal resolution of raycast -->
+    <arg name="raycast_horizontal_resolution" default="5.0"/>
+    <!-- Vertical resolution of raycast -->
+    <arg name="raycast_vertical_resolution" default="5.0"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
@@ -53,5 +59,8 @@
         <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
         <param name="sensor_horizontal_range" value="$(arg sensor_horizontal_range)" type="double"/>
         <param name="sensor_vertical_range" value="$(arg sensor_vertical_range)" type="double"/>
+        <param name="lamda" value="$(arg lamda)" type="double"/>
+        <param name="raycast_horizontal_resolution" value="$(arg raycast_horizontal_resolution)" type="double"/>
+        <param name="raycast_vertical_resolution" value="$(arg raycast_vertical_resolution)" type="double"/>
     </node>
 </launch>
