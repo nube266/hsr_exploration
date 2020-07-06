@@ -48,6 +48,7 @@ add_service_files(
   generating_candidates.srv
   get_candidates.srv
   get_next_viewpoint.srv
+  get_shortest_path_length.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

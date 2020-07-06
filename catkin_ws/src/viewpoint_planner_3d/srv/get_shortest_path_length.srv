@@ -1,0 +1,5 @@
+int32[] node1
+int32[] node2
+int32 start_node
+---
+int32[] distances
