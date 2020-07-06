@@ -39,6 +39,7 @@
     <arg name="raycast_vertical_resolution" default="5.0"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
+        <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
         <param name="map_update_frequency" value="$(arg map_update_frequency)" type="double"/>
         <param name="distance_between_candidates" value="$(arg distance_between_candidates)" type="double"/>
         <param name="candidate_yaw_resolution" value="$(arg candidate_yaw_resolution)" type="double"/>

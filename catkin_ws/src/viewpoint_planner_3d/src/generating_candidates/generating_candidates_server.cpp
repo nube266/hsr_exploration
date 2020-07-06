@@ -12,10 +12,12 @@ GeneratingCandidatesServer::GeneratingCandidatesServer(ros::NodeHandlePtr node_h
     setParam();
     map_sub_ = nh_->subscribe("/map", 1, &GeneratingCandidatesServer::mapUpdate, this);
     global_costmap_sub_ = nh_->subscribe("/move_base/global_costmap/costmap", 1, &GeneratingCandidatesServer::globalCostmapUpdate, this);
+    odom_sub_ = nh_->subscribe(odom_topic, 1, &GeneratingCandidatesServer::odomCallback, this);
     gen_srv_ = nh_->advertiseService("/viewpoint_planner_3d/generating_candidates", &GeneratingCandidatesServer::generatingCandidates, this);
     get_srv_ = nh_->advertiseService("/viewpoint_planner_3d/get_candidates", &GeneratingCandidatesServer::getCandidates, this);
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
+    get_shortest_path_length_cli_ = nh_->serviceClient<viewpoint_planner_3d::get_shortest_path_length>("/dijkstra_server/get_shortest_path_length");
     ROS_INFO("Ready to generating_candidates_server");
 }
 
@@ -35,6 +37,7 @@ Return: None
 -----------------------------*/
 void GeneratingCandidatesServer::setParam() {
     // Distance between candidate viewpoints [m]
+    ros::param::get("/generating_candidates/odom_topic", odom_topic);
     ros::param::get("/generating_candidates/distance_between_candidates", distance_between_candidates);
     ros::param::get("/generating_candidates/candidate_yaw_resolution", candidate_yaw_resolution);
     ros::param::get("/generating_candidates/distance_obstacle_candidate", distance_obstacle_candidate);
@@ -44,6 +47,17 @@ void GeneratingCandidatesServer::setParam() {
     ros::param::get("/generating_candidates/robot_head_candidate_resolution", robot_head_candidate_resolution);
     ros::param::get("/generating_candidates/max_free_space_noize_size", max_free_space_noize_size);
     ros::param::get("/generating_candidates/timeout", timeout);
+}
+
+/*-----------------------------
+overview: Get current robot position
+argument: None
+return: None
+set: odom
+-----------------------------*/
+void GeneratingCandidatesServer::odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg) {
+    nav_msgs::Odometry odom = *odom_msg;
+    current_robot_pose_ = odom.pose.pose;
 }
 
 /*-----------------------------

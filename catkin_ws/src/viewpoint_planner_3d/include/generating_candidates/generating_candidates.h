@@ -4,6 +4,7 @@
 // ros searvice
 #include "viewpoint_planner_3d/generating_candidates.h"
 #include "viewpoint_planner_3d/get_candidates.h"
+#include "viewpoint_planner_3d/get_shortest_path_length.h"
 
 // ros
 #include <costmap_2d/costmap_2d.h>
@@ -12,6 +13,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetMap.h>
+#include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <std_srvs/Empty.h>
@@ -41,20 +43,24 @@ namespace generating_candidates_server {
 class GeneratingCandidatesServer {
   private:
     /* Initial setting as ROS node */
-    ros::NodeHandlePtr nh_;                 // ROS node handle
-    ros::ServiceServer gen_srv_;            // ROS service that generates viewpoint candidates
-    ros::ServiceServer get_srv_;            // ROS service that getter(viewpoint candidates)
-    ros::Subscriber map_sub_;               // Subscriber updating map
-    ros::Subscriber global_costmap_sub_;    // Subscriber updating global costmap
-    ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
-    ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
+    ros::NodeHandlePtr nh_;                           // ROS node handle
+    ros::ServiceServer gen_srv_;                      // ROS service that generates viewpoint candidates
+    ros::ServiceServer get_srv_;                      // ROS service that getter(viewpoint candidates)
+    ros::Subscriber map_sub_;                         // Subscriber updating map
+    ros::Subscriber odom_sub_;                        // ROS subscriber to get the current robot position
+    ros::Subscriber global_costmap_sub_;              // Subscriber updating global costmap
+    ros::Publisher candidates_marker_pub_;            // ROS publisher that candidates marker
+    ros::ServiceClient clear_costmaps_cli_;           // Delete move_base cost map
+    ros::ServiceClient get_shortest_path_length_cli_; // Get the shortest path length to each free cell
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates;     // Viewpoint candidate
     std::vector<float> distances;                    // Distance to each viewpoint candidate
     nav_msgs::OccupancyGridConstPtr map_;            // Occupancy grid map
     nav_msgs::OccupancyGridConstPtr global_costmap_; // Occupancy grid map(move_base)
+    geometry_msgs::Pose current_robot_pose_;         // Current robot pose
     std::vector<cv::Point> frontier_centroids;       // Centroid of gravity of the frontier
+    std::string odom_topic = "/hsrb/odom";           // Odometry topic name
     double distance_between_candidates = 0.3;        // Distance between center of gravity of frontier and viewpoint candidates[m]
     double candidate_yaw_resolution = 0.6;           // Candidate orientation resolution
     double distance_obstacle_candidate = 0.1;        // Size to expand Costmap [m]
@@ -71,6 +77,14 @@ class GeneratingCandidatesServer {
     Return: None
     -----------------------------*/
     void setParam(void);
+
+    /*-----------------------------
+    overview: Get current robot position
+    argument: None
+    return: None
+    set: odom
+    -----------------------------*/
+    void odomCallback(const nav_msgs::Odometry::ConstPtr &odom_msg);
 
     /*-----------------------------
     overview: Generation of viewpoint candidates(using ROS service)
