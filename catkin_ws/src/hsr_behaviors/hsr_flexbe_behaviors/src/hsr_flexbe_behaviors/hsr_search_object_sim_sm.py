@@ -38,7 +38,7 @@ class HSRSearchObjectSimSM(Behavior):
 		# parameters of this behavior
 
 		# references to used behaviors
-		self.add_behavior(hsr_object_search_poseSM, 'hsr_object_search_pose')
+		self.add_behavior(hsr_object_search_poseSM, 'ChangeOrientationForObjectDetection')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -69,35 +69,35 @@ class HSRSearchObjectSimSM(Behavior):
 			# x:404 y:26
 			OperatableStateMachine.add('UpdateOctomap',
 										hsr_UpdateOctomapState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
-										transitions={'succeeded': 'GeneratingCandidates', 'failed': 'failed'},
+										transitions={'succeeded': 'GenerateCandidates', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:658 y:26
-			OperatableStateMachine.add('GeneratingCandidates',
+			OperatableStateMachine.add('GenerateCandidates',
 										hsr_GeneratingCandidatesState(srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0),
-										transitions={'succeeded': 'hsr_object_search_pose', 'failed': 'failed'},
+										transitions={'succeeded': 'ChangeOrientationForObjectDetection', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
-			# x:660 y:144
-			OperatableStateMachine.add('hsr_object_search_pose',
-										self.use_behavior(hsr_object_search_poseSM, 'hsr_object_search_pose'),
-										transitions={'finished': 'ObjectDetection', 'failed': 'failed'},
+			# x:626 y:149
+			OperatableStateMachine.add('ChangeOrientationForObjectDetection',
+										self.use_behavior(hsr_object_search_poseSM, 'ChangeOrientationForObjectDetection'),
+										transitions={'finished': 'DetectObject', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:677 y:286
-			OperatableStateMachine.add('ObjectDetection',
+			OperatableStateMachine.add('DetectObject',
 										hsr_ObjectDetectionState(target_object_1="apple", target_object_2="orange", target_object_3="", timeout=1, bounding_box_topic="/darknet_ros/bounding_boxes"),
-										transitions={'found': 'finished', 'not_found': 'ViewpointEvaluate'},
+										transitions={'found': 'finished', 'not_found': 'EvaluateViewpoint'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off})
 
-			# x:669 y:394
-			OperatableStateMachine.add('ViewpointEvaluate',
+			# x:670 y:404
+			OperatableStateMachine.add('EvaluateViewpoint',
 										hsr_ViewpointEvaluatorState(srv_name="/viewpoint_planner_3d/get_next_viewpoint"),
 										transitions={'succeeded': 'MoveToNextViewpoint', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:475 y:233
+			# x:462 y:240
 			OperatableStateMachine.add('MoveToNextViewpoint',
 										hsr_MoveBaseState(),
 										transitions={'succeeded': 'UpdateOctomap', 'failed': 'failed'},
