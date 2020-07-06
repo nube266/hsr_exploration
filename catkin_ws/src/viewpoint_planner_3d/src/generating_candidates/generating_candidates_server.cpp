@@ -282,6 +282,8 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             }
         }
     }
+    // Calculate the distance to each viewpoint
+    CalculateDistanceViewpoint(map_img);
 }
 
 /*-----------------------------
@@ -312,6 +314,55 @@ void GeneratingCandidatesServer::visualizationCandidates(void) {
         id++;
     }
     candidates_marker_pub_.publish(marker_array);
+}
+
+/*-----------------------------
+overview: Calculate the distance to each viewpoint
+argument: map(cv::Mat)
+return: None
+set: distances
+-----------------------------*/
+void GeneratingCandidatesServer::CalculateDistanceViewpoint(cv::Mat map_img) {
+    // Generate adjacency list from free space
+    // example:
+    // graph
+    // 1----2---4
+    //   |--3
+    // data
+    // node1: 1 1 2 2 3 4
+    // node2: 2 3 1 4 1 2
+    std::vector<int> node1;
+    std::vector<int> node2;
+    for(int y = 0; y < map_img.rows; ++y) {
+        for(int x = 0; x < map_img.cols; ++x) {
+            if(map_img.at<unsigned char>(y, x) == 0)
+                continue;
+            if(x != 0) {
+                if(map_img.at<unsigned char>(y, x - 1) == 255) {
+                    node1.push_back(x + map_img.cols * y);
+                    node2.push_back(x - 1 + map_img.cols * y);
+                }
+            }
+            if(x != map_img.cols - 1) {
+                if(map_img.at<unsigned char>(y, x + 1) == 255) {
+                    node1.push_back(x + map_img.cols * y);
+                    node2.push_back(x + 1 + map_img.cols * y);
+                }
+            }
+            if(y != 0) {
+                if(map_img.at<unsigned char>(y - 1, x) == 255) {
+                    node1.push_back(x + map_img.cols * y);
+                    node2.push_back(x + map_img.cols * (y - 1));
+                }
+            }
+            if(y != map_img.rows - 1) {
+                if(map_img.at<unsigned char>(y + 1, x) == 255) {
+                    node1.push_back(x + map_img.cols * y);
+                    node2.push_back(x + map_img.cols * (y + 1));
+                }
+            }
+        }
+    }
 }
 
 } // namespace generating_candidates_server

@@ -51,6 +51,7 @@ class GeneratingCandidatesServer {
 
     /* Variables for occupied grid map */
     std::vector<geometry_msgs::Pose> candidates;     // Viewpoint candidate
+    std::vector<float> distances;                    // Distance to each viewpoint candidate
     nav_msgs::OccupancyGridConstPtr map_;            // Occupancy grid map
     nav_msgs::OccupancyGridConstPtr global_costmap_; // Occupancy grid map(move_base)
     std::vector<cv::Point> frontier_centroids;       // Centroid of gravity of the frontier
@@ -169,6 +170,14 @@ class GeneratingCandidatesServer {
     return: None
     -----------------------------*/
     void visualizationCandidates(void);
+
+    /*-----------------------------
+    overview: Calculate the distance to each viewpoint
+    argument: map(cv::Mat)
+    return: None
+    set: distances
+    -----------------------------*/
+    void CalculateDistanceViewpoint(cv::Mat map_img);
 
   public:
     /*-----------------------------
