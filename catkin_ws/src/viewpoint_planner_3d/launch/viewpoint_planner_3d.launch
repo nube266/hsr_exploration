@@ -64,4 +64,6 @@
         <param name="raycast_horizontal_resolution" value="$(arg raycast_horizontal_resolution)" type="double"/>
         <param name="raycast_vertical_resolution" value="$(arg raycast_vertical_resolution)" type="double"/>
     </node>
+    <!-- Service server used when calculating the distance to a viewpoint candidate -->
+    <node name="viewpoint_planner_3d" pkg="viewpoint_planner_3d" type="dijkstra_server_node.py" output="screen"/>
 </launch>

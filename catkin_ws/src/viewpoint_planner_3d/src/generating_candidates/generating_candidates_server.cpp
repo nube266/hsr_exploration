@@ -217,9 +217,9 @@ int GeneratingCandidatesServer::meter2pix(double length) {
 }
 
 /*-----------------------------
-overview: Convert coordinates on the image to point on map
+overview: Convert coordinates on the map to point on image
 argument: Coordinates on the image
-return: point
+return: Coordinates on the map
 -----------------------------*/
 geometry_msgs::Point GeneratingCandidatesServer::img_point2map_pose(int x, int y, double z) {
     geometry_msgs::Point position;
@@ -228,6 +228,18 @@ geometry_msgs::Point GeneratingCandidatesServer::img_point2map_pose(int x, int y
     position.y = (double)(map_->info.height - y) * map_->info.resolution + origin.position.y;
     position.z = z;
     return position;
+}
+
+/*-----------------------------
+overview: Converts the coordinates on the map to the coordinates on the image
+argument: Coordinates on the map
+return: Coordinates on the image(x, y)
+-----------------------------*/
+void GeneratingCandidatesServer::map_pose2img_point(geometry_msgs::Pose pose, int &x, int &y) {
+    // geometry_msgs::Point position;
+    geometry_msgs::Pose origin = map_->info.origin;
+    x = (int)(std::round((pose.position.x - origin.position.x) / map_->info.resolution));
+    y = (int)(std::round(map_->info.height - (pose.position.y - origin.position.y) / map_->info.resolution));
 }
 
 /*-----------------------------
@@ -270,7 +282,10 @@ return: True if the viewpoint candidate is successfully generated
 -----------------------------*/
 bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
     // Initialize viewpoint candidates
+    std::vector<geometry_msgs::Pose>().swap(candidates);
+    std::vector<float>().swap(distances);
     candidates.clear();
+    distances.clear();
     cv::Mat map_img = map2img(map_);
     // Opening process(noise removal)
     cv::erode(map_img, map_img, cv::Mat(), cv::Point(-1, 1), meter2pix(max_free_space_noize_size));
@@ -337,45 +352,62 @@ return: None
 set: distances
 -----------------------------*/
 void GeneratingCandidatesServer::CalculateDistanceViewpoint(cv::Mat map_img) {
+    // Convert current position of robot to node number
+    int robot_img_x, robot_img_y;
+    map_pose2img_point(current_robot_pose_, robot_img_x, robot_img_y);
+    int start_node = 0;
+    float distance_from_robot_min = FLT_MAX;
     // Generate adjacency list from free space
     // example:
     // graph
-    // 1----2---4
-    //   |--3
+    // 0----1---3
+    // |----2
     // data
-    // node1: 1 1 2 2 3 4
-    // node2: 2 3 1 4 1 2
+    // node1: 0 0 1 1 2 3
+    // node2: 1 2 0 3 0 1
     std::vector<int> node1;
     std::vector<int> node2;
     for(int y = 0; y < map_img.rows; ++y) {
         for(int x = 0; x < map_img.cols; ++x) {
             if(map_img.at<unsigned char>(y, x) == 0)
                 continue;
-            if(x != 0) {
-                if(map_img.at<unsigned char>(y, x - 1) == 255) {
+            bool is_edge = false;
+            for(int xx = x - 1; xx <= x + 1; ++xx) {
+                for(int yy = y - 1; yy <= y + 1; ++yy) {
+                    if((xx == x && yy == y) && (xx != x && yy != y))
+                        continue;
+                    if(xx < 0 || xx == map_img.cols || yy < 0 || yy == map_img.rows)
+                        continue;
                     node1.push_back(x + map_img.cols * y);
-                    node2.push_back(x - 1 + map_img.cols * y);
+                    node2.push_back(xx + map_img.cols * yy);
+                    is_edge = true;
                 }
             }
-            if(x != map_img.cols - 1) {
-                if(map_img.at<unsigned char>(y, x + 1) == 255) {
-                    node1.push_back(x + map_img.cols * y);
-                    node2.push_back(x + 1 + map_img.cols * y);
-                }
-            }
-            if(y != 0) {
-                if(map_img.at<unsigned char>(y - 1, x) == 255) {
-                    node1.push_back(x + map_img.cols * y);
-                    node2.push_back(x + map_img.cols * (y - 1));
-                }
-            }
-            if(y != map_img.rows - 1) {
-                if(map_img.at<unsigned char>(y + 1, x) == 255) {
-                    node1.push_back(x + map_img.cols * y);
-                    node2.push_back(x + map_img.cols * (y + 1));
+            if(is_edge == true) {
+                float distance_from_robot = std::sqrt(std::pow((float)robot_img_x - x, 2) + std::pow((float)robot_img_y - y, 2));
+                if(distance_from_robot < distance_from_robot_min) {
+                    start_node = x + map_img.cols * y;
+                    distance_from_robot_min = distance_from_robot;
                 }
             }
         }
+    }
+    // Service call that calculates the shortest route(get_shortest_path_length.srv)
+    viewpoint_planner_3d::get_shortest_path_length srv;
+    srv.request.node1 = node1;
+    srv.request.node2 = node2;
+    // srv.request.start_node = start_node;
+    srv.request.start_node = start_node;
+    get_shortest_path_length_cli_.call(srv);
+    // Get the distance to the viewpoint candidate and set it in distances
+    std::vector<int> dist = srv.response.distances;
+    distances.resize(candidates.size());
+    for(int i = 0; i < candidates.size(); ++i) {
+        geometry_msgs::Pose candidate = candidates[i];
+        int candidate_img_x, candidate_img_y;
+        map_pose2img_point(candidate, candidate_img_x, candidate_img_y);
+        int node = candidate_img_x + map_img.cols * candidate_img_y;
+        distances[i] = dist[node] * map_->info.resolution;
     }
 }
 

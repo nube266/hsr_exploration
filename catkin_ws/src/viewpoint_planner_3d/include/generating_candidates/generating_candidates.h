@@ -31,6 +31,7 @@
 // std
 #include <chrono>
 #include <cmath>
+#include <float.h>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -151,11 +152,18 @@ class GeneratingCandidatesServer {
     int meter2pix(double length);
 
     /*-----------------------------
-    overview: Convert coordinates on the image to point on map
+    overview: Convert coordinates on the map to point on image
     argument: Coordinates on the image
-    return: point
+    return: Coordinates on the map
     -----------------------------*/
     geometry_msgs::Point img_point2map_pose(int x, int y, double z);
+
+    /*-----------------------------
+    overview: Converts the coordinates on the map to the coordinates on the image
+    argument: Coordinates on the map
+    return: Coordinates on the image
+    -----------------------------*/
+    void map_pose2img_point(geometry_msgs::Pose, int &x, int &y);
 
     /*-----------------------------
     overview: Wait until get the map successfully
