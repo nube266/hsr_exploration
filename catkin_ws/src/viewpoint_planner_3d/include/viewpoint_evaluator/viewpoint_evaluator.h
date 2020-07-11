@@ -62,20 +62,18 @@ class ViewpointEvaluatorServer {
     ros::Publisher raycast_marker_pub_;     // ROS publisher for displaying raycast markers
     ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
     ros::Subscriber octomap_sub_;           // ROS subscriber to get the Octomap(Octree)
-    ros::ServiceClient make_path_cli_;      // move_base route planning service client
     ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
 
     /* Variables used to evaluate viewpoint candidates */
     geometry_msgs::Pose current_robot_pose_;     // Current robot pose
     std::vector<geometry_msgs::Pose> candidates; // Viewpoint candidates
-    std::vector<double> distances;               // Distance to each viewpoint candidates
-    navfn::NavfnROS planner_;                    // Path planner
+    std::vector<float> distances;                // Distance to each viewpoint candidates
 
     /* Octomap */
     octomap::OcTree *octree_ = nullptr;
     std::mutex octree_mutex;
     std::chrono::system_clock::time_point current_get_octree_time;  // Time to get the latest Octree
-    std::chrono::system_clock::time_point previous_get_octree_time; // 前回視点計画
+    std::chrono::system_clock::time_point previous_get_octree_time; // Last time Octtree was acquired
 
     /* Parameter */
     double sensor_max_range = 3.5;               // Maximum sensor range (distance) [m]
@@ -83,7 +81,6 @@ class ViewpointEvaluatorServer {
     double sensor_vertical_range = 45.0;         // Vertical sensor viewing angle [deg]
     double timeout = 10.0;                       // Timeout time when stopped by some processing[s]
     double candidate_marker_lifetime = 5.0;      //Display time when the marker is visualized
-    double path_planning_tolerance = 0.3;        // Path planning tolerance
     std::string odom_topic = "/hsrb/odom";       // Odometry topic name
     double lamda_ = 0.02;                        // This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.
     double raycast_horizontal_resolution_ = 5.0; // Horizontal resolution of raycast
@@ -119,28 +116,6 @@ class ViewpointEvaluatorServer {
     set: octree_(Octree)
     -----------------------------*/
     bool waitGetOctomap(void);
-
-    /*-----------------------------
-    overview: Returns the total travel distance in the entered travel plan
-    argument: plan(toravel plan)
-    return: distance[m]
-    -----------------------------*/
-    double calcTravelDistance(const nav_msgs::Path &plan);
-
-    /*-----------------------------
-    overview: Return travel planning results using move_base's ROS service
-    argument: Start point of movement, end point of movement, travel planning
-    return: travel planning, returns true if route planning succeeds
-    -----------------------------*/
-    bool makePathPlan(const geometry_msgs::Pose &start, const geometry_msgs::Pose &goal, nav_msgs::Path &plan);
-
-    /*-----------------------------
-    overview: Calculate the distance traveled to each viewpoint candidate and set it in 'distances'
-    argument: None
-    return: None
-    set: distances
-    -----------------------------*/
-    void calcViewpointDistances(void);
 
     /*-----------------------------
     overview: Get viewpoint from 'generating_candidates' by service call

@@ -14,7 +14,6 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
     get_candidates_cli_ = nh_->serviceClient<viewpoint_planner_3d::get_candidates>("/viewpoint_planner_3d/get_candidates");
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
     raycast_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/raycast_marker", 1);
-    make_path_cli_ = nh_->serviceClient<nav_msgs::GetPlan>("/move_base/make_plan", true);
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
     // Initialize Subscriber and Publisher
     odom_sub_ = nh_->subscribe(odom_topic, 1, &ViewpointEvaluatorServer::odomCallback, this);
@@ -41,7 +40,6 @@ return: None
 void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/timeout", timeout);
     ros::param::get("/viewpoint_evaluator/candidate_marker_lifetime", candidate_marker_lifetime);
-    ros::param::get("/viewpoint_evaluator/path_planning_tolerance", path_planning_tolerance);
     ros::param::get("/viewpoint_evaluator/odom_topic", odom_topic);
     ros::param::get("/viewpoint_evaluator/sensor_max_range", sensor_max_range);
     ros::param::get("/viewpoint_evaluator/sensor_horizotal_range", sensor_horizontal_range);
@@ -111,88 +109,10 @@ bool ViewpointEvaluatorServer::waitGetOctomap(void) {
 }
 
 /*-----------------------------
-overview: Returns the total travel distance in the entered travel plan
-argument: plan(toravel plan)
-return: distance[m]
------------------------------*/
-double ViewpointEvaluatorServer::calcTravelDistance(const nav_msgs::Path &plan) {
-    double distance = 0.0;
-    for(size_t i = 0; i < plan.poses.size() - 1; ++i) {
-        geometry_msgs::Point p1 = plan.poses[i].pose.position;
-        geometry_msgs::Point p2 = plan.poses[i + 1].pose.position;
-        distance += std::sqrt(std::pow((p2.x - p1.x), 2) + std::pow((p2.y - p1.y), 2));
-    }
-    return distance;
-}
-
-/*-----------------------------
-overview: Return travel planning results using move_base's ROS service
-argument: Start point of movement, end point of movement, travel planning
-return: travel planning, returns true if route planning succeeds
------------------------------*/
-bool ViewpointEvaluatorServer::makePathPlan(const geometry_msgs::Pose &start, const geometry_msgs::Pose &goal, nav_msgs::Path &plan) {
-    geometry_msgs::PoseStamped start_stamped;
-    geometry_msgs::PoseStamped goal_stamped;
-    start_stamped.header.frame_id = "map";
-    goal_stamped.header.frame_id = "map";
-    start_stamped.pose = start;
-    goal_stamped.pose = goal;
-    start_stamped.pose.position.z = 0.0;
-    goal_stamped.pose.position.z = 0.0;
-
-    nav_msgs::GetPlan make_plan_srv;
-    make_plan_srv.request.start = start_stamped;
-    make_plan_srv.request.goal = goal_stamped;
-    make_plan_srv.request.tolerance = path_planning_tolerance;
-
-    if(make_path_cli_.call(make_plan_srv)) {
-        plan = make_plan_srv.response.plan;
-    } else {
-        std::cout << "Path planning failed" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-/*-----------------------------
-overview: Calculate the distance traveled to each viewpoint candidate and set it in 'distances'
-argument: None
-return: None
-set: distances
------------------------------*/
-void ViewpointEvaluatorServer::calcViewpointDistances(void) {
-    geometry_msgs::Pose robot_pose = current_robot_pose_;
-    geometry_msgs::Pose previous_pose = geometry_msgs::Pose();
-    double previous_distance = 0.0;
-    for(geometry_msgs::Pose candidate : candidates) {
-        if(previous_distance != 0.0) { // Other than the first time
-            /* If the xy coordinates are the same as the last time, use the distance calculated last */
-            if(previous_pose.position.x == candidate.position.x && previous_pose.position.y == candidate.position.y) {
-                distances.push_back(previous_distance);
-                continue;
-            }
-        }
-        // Make a path plan using a rosservie of move_base
-        nav_msgs::Path plan;
-        if(makePathPlan(robot_pose, candidate, plan)) {
-            double distance = calcTravelDistance(plan);
-            distances.push_back(distance);
-            previous_pose = candidate;
-            previous_distance = distance;
-        } else {
-            distances.push_back(-1.0);
-            previous_pose = candidate;
-            previous_distance = -1.0;
-        }
-    }
-}
-
-/*-----------------------------
 overview: Get viewpoint from 'generating_candidates' by service call
 argument: None
 return: Returns true if acquisition of viewpoint is successful
-set: candidates
+set: candidates, distances
 using: get_candidates_cli_(generating_candidates)
 -----------------------------*/
 bool ViewpointEvaluatorServer::getCandidates(void) {
@@ -200,6 +120,7 @@ bool ViewpointEvaluatorServer::getCandidates(void) {
     get_candidates_cli_.call(srv);
     if(srv.response.is_succeeded == true) {
         candidates = srv.response.candidates;
+        distances = srv.response.distances;
         ROS_INFO("Successful acquisition of viewpoint candidates");
         return true;
     } else {
@@ -493,6 +414,9 @@ Ros searvice to use: get_viewpoint_candidates
 -----------------------------*/
 bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::Request &req,
                                       viewpoint_planner_3d::get_next_viewpoint::Response &res) {
+    // Initialize
+    std::vector<geometry_msgs::Pose>().swap(candidates);
+    std::vector<float>().swap(distances);
     // Changed to decide whether to wait for Octomap update with ROS param
     if(!waitGetOctomap()) {
         res.is_succeeded = false;
@@ -503,7 +427,6 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
         return false;
     }
     visualizationCandidates();
-    calcViewpointDistances();
     geometry_msgs::Pose next_viewpoint = evaluateViewpoints();
     double viewpoint_height = next_viewpoint.position.z;
     next_viewpoint.position.z = 0.0;
