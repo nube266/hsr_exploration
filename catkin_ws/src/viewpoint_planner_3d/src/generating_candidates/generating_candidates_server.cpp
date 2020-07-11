@@ -90,12 +90,12 @@ bool GeneratingCandidatesServer::getCandidates(viewpoint_planner_3d::get_candida
                                                viewpoint_planner_3d::get_candidates::Response &res) {
     // Returns false if there is no viewpoint candidate
     if(candidates.empty() == true) {
-        res, candidates = candidates;
         res.is_succeeded = false;
     } else {
-        res.candidates = candidates;
         res.is_succeeded = true;
     }
+    res.candidates = candidates;
+    res.distances = distances;
     return true;
 }
 
