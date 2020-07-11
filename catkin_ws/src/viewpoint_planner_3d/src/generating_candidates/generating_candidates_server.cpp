@@ -374,7 +374,7 @@ void GeneratingCandidatesServer::CalculateDistanceViewpoint(cv::Mat map_img) {
             bool is_edge = false;
             for(int xx = x - 1; xx <= x + 1; ++xx) {
                 for(int yy = y - 1; yy <= y + 1; ++yy) {
-                    if((xx == x && yy == y) && (xx != x && yy != y))
+                    if(xx == x && yy == y)
                         continue;
                     if(xx < 0 || xx == map_img.cols || yy < 0 || yy == map_img.rows)
                         continue;
