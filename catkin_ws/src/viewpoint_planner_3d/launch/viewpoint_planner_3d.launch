@@ -56,7 +56,6 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
         <param name="candidate_marker_lifetime" value="$(arg candidate_marker_lifetime)" type="double"/>
-        <param name="path_planning_tolerance" value="$(arg path_planning_tolerance)" type="double"/>
         <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
         <param name="sensor_horizontal_range" value="$(arg sensor_horizontal_range)" type="double"/>
         <param name="sensor_vertical_range" value="$(arg sensor_vertical_range)" type="double"/>

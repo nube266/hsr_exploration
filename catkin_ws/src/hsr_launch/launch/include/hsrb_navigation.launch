@@ -89,7 +89,10 @@
         <param name="map_tf_name" value="odom"/>
     </node>
     <!-- move base -->
-    <!--<node pkg="tmc_move_base" type="move_base_node" name="move_base"><param name="planning_timeout" value="20.0"/><remap from="move_base_simple/goal" to="/goal"/></node>-->
+    <node pkg="tmc_move_base" type="move_base_node" name="move_base">
+        <param name="planning_timeout" value="20.0"/>
+        <remap from="move_base_simple/goal" to="/goal"/>
+    </node>
     <!--<include file="$(find hsr_launch)/launch/include/move_base.launch"/>-->
     <!-- action_move_base -->
     <include file="$(find tmc_action_move_base)/launch/action_move_base_default.launch" />
