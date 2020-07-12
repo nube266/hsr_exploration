@@ -21,18 +21,17 @@
         <arg name="sim" value="$(arg sim)"/>
         <arg name="robot_name" value="$(arg robot_name)"/>
     </include>
-    <!-- rviz -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find hsrb_rosnav_config)/launch/hsrb.rviz"/>
-    <!-- SLAM -->
-    <include file="$(find hsrb_mapping)/launch/gmapping.launch"/>
     <!-- navigation -->
-    <!-- <group if="$(arg use_slam)"><include file="$(find hsrb_mapping)/launch/hsrb_mapping.launch"/></group><group unless="$(arg use_slam)"><include file="$(find hsrb_rosnav_config)/launch/hsrb_nav.launch"/></group> -->
+    <group if="$(arg use_slam)">
+        <include file="$(find hsrb_mapping)/launch/hsrb_mapping.launch"/>
+    </group>
+    <group unless="$(arg use_slam)">
+        <include file="$(find hsrb_rosnav_config)/launch/hsrb_nav.launch"/>
+    </group>
+    <!--
     <include file="$(find hsr_launch)/launch/include/hsrb_navigation.launch"
-           if="$(arg use_navigation)">
-        <arg name="namespace" value="$(arg namespace)"/>
-        <arg name="sim" value="$(arg sim)"/>
-        <arg name="map" value="$(arg map)"/>
-    </include>
+           if="$(arg use_navigation)"><arg name="namespace" value="$(arg namespace)"/><arg name="sim" value="$(arg sim)"/><arg name="map" value="$(arg map)"/></include>
+    -->
     <!-- perception -->
     <include file="$(find hsrb_common_launch)/launch/include/hsrb_perception.xml"
            if="$(arg use_perception)">
