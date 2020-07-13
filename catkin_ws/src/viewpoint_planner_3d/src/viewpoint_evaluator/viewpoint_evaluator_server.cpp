@@ -402,6 +402,8 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     float elapsed_time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(current - start).count() / 1000000.0);
     std::cout << "candidate num: " << candidates.size() << std::endl;
     std::cout << "elapsed time: " << elapsed_time << std::endl;
+    std::cout << "next_viewpoint:" << std::endl;
+    std::cout << next_viewpoint << std::endl;
     std::cout << "------------" << std::endl;
     return next_viewpoint;
 }
@@ -428,7 +430,7 @@ bool ViewpointEvaluatorServer::getNBV(viewpoint_planner_3d::get_next_viewpoint::
     }
     visualizationCandidates();
     geometry_msgs::Pose next_viewpoint = evaluateViewpoints();
-    double viewpoint_height = next_viewpoint.position.z;
+    res.viewpoint_height = next_viewpoint.position.z;
     next_viewpoint.position.z = 0.0;
     res.next_viewpoint = next_viewpoint;
     res.is_succeeded = true;

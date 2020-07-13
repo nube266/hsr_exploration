@@ -9,6 +9,7 @@ import rospy
 from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
+from geometry_msgs.msg import Pose, PoseStamped
 from viewpoint_planner_3d.srv import *
 
 
@@ -28,9 +29,11 @@ class hsr_ViewpointEvaluatorState(EventState):
     def execute(self, userdata):
         rospy.loginfo("Select next viewpoint")
         res = self._service()
-        userdata.pose = res.next_viewpoint
-        print("pose: ")
-        print(res.next_viewpoint)
+        viewpoint_pose = res.next_viewpoint
+        viewpoint_pose.position.z = res.viewpoint_height
+        userdata.pose = viewpoint_pose
+        print("viewpoint_pose: ")
+        print(viewpoint_pose)
         if res.is_succeeded:
             rospy.loginfo("Successfully selected next viewpoint")
             return "succeeded"

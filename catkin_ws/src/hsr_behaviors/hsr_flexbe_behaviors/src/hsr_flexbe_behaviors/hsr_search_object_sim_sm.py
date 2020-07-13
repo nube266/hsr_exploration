@@ -14,7 +14,7 @@ from hsr_flexbe_states.hsr_generating_candidates_state import hsr_GeneratingCand
 from hsr_flexbe_behaviors.hsr_object_search_pose_sm import hsr_object_search_poseSM
 from hsr_flexbe_states.hsr_object_detection_state import hsr_ObjectDetectionState
 from hsr_flexbe_states.hsr_viewpoint_evaluator import hsr_ViewpointEvaluatorState
-from hsr_flexbe_states.hsr_move_base_state import hsr_MoveBaseState
+from hsr_flexbe_states.hsr_move_to_viewpoint_state import hsr_MoveToViewpointState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -50,7 +50,7 @@ class HSRSearchObjectSimSM(Behavior):
 
 
 	def create(self):
-		# x:915 y:298, x:139 y:224
+		# x:915 y:298, x:132 y:271
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -97,12 +97,12 @@ class HSRSearchObjectSimSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:462 y:240
+			# x:405 y:266
 			OperatableStateMachine.add('MoveToNextViewpoint',
-										hsr_MoveBaseState(),
+										hsr_MoveToViewpointState(),
 										transitions={'succeeded': 'UpdateOctomap', 'failed': 'failed'},
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'request': 'pose'})
+										remapping={'pose': 'pose'})
 
 
 		return _state_machine
