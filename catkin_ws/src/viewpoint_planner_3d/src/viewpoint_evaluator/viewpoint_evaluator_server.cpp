@@ -371,7 +371,49 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
     // cv::waitKey(0);
 
     return unknown.size();
-} // namespace viewpoint_evaluator_server
+}
+
+/*-----------------------------
+overview: Calculate the maximum observable unknown voxels based on the sensor model
+argument: None
+return: Maximum observable volume of unknown voxels (number of voxels)
+-----------------------------*/
+int ViewpointEvaluatorServer::maxUnknownObservable(void) {
+    geometry_msgs::Pose viewpoint = geometry_msgs::Pose();
+    viewpoint.orientation.z = -1.0;
+    int result = 0;
+    // Get end points of raycast
+    std::vector<geometry_msgs::Point> ray_end_points = computeRayDirections(viewpoint);
+    // Preparing for speed up ray casting
+    octomap::OcTreeKey justRay, previousRay;
+    bool isFirst = true;
+    // Count the number of unknown voxels with raycast
+    for(auto it = ray_end_points.begin(); it != ray_end_points.end(); ++it) {
+        octomap::point3d end(it->x, it->y, it->z);
+        // If the ray passes through the same cell as the previous time, skip the following process
+        justRay = octree_->coordToKey(end);
+        if(isFirst) {
+            previousRay = justRay;
+            isFirst = false;
+        } else {
+            if(justRay == previousRay)
+                continue;
+            else
+                previousRay = justRay;
+        }
+        // Ray casting
+        octomap::KeyRay ray;
+        octomap::point3d origin(viewpoint.position.x, viewpoint.position.y, viewpoint.position.z);
+        bool success = octree_->computeRayKeys(origin, end, ray);
+        // Count the number of unknown cell observable
+        if(success && ray.size() != 0) {
+            for(auto _it = ray.begin(); _it != ray.end(); ++_it) {
+                result++;
+            }
+        }
+    }
+    return result;
+}
 
 /*-----------------------------
 overview: Evaluate viewpoint candidates
@@ -383,6 +425,7 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     // Initialize
     std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
     std::vector<double> gains;
+    int max_unknown = maxUnknownObservable();
     gains.resize(candidates.size());
 #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
@@ -404,6 +447,7 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::cout << "elapsed time: " << elapsed_time << std::endl;
     std::cout << "next_viewpoint:" << std::endl;
     std::cout << next_viewpoint << std::endl;
+    std::cout << "max_unknown: " << max_unknown << std::endl;
     std::cout << "------------" << std::endl;
     return next_viewpoint;
 }

@@ -176,6 +176,13 @@ class ViewpointEvaluatorServer {
     int countUnknownObservable(geometry_msgs::Pose viewpoint);
 
     /*-----------------------------
+    overview: Calculate the maximum observable unknown voxels based on the sensor model
+    argument: None
+    return: Maximum observable volume of unknown voxels (number of voxels)
+    -----------------------------*/
+    int maxUnknownObservable(void);
+
+    /*-----------------------------
     overview: Evaluate viewpoint candidates
     argument: None
     return: Next viewpoint
