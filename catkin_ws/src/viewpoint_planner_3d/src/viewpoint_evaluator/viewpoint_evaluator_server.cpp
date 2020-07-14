@@ -44,9 +44,10 @@ void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/sensor_max_range", sensor_max_range);
     ros::param::get("/viewpoint_evaluator/sensor_horizotal_range", sensor_horizontal_range);
     ros::param::get("/viewpoint_evaluator/sensor_vertical_range", sensor_vertical_range);
-    ros::param::get("/viewpoint_evaluator/lamda", lamda_);
     ros::param::get("/viewpoint_evaluator/raycast_horizotal_resolution", raycast_horizontal_resolution_);
     ros::param::get("/viewpoint_evaluator/raycast_vertical_resolution", raycast_vertical_resolution_);
+    ros::param::get("/viewpoint_evaluator/robot_movement_speed", robot_movement_speed);
+    ros::param::get("/viewpoint_evaluator/offset_gain", offset_gain);
 }
 
 /*-----------------------------
@@ -431,23 +432,21 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::mutex current_max_gain_mutex;
 #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
-        double max_gain_this_candidate = max_unknown * std::exp(-1.0 * lamda_ * distances[i]);
+        double max_gain_this_candidate = max_unknown / ((distances[i] / robot_movement_speed) + offset_gain);
         {
             std::lock_guard<std::mutex> lock(current_max_gain_mutex);
             if(current_max_gain >= max_gain_this_candidate) {
                 gains[i] = 0.0;
-                std::cout << "skip:::current_max_gain: " << current_max_gain << std::endl;
                 continue;
             }
         }
-        int unknwonNum = countUnknownObservable(candidates[i]);
-        gains[i] = unknwonNum * std::exp(-1.0 * lamda_ * distances[i]);
+        int unknwon_num = countUnknownObservable(candidates[i]);
+        gains[i] = unknwon_num / ((distances[i] / robot_movement_speed) + offset_gain);
         {
             std::lock_guard<std::mutex> lock(current_max_gain_mutex);
             if(gains[i] > current_max_gain) {
                 current_max_gain = gains[i];
             }
-            std::cout << "no skip:::current_max_gain: " << current_max_gain << std::endl;
         }
     }
     double max_gain = 0;
@@ -465,7 +464,6 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::cout << "elapsed time: " << elapsed_time << std::endl;
     std::cout << "next_viewpoint:" << std::endl;
     std::cout << next_viewpoint << std::endl;
-    std::cout << "max_unknown: " << max_unknown << std::endl;
     std::cout << "------------" << std::endl;
     return next_viewpoint;
 }
