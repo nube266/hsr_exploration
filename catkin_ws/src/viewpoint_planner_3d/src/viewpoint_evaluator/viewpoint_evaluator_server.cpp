@@ -427,10 +427,28 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::vector<double> gains;
     int max_unknown = maxUnknownObservable();
     gains.resize(candidates.size());
+    double current_max_gain = 0.0;
+    std::mutex current_max_gain_mutex;
 #pragma omp parallel for schedule(guided, 1), default(shared)
     for(int i = 0; i < candidates.size(); ++i) {
+        double max_gain_this_candidate = max_unknown * std::exp(-1.0 * lamda_ * distances[i]);
+        {
+            std::lock_guard<std::mutex> lock(current_max_gain_mutex);
+            if(current_max_gain >= max_gain_this_candidate) {
+                gains[i] = 0.0;
+                std::cout << "skip:::current_max_gain: " << current_max_gain << std::endl;
+                continue;
+            }
+        }
         int unknwonNum = countUnknownObservable(candidates[i]);
         gains[i] = unknwonNum * std::exp(-1.0 * lamda_ * distances[i]);
+        {
+            std::lock_guard<std::mutex> lock(current_max_gain_mutex);
+            if(gains[i] > current_max_gain) {
+                current_max_gain = gains[i];
+            }
+            std::cout << "no skip:::current_max_gain: " << current_max_gain << std::endl;
+        }
     }
     double max_gain = 0;
     geometry_msgs::Pose next_viewpoint;
