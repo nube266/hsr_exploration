@@ -80,11 +80,12 @@ class ViewpointEvaluatorServer {
     double sensor_horizontal_range = 58.0;       // Horizontal sensor viewing angle [deg]
     double sensor_vertical_range = 45.0;         // Vertical sensor viewing angle [deg]
     double timeout = 10.0;                       // Timeout time when stopped by some processing[s]
-    double candidate_marker_lifetime = 5.0;      //Display time when the marker is visualized
+    double candidate_marker_lifetime = 5.0;      // Display time when the marker is visualized
     std::string odom_topic = "/hsrb/odom";       // Odometry topic name
-    double lamda_ = 0.02;                        // This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.
     double raycast_horizontal_resolution_ = 5.0; // Horizontal resolution of raycast
     double raycast_vertical_resolution_ = 5.0;   // Vertical resolution of raycast
+    double robot_movement_speed = 0.2;           // Robot movement speed[m] (HSRB default speed: 0.2[m])
+    double offset_gain = 2.0;                    // Offset when calculating gain(Usually the time taken for perspective planning[sec])
 
     /*-----------------------------
     overview: Set of ROS parameters
