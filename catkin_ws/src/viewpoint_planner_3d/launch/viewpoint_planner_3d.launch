@@ -61,7 +61,6 @@
         <param name="sensor_max_range" value="$(arg sensor_max_range)" type="double"/>
         <param name="sensor_horizontal_range" value="$(arg sensor_horizontal_range)" type="double"/>
         <param name="sensor_vertical_range" value="$(arg sensor_vertical_range)" type="double"/>
-        <param name="lamda" value="$(arg lamda)" type="double"/>
         <param name="raycast_horizontal_resolution" value="$(arg raycast_horizontal_resolution)" type="double"/>
         <param name="raycast_vertical_resolution" value="$(arg raycast_vertical_resolution)" type="double"/>
         <param name="robot_movement_speed" value="$(arg robot_movement_speed)" type="double"/>
