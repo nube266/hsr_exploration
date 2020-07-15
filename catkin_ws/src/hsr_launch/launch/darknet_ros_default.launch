@@ -25,5 +25,6 @@
   <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" launch-prefix="$(arg launch_prefix)">
     <param name="weights_path" value="$(arg yolo_weights_path)"/>
     <param name="config_path" value="$(arg yolo_config_path)"/>
+    <param name="enable_darknet_ros" value="false" type="bool"/>
   </node>
 </launch>

@@ -31,6 +31,7 @@ class object_detector:
         start_time = time.time()
         r = rospy.Rate(10)  # 10Hz
         self._bbox_datas = []
+        rospy.set_param("/darknet_ros/enable_darknet_ros", True)
         while time.time() - start_time <= self._search_time:
             r.sleep()
             if self._bbox_datas is None:
@@ -38,8 +39,10 @@ class object_detector:
             for target_name in self._target_names:
                 if target_name in self._bbox_datas:
                     print("Target object found")
+                    rospy.set_param("/darknet_ros/enable_darknet_ros", False)
                     return True
         print("Not found")
+        rospy.set_param("/darknet_ros/enable_darknet_ros", False)
         return False
 
     def sub_callback(self, data):
