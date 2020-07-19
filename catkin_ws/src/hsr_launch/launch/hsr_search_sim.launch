@@ -7,7 +7,7 @@
     <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- gazebo -->
     <group if="$(arg use_gazebo)">
-        <include file="$(find hsr_launch)/launch/sdewg_gazebo_default.launch">
+        <include file="$(find hsr_object_search_world)/launch/sdewg_gazebo_default.launch">
             <arg name="gui" value="$(arg gui)"/>
         </include>
     </group>
