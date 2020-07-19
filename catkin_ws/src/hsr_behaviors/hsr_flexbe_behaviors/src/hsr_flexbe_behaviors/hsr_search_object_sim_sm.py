@@ -86,7 +86,7 @@ class HSRSearchObjectSimSM(Behavior):
 
 			# x:677 y:286
 			OperatableStateMachine.add('DetectObject',
-										hsr_ObjectDetectionState(target_object_1="apple", target_object_2="orange", target_object_3="", timeout=2, bounding_box_topic="/darknet_ros/bounding_boxes"),
+										hsr_ObjectDetectionState(target_object_1="keyboard", target_object_2="", target_object_3="", timeout=2, bounding_box_topic="/darknet_ros/bounding_boxes"),
 										transitions={'found': 'finished', 'not_found': 'EvaluateViewpoint'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off})
 
