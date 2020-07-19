@@ -17,3 +17,6 @@
 [submodule "catkin_ws/src/darknet_ros_one_shoat"]
 	path = catkin_ws/src/darknet_ros_one_shoat
 	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/YusukeMiake/darknet_ros_one_shoat.git
+[submodule "catkin_ws/src/hsr_object_search_world"]
+	path = catkin_ws/src/hsr_object_search_world
+	url = https://aisl-serv6.aisl.cs.tut.ac.jp:20443/YusukeMiake/hsr_object_search_world.git

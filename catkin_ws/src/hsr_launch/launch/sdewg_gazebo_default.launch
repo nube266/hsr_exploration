@@ -2,11 +2,13 @@
 <launch>
     <!-- Simulation type: unattended or not. -->
     <arg name="unattended" default="false"/>
+    <arg name="world_name" default="$(find tmc_gazebo_worlds)/worlds/mock_home.world"/>
     <arg name="gui" default="true"/>
     <!-- Attended simulation case. -->
     <group unless="$(arg unattended)">
         <!-- Gazebo launch file. -->
         <include file="$(find hsr_launch)/launch/hsrb_mock_home_world.launch">
+            <arg name="world_name" value="$(arg world_name)"/>
             <arg name="debug" default="false"/>
             <arg name="fast_physics" default="true"/>
             <arg name="gazebo_visualization" default="false"/>
@@ -26,6 +28,7 @@
     <group if="$(arg unattended)">
         <!-- Gazebo launch file. -->
         <include file="$(find hsr_launch)/launch/hsrb_mock_home_world.launch">
+            <arg name="world_name" value="$(arg world_name)"/>
             <arg name="debug" default="false"/>
             <arg name="fast_physics" default="true"/>
             <arg name="gazebo_visualization" default="false"/>

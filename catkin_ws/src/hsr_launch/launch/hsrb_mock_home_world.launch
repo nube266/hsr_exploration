@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="namespace" default="/hsrb"/>
+    <arg name="world_name" default="$(find tmc_gazebo_worlds)/worlds/mock_home.world"/>
     <arg name="debug" default="false"/>
     <arg name="gui" default="true" />
     <arg name="rviz" default="true"/>
@@ -19,7 +20,7 @@
     <arg     if="$(arg fast_physics)" name="world_suffix" value="_fast"/>
     <include file="$(find hsr_launch)/launch/hsrb_gazebo_common.launch" pass_all_args="true" >
         <arg name="map" default="$(find tmc_potential_maps)/maps/mock_house/map.yaml" />
-        <arg name="world_name" value="$(find tmc_gazebo_worlds)/worlds/mock_home.world"/>
+        <arg name="world_name" value="$(arg world_name)"/>
         <arg name="robot_pos" value="-x 0 -y 0 -z 0 -Y 0" />
     </include>
     <group ns="/laser_2d_localizer">
