@@ -3,7 +3,7 @@
     <arg name="use_gazebo" default="true"/>
     <arg name="use_flexbe" default="false"/>
     <arg name="use_darknet" default="true"/>
-    <arg name="gui" default="true"/>
+    <arg name="gui" default="false"/>
     <arg name="candidate_marker_lifetime" default="5.0"/>
     <!-- gazebo -->
     <group if="$(arg use_gazebo)">

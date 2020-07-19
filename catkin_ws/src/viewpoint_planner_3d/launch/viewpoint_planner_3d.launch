@@ -6,7 +6,7 @@
     <!-- Candidate orientation resolution ([deg]) -->
     <arg name="candidate_yaw_resolution" default="60.0"/>
     <!-- Size to expand Costmap [m] -->
-    <arg name="distance_obstacle_candidate" default="0.2"/>
+    <arg name="distance_obstacle_candidate" default="0.4"/>
     <!-- Minimum Frontier length ([m]) -->
     <arg name="min_frontier_length" default="0.3"/>
     <!--  Minimum of robot head position([m]) -->
@@ -39,6 +39,8 @@
     <arg name="robot_movement_speed" default="0.2"/>
     <!-- Offset when calculating gain(Usually the time taken for perspective planning[sec]) -->
     <arg name="offset_gain" default="2.0"/>
+    <!-- This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.-->
+    <arg name="lamda" default="0.2"/>
     <!-- ROS service server that generates viewpoint candidates -->
     <node name="generating_candidates" pkg="viewpoint_planner_3d" type="generating_candidates" output="screen">
         <param name="odom_topic" value="$(arg odom_topic)" type="str"/>
