@@ -32,6 +32,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(
+  PCL 1.7 REQUIRED
+)
+find_package(
   OpenCV REQUIRED
 )
 find_package(
@@ -71,12 +74,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OCTOMAP_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 set(LINK_LIBS
   ${catkin_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_executable(generating_candidates

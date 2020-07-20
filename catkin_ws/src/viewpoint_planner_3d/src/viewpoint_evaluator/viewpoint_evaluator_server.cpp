@@ -14,6 +14,7 @@ ViewpointEvaluatorServer::ViewpointEvaluatorServer(ros::NodeHandlePtr node_handl
     get_candidates_cli_ = nh_->serviceClient<viewpoint_planner_3d::get_candidates>("/viewpoint_planner_3d/get_candidates");
     candidates_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/candidates_marker", 1);
     raycast_marker_pub_ = nh_->advertise<visualization_msgs::MarkerArray>("/viewpoint_planner_3d/raycast_marker", 1);
+    visible_unknown_pub_ = nh_->advertise<sensor_msgs::PointCloud2>("/viewpoint_planner_3d/visible_unknown", 1, true);
     clear_costmaps_cli_ = nh_->serviceClient<std_srvs::Empty>("/move_base/clear_costmaps", true);
     // Initialize Subscriber and Publisher
     odom_sub_ = nh_->subscribe(odom_topic, 1, &ViewpointEvaluatorServer::odomCallback, this);
@@ -361,6 +362,7 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
                 if(node == nullptr) {
                     unknown.insert(*_it);
                 } else if(octree_->isNodeOccupied(node)) {
+                    std::cout << "hogehogehoge" << std::endl;
                     break;
                 }
             }
@@ -473,6 +475,7 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
     std::cout << next_viewpoint << std::endl;
     std::cout << "max_unknown: " << max_unknown << std::endl;
     std::cout << "------------" << std::endl;
+    publishVisibleUnknown(next_viewpoint);
     return next_viewpoint;
 }
 
@@ -534,6 +537,57 @@ void ViewpointEvaluatorServer::visualizationCandidates(void) {
         id++;
     }
     candidates_marker_pub_.publish(marker_array);
+}
+
+void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoint) {
+    pcl::PointCloud<pcl::PointXYZ> cloud;
+    // Get end points of raycast
+    std::vector<geometry_msgs::Point> ray_end_points = computeRayDirections(viewpoint);
+    // Preparing for speed up ray casting
+    octomap::OcTreeKey justRay, previousRay;
+    bool isFirst = true;
+    // Preparing for visualization
+    octomap::KeySet visualization_voxel_key;
+    // Count the number of unknown voxels with raycast
+    for(auto it = ray_end_points.begin(); it != ray_end_points.end(); ++it) {
+        octomap::point3d end(it->x, it->y, it->z);
+        // If the ray passes through the same cell as the previous time, skip the following process
+        justRay = octree_->coordToKey(end);
+        if(isFirst) {
+            previousRay = justRay;
+            isFirst = false;
+        } else {
+            if(justRay == previousRay)
+                continue;
+            else
+                previousRay = justRay;
+        }
+        // Ray casting
+        octomap::KeyRay ray;
+        octomap::point3d origin(viewpoint.position.x, viewpoint.position.y, viewpoint.position.z);
+        bool success = octree_->computeRayKeys(origin, end, ray);
+        if(success && ray.size() != 0) {
+            for(auto _it = ray.begin(); _it != ray.end(); ++_it) {
+                // Check whether ray hits an unknown cell or occupied cell
+                octomap::OcTreeNode *node = nullptr;
+                node = octree_->search(*_it);
+                visualization_voxel_key.insert(*_it);
+                if(node == nullptr) {
+                    octomap::point3d p = octree_->keyToCoord(*_it);
+                    pcl::PointXYZ tmp(p.x(), p.y(), p.z());
+                    cloud.push_back(tmp);
+                } else if(octree_->isNodeOccupied(node)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    // Convert pcl::PointCloud into sensor_msgs::PointCloud
+    sensor_msgs::PointCloud2 output;
+    pcl::toROSMsg(cloud, output);
+    output.header.frame_id = "/map";
+    visible_unknown_pub_.publish(output);
 }
 
 } // namespace viewpoint_evaluator_server

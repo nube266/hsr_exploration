@@ -12,7 +12,7 @@
     <!--  Minimum of robot head position([m]) -->
     <arg name="robot_head_pos_min" default="1.00"/>
     <!--  Maximum of robot head position([m]) -->
-    <arg name="robot_head_pos_max" default="1.69"/>
+    <arg name="robot_head_pos_max" default="1.01"/>
     <!--  Resolution of viewpoint candidates in the height direction -->
     <arg name="robot_head_candidate_resolution" default="0.2"/>
     <!-- Timeout time when stopped by some processing[s] -->
@@ -28,9 +28,9 @@
     <!-- Maximum sensor range (distance) [m] -->
     <arg name="sensor_max_range" default="3.5"/>
     <!-- Horizontal sensor viewing angle [deg] -->
-    <arg name="sensor_horizontal_range" default="58.0"/>
+    <arg name="sensor_horizontal_range" default="50.0"/>
     <!-- Vertical sensor viewing angle [deg] -->
-    <arg name="sensor_vertical_range" default="45.0"/>
+    <arg name="sensor_vertical_range" default="35.0"/>
     <!-- Horizontal resolution of raycast -->
     <arg name="raycast_horizontal_resolution" default="5.0"/>
     <!-- Vertical resolution of raycast -->

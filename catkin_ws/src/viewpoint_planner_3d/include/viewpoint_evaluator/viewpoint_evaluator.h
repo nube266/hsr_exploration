@@ -24,6 +24,10 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
+// PCL
+#include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/PointCloud2.h>
+
 // OctoMap
 #include <octomap/OcTree.h>
 #include <octomap/octomap.h>
@@ -60,6 +64,7 @@ class ViewpointEvaluatorServer {
     ros::ServiceClient get_candidates_cli_; // ROS service client that gets view viewpoint candidates
     ros::Publisher candidates_marker_pub_;  // ROS publisher that candidates marker
     ros::Publisher raycast_marker_pub_;     // ROS publisher for displaying raycast markers
+    ros::Publisher visible_unknown_pub_;    // ROS publisher for visualizing observable unknown voxels
     ros::Subscriber odom_sub_;              // ROS subscriber to get the current robot position
     ros::Subscriber octomap_sub_;           // ROS subscriber to get the Octomap(Octree)
     ros::ServiceClient clear_costmaps_cli_; // Delete move_base cost map
@@ -191,6 +196,11 @@ class ViewpointEvaluatorServer {
     using: candidates, distances
     -----------------------------*/
     geometry_msgs::Pose evaluateViewpoints(void);
+
+    /*
+    TODO
+    */
+    void publishVisibleUnknown(geometry_msgs::Pose viewpoint);
 
   public:
     /*-----------------------------
