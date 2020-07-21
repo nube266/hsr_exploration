@@ -359,6 +359,10 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
                 octomap::OcTreeNode *node = nullptr;
                 node = octree_->search(*_it);
                 visualization_voxel_key.insert(*_it);
+                octomap::point3d p = octree_->keyToCoord(*_it);
+                if(p.z() < 0) {
+                    break;
+                }
                 if(node == nullptr) {
                     unknown.insert(*_it);
                 } else if(octree_->isNodeOccupied(node)) {
@@ -569,6 +573,9 @@ void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoi
                 visualization_voxel_key.insert(*_it);
                 if(node == nullptr) {
                     octomap::point3d p = octree_->keyToCoord(*_it);
+                    if(p.z() < 0) {
+                        break;
+                    }
                     pcl::PointXYZ tmp(p.x(), p.y(), p.z());
                     cloud.push_back(tmp);
                 } else if(octree_->isNodeOccupied(node)) {
