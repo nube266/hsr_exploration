@@ -5,6 +5,12 @@
     <arg name="distance_between_candidates" default="0.5"/>
     <!-- Candidate orientation resolution ([deg]) -->
     <arg name="candidate_yaw_resolution" default="60.0"/>
+    <!-- Candidate tilt resolution ([rad]) -->
+    <arg name="candidate_tilt_resolution" default="0.3"/>
+    <!-- Candidate tilt min ([rad]) -->
+    <arg name="candidate_tilt_min" default="-0.3"/>
+    <!-- Candidate tilt max ([rad]) -->
+    <arg name="candidate_tilt_max" default="0.6"/>
     <!-- Size to expand Costmap [m] -->
     <arg name="distance_obstacle_candidate" default="0.4"/>
     <!-- Minimum Frontier length ([m]) -->
@@ -12,7 +18,7 @@
     <!--  Minimum of robot head position([m]) -->
     <arg name="robot_head_pos_min" default="1.00"/>
     <!--  Maximum of robot head position([m]) -->
-    <arg name="robot_head_pos_max" default="1.01"/>
+    <arg name="robot_head_pos_max" default="1.00"/>
     <!--  Resolution of viewpoint candidates in the height direction -->
     <arg name="robot_head_candidate_resolution" default="0.2"/>
     <!-- Timeout time when stopped by some processing[s] -->
@@ -54,6 +60,9 @@
         <param name="timeout" value="$(arg timeout)" type="double"/>
         <param name="robot_head_candidate_resolution" value="$(arg robot_head_candidate_resolution)" type="double"/>
         <param name="max_free_space_noize_size" value="$(arg max_free_space_noize_size)" type="double"/>
+        <param name="candidate_tilt_resolution" value="$(arg candidate_tilt_resolution)" type="double"/>
+        <param name="candidate_tilt_min" value="$(arg candidate_tilt_min)" type="double"/>
+        <param name="candidate_tilt_max" value="$(arg candidate_tilt_max)" type="double"/>
     </node>
     <!-- ROS service server that calculates next viewpoint -->
     <node name="viewpoint_evaluator" pkg="viewpoint_planner_3d" type="viewpoint_evaluator" output="screen">

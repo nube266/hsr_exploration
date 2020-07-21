@@ -362,7 +362,6 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
                 if(node == nullptr) {
                     unknown.insert(*_it);
                 } else if(octree_->isNodeOccupied(node)) {
-                    std::cout << "hogehogehoge" << std::endl;
                     break;
                 }
             }
@@ -446,10 +445,6 @@ geometry_msgs::Pose ViewpointEvaluatorServer::evaluateViewpoints(void) {
         raycast_count++;
         int unknown_num = countUnknownObservable(candidates[i]);
         gains[i] = unknown_num * std::exp(-1.0 * lamda_ * distances[i]);
-        std::cout << "------------" << std::endl;
-        std::cout << "distance: " << distances[i] << std::endl;
-        std::cout << "unknown_num: " << unknown_num << std::endl;
-        std::cout << "gains: " << gains[i] << std::endl;
         {
             std::lock_guard<std::mutex> lock(current_max_gain_mutex);
             if(gains[i] > current_max_gain) {

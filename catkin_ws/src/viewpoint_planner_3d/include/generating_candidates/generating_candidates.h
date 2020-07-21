@@ -71,6 +71,9 @@ class GeneratingCandidatesServer {
     double robot_head_candidate_resolution = 0.2;    // Resolution of viewpoint candidates in the height direction
     double max_free_space_noize_size = 0.1;          // Size of free space removed as noise by the opening process[m]
     double timeout = 10.0;                           // Timeout time when stopped by some processing[s]
+    double candidate_tilt_resolution = 0.4;          // Candidate tilt resolution ([rad])
+    double candidate_tilt_min = -0.8;                // Candidate tilt min([rad])
+    double candidate_tilt_max = 0.4;                 // Candidate tilt max([rad])
 
     /*-----------------------------
     overview: Set of ROS parameters

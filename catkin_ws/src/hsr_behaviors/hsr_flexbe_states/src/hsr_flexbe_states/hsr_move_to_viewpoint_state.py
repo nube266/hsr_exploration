@@ -6,6 +6,9 @@ from actionlib_msgs.msg import GoalStatus
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from flexbe_core import EventState, Logger
 import hsrb_interface
+import tf
+from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Quaternion
 
 
 class hsr_MoveToViewpointState(EventState):
@@ -25,12 +28,22 @@ class hsr_MoveToViewpointState(EventState):
         self._whole_body = self._robot.get("whole_body")
 
     def execute(self, userdata):
+        # Set goal
         goal = PoseStamped()
         goal.header.stamp = rospy.Time.now()
         goal.header.frame_id = "map"
+        # Set viewpoint pose
         base_pose = userdata.pose
+        # Set viewpoint height
         arm_lift_height = base_pose.position.z - 1.0
         base_pose.position.z = 0.0
+        # Set tilt
+        quat = base_pose.orientation
+        euler = tf.transformations.euler_from_quaternion((quat.x, quat.y, quat.z, quat.w))
+        head_tilt_joint = euler[1]
+        # Set orientaion
+        q = tf.transformations.quaternion_from_euler(0.0, 0.0, euler[2])
+        base_pose.orientation = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
         print("-----------------")
         print("base_pose:")
         print(base_pose)
@@ -48,7 +61,12 @@ class hsr_MoveToViewpointState(EventState):
             return 'failed'
         rospy.loginfo("[Action move_base/move] succeeded.")
         rospy.loginfo("Change the height of the viewpoint")
-        self._whole_body.move_to_joint_positions({"arm_lift_joint": arm_lift_height})  # HSR B height is 1.0[m]
+        self._whole_body.move_to_go()
+        print("-------------")
+        print(head_tilt_joint)
+        print("-------------")
+        self._whole_body.move_to_joint_positions({"arm_lift_joint": arm_lift_height,
+                                                  "head_tilt_joint": -head_tilt_joint})
         return 'succeeded'
 
     def on_enter(self, userdata):
@@ -62,3 +80,7 @@ class hsr_MoveToViewpointState(EventState):
 
     def on_stop(self):
         pass
+
+    def quaternion_to_euler(self, quaternion):
+        e = tf.transformations.euler_from_quaternion((quaternion.x, quaternion.y, quaternion.z, quaternion.w))
+        return Vector3(x=e[0], y=e[1], z=e[2])

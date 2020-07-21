@@ -47,6 +47,9 @@ void GeneratingCandidatesServer::setParam() {
     ros::param::get("/generating_candidates/robot_head_candidate_resolution", robot_head_candidate_resolution);
     ros::param::get("/generating_candidates/max_free_space_noize_size", max_free_space_noize_size);
     ros::param::get("/generating_candidates/timeout", timeout);
+    ros::param::get("/generating_candidates/candidate_tilt_resolution", candidate_tilt_resolution);
+    ros::param::get("/generating_candidates/candidate_tilt_min", candidate_tilt_min);
+    ros::param::get("/generating_candidates/candidate_tilt_max", candidate_tilt_max);
 }
 
 /*-----------------------------
@@ -302,10 +305,12 @@ bool GeneratingCandidatesServer::generateCandidateGridPattern(void) {
             if(intensity == 255 && occupancy_img.at<unsigned char>(y, x) == 255) { // white(free)
                 geometry_msgs::Pose pose;
                 for(double yaw = -180; yaw < 180; yaw += candidate_yaw_resolution) {
-                    for(double z = robot_head_pos_min; z < robot_head_pos_max; z += robot_head_candidate_resolution) {
-                        pose.position = img_point2map_pose(x, y, z);
-                        pose.orientation = rpy_to_geometry_quat(0.0, 0.0, yaw * (M_PI / 180));
-                        candidates.push_back(pose);
+                    for(double z = robot_head_pos_min; z <= robot_head_pos_max; z += robot_head_candidate_resolution) {
+                        for(double pitch = candidate_tilt_min; pitch <= candidate_tilt_max; pitch += candidate_tilt_resolution) {
+                            pose.position = img_point2map_pose(x, y, z);
+                            pose.orientation = rpy_to_geometry_quat(0.0, pitch, yaw * (M_PI / 180));
+                            candidates.push_back(pose);
+                        }
                     }
                 }
             }
