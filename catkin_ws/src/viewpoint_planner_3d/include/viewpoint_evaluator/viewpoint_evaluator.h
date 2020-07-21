@@ -92,6 +92,8 @@ class ViewpointEvaluatorServer {
     double robot_movement_speed = 0.2;           // Robot movement speed[m] (HSRB default speed: 0.2[m])
     double offset_gain = 2.0;                    // Offset when calculating gain(Usually the time taken for perspective planning[sec])
     double lamda_ = 0.2;                         // This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.
+    double max_raycast_height = 3.5;             // Maximum height for ray casting
+    double min_raycast_height = 0.0;             // Minimum height for ray casting
 
     /*-----------------------------
     overview: Set of ROS parameters
