@@ -81,8 +81,10 @@
         <param name="robot_movement_speed" value="$(arg robot_movement_speed)" type="double"/>
         <param name="offset_gain" value="$(arg offset_gain)" type="double"/>
         <param name="max_raycast_height" value="$(arg max_raycast_height)"/>
-        <param name="min_raycast_height" default="$(arg min_raycast_height)"/>
+        <param name="min_raycast_height" value="$(arg min_raycast_height)"/>
     </node>
     <!-- Service server used when calculating the distance to a viewpoint candidate -->
     <node name="viewpoint_planner_3d" pkg="viewpoint_planner_3d" type="dijkstra_server_node.py" output="screen"/>
+    <!-- GUI -->
+    <node name="viewpoint_planner_3d" pkg="viewpoint_planner_3d" type="viewpoint_planner_viewer.py" output="screen"/>
 </launch>
