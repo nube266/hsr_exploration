@@ -33,6 +33,7 @@ class ViewpointPlannerViewerNode:
             self.update_number_of_moves()
             self.update_total_travel_time()
             self._root.update_idletasks()
+            time.sleep(0.1)
 
     def set_label(self, x, y, text):
         var = StringVar()
@@ -69,7 +70,7 @@ class ViewpointPlannerViewerNode:
         self._start_total_travel_timer_param = "/viewpoint_planner_viewer/start_total_travel_timer"
         rospy.set_param(self._start_total_travel_timer_param, False)
         self._last_update_total_travel_time = time.time()
-        self.set_label(770, 135, "{:.2f} [m]".format(self._total_travel_time))
+        self.set_label(770, 135, "{:.2f} [sec]".format(self._total_travel_time))
 
     def update_total_search_time(self):
         if rospy.get_param(self._start_total_search_timer_param, False) == True:
@@ -93,7 +94,7 @@ class ViewpointPlannerViewerNode:
     def update_total_travel_time(self):
         if rospy.get_param(self._start_total_travel_timer_param, False) == True:
             self._total_travel_time += time.time() - self._last_update_total_travel_time
-            self.set_label(770, 135, "{:.2f} [m]".format(self._total_travel_time))
+            self.set_label(770, 135, "{:.2f} [sec]".format(self._total_travel_time))
         self._last_update_total_travel_time = time.time()
 
 

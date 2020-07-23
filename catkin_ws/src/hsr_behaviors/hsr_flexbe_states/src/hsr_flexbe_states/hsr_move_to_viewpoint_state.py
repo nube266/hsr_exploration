@@ -24,6 +24,7 @@ class hsr_MoveToViewpointState(EventState):
     def __init__(self):
         super(hsr_MoveToViewpointState, self).__init__(outcomes=['succeeded', 'failed'], input_keys=['pose'])
         self.cli = actionlib.SimpleActionClient('/move_base/move', MoveBaseAction)
+        self.cli.wait_for_server()
         self._robot = hsrb_interface.Robot()
         self._whole_body = self._robot.get("whole_body")
 
@@ -70,10 +71,11 @@ class hsr_MoveToViewpointState(EventState):
         return 'succeeded'
 
     def on_enter(self, userdata):
-        self.cli.wait_for_server()
+        rospy.set_param("/viewpoint_planner_viewer/start_total_travel_timer", True)
 
     def on_exit(self, userdata):
-        pass
+        rospy.set_param("/viewpoint_planner_viewer/start_total_travel_timer", False)
+        rospy.set_param("/viewpoint_planner_viewer/add_number_of_moves", 1)
 
     def on_start(self):
         pass

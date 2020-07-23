@@ -24,22 +24,11 @@ class hsr_MoveToNeutralState(EventState):
 
     def __init__(self, open_hand=False):
         super(hsr_MoveToNeutralState, self).__init__(outcomes=['succeeded', 'failed'])
-
-        #
-        # Robot interface
-        #
         self._robot = hsrb_interface.Robot()
         self._whole_body = self._robot.get('whole_body')
-        self._gripper = self._robot.get('gripper')
-        self._open_hand = open_hand
 
     def execute(self, userdata):
-        '''
-        Execute the state
-        '''
-
-        # Wait for a second
-        rospy.sleep(1)
+        rospy.sleep(0.5)
         # If an object is found, return 'succeeded'
         if not self._failed:
             return 'succeeded'
@@ -47,20 +36,9 @@ class hsr_MoveToNeutralState(EventState):
             return 'failed'
 
     def on_enter(self, userdata):
-        #
-        # Move to neutral
-        #
+        self._failed = False
         try:
-            #
-            # Move to neutral
-            #
             self._whole_body.move_to_go()
-
-            # Open hand
-            if self._open_hand:
-                self._gripper.command(1.0)
-
-            self._failed = False
         except Exception as e:
             rospy.logerr(e)
             self._failed = True

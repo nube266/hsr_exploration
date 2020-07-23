@@ -46,7 +46,7 @@
     <!-- Offset when calculating gain(Usually the time taken for perspective planning[sec]) -->
     <arg name="offset_gain" default="2.0"/>
     <!-- This parameter is related to the distance to move when calculating the NBV. If this parameter is set to 0, the movement distance is ignored.-->
-    <arg name="lamda" default="0.2"/>
+    <arg name="lamda" default="0.1"/>
     <!-- Maximum height when raycasting -->
     <arg name="max_raycast_height" default="3.5"/>
     <!-- Minimum height for ray casting -->
@@ -84,7 +84,7 @@
         <param name="min_raycast_height" value="$(arg min_raycast_height)"/>
     </node>
     <!-- Service server used when calculating the distance to a viewpoint candidate -->
-    <node name="viewpoint_planner_3d" pkg="viewpoint_planner_3d" type="dijkstra_server_node.py" output="screen"/>
+    <node name="dijkstra_server_node" pkg="viewpoint_planner_3d" type="dijkstra_server_node.py" output="screen"/>
     <!-- GUI -->
-    <node name="viewpoint_planner_3d" pkg="viewpoint_planner_3d" type="viewpoint_planner_viewer.py" output="screen"/>
+    <node name="viewpoint_planner_viewer" pkg="viewpoint_planner_3d" type="viewpoint_planner_viewer.py" output="screen"/>
 </launch>

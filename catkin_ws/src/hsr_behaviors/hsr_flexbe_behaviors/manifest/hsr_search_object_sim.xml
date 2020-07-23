@@ -12,6 +12,7 @@
 
 
 	<!-- Contained Behaviors -->
+	<contains name="InitializeForObjectSearch" />
 	<contains name="hsr_object_search_pose" />
 
 	<!-- Available Parameters -->

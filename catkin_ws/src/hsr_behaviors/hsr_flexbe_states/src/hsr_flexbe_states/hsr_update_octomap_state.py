@@ -26,7 +26,7 @@ class hsr_UpdateOctomapState(EventState):
     '''
 
     def __init__(self, srv_name="/octomap_publisher/update_octomap", timeout=10.0):
-        super(hsr_UpdateOctomapState, self).__init__(outcomes=["succeeded", "failed"])
+        super(hsr_UpdateOctomapState, self).__init__(outcomes=["succeeded"])
         self._srv_name = srv_name
         self._timeout = timeout
 
@@ -37,12 +37,7 @@ class hsr_UpdateOctomapState(EventState):
             res = self._service()
             if res.is_succeeded:
                 break
-        if res.is_succeeded:
-            rospy.loginfo("Octomap updated successfully")
-            return "succeeded"
-        else:
-            rospy.loginfo("Octomap update failed")
-            return "failed"
+        return "succeeded"
 
     def on_enter(self, userdata):
         rospy.wait_for_service(self._srv_name)

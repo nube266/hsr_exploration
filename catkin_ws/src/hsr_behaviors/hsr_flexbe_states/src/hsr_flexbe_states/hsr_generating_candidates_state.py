@@ -23,9 +23,11 @@ class hsr_GeneratingCandidatesState(EventState):
     '''
 
     def __init__(self, srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0):
-        super(hsr_GeneratingCandidatesState, self).__init__(outcomes=["succeeded", "failed"])
+        super(hsr_GeneratingCandidatesState, self).__init__(outcomes=["succeeded"])
         self._srv_name = srv_name
         self._timeout = timeout
+        rospy.wait_for_service(self._srv_name)
+        self._service = rospy.ServiceProxy(self._srv_name, generating_candidates)
 
     def execute(self, userdata):
         rospy.loginfo("Generating Candidates")
@@ -35,16 +37,10 @@ class hsr_GeneratingCandidatesState(EventState):
             if res.is_succeeded:
                 break
             res.is_succeeded = False
-        if res.is_succeeded:
-            rospy.loginfo("Successfully generated candidates")
-            return "succeeded"
-        else:
-            rospy.loginfo("Failed to generate a candidate")
-            return "failed"
+        return "succeeded"
 
     def on_enter(self, userdata):
-        rospy.wait_for_service(self._srv_name)
-        self._service = rospy.ServiceProxy(self._srv_name, generating_candidates)
+        rospy.set_param("/viewpoint_planner_viewer/start_viewpoint_planning_timer", True)
 
     def on_exit(self, userdata):
         pass

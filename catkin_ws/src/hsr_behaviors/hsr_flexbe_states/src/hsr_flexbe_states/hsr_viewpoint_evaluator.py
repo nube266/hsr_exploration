@@ -18,13 +18,14 @@ class hsr_ViewpointEvaluatorState(EventState):
     Evaluate the candidate viewpoints.
 
     <= succeeded                        Successful evaluation of candidate viewpoints.
-    <= failed                           Failure to evaluate candidate viewpoints.
 
     '''
 
     def __init__(self, srv_name="/viewpoint_planner_3d/get_next_viewpoint"):
-        super(hsr_ViewpointEvaluatorState, self).__init__(output_keys=["pose"], outcomes=["succeeded", "failed"])
+        super(hsr_ViewpointEvaluatorState, self).__init__(output_keys=["pose"], outcomes=["succeeded"])
         self._srv_name = srv_name
+        rospy.wait_for_service(self._srv_name)
+        self._service = rospy.ServiceProxy(self._srv_name, get_next_viewpoint)
 
     def execute(self, userdata):
         rospy.loginfo("Select next viewpoint")
@@ -34,19 +35,13 @@ class hsr_ViewpointEvaluatorState(EventState):
         userdata.pose = viewpoint_pose
         print("viewpoint_pose: ")
         print(viewpoint_pose)
-        if res.is_succeeded:
-            rospy.loginfo("Successfully selected next viewpoint")
-            return "succeeded"
-        else:
-            rospy.loginfo("Failed to select next viewpoint")
-            return "failed"
+        return "succeeded"
 
     def on_enter(self, userdata):
-        rospy.wait_for_service(self._srv_name)
-        self._service = rospy.ServiceProxy(self._srv_name, get_next_viewpoint)
+       pass
 
     def on_exit(self, userdata):
-        pass
+        rospy.set_param("/viewpoint_planner_viewer/start_viewpoint_planning_timer", False)
 
     def on_start(self):
         pass
