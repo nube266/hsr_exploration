@@ -17,4 +17,6 @@
     <group if="$(arg use_darknet)">
         <include file="$(find hsr_launch)/launch/darknet_ros_default.launch"></include>
     </group>
+    <!-- Run rviz node -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find hsrb_rosnav_config)/launch/hsrb.rviz"/>
 </launch>
