@@ -25,6 +25,7 @@ class hsr_ResetOctomapState(EventState):
     def __init__(self, srv_name="/octomap_server/reset"):
         super(hsr_ResetOctomapState, self).__init__(outcomes=["succeeded"])
         self._srv_name = srv_name
+        rospy.wait_for_service(self._srv_name)
 
     def execute(self, userdata):
         rospy.loginfo("Reset octomap")
@@ -33,7 +34,7 @@ class hsr_ResetOctomapState(EventState):
         return "succeeded"
 
     def on_enter(self, userdata):
-        rospy.wait_for_service(self._srv_name)
+        pass
 
     def on_exit(self, userdata):
         pass

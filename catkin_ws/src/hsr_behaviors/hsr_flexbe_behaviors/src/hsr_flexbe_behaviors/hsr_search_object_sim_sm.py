@@ -15,6 +15,7 @@ from hsr_flexbe_states.hsr_viewpoint_evaluator import hsr_ViewpointEvaluatorStat
 from hsr_flexbe_states.hsr_move_to_viewpoint_state import hsr_MoveToViewpointState
 from hsr_flexbe_states.hsr_generating_candidates_state import hsr_GeneratingCandidatesState
 from hsr_flexbe_states.hsr_update_octomap_state import hsr_UpdateOctomapState
+from hsr_flexbe_states.hsr_stop_timer_state import hsr_StopTimerState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -51,7 +52,7 @@ class HSRSearchObjectSimSM(Behavior):
 
 
 	def create(self):
-		# x:458 y:434, x:140 y:190
+		# x:653 y:460, x:163 y:192
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -76,7 +77,7 @@ class HSRSearchObjectSimSM(Behavior):
 			# x:404 y:314
 			OperatableStateMachine.add('DetectObject',
 										hsr_ObjectDetectionState(target_object_1="keyboard", target_object_2="", target_object_3="", timeout=2, bounding_box_topic="/darknet_ros/bounding_boxes"),
-										transitions={'found': 'finished', 'not_found': 'GenerateCandidates'},
+										transitions={'found': 'TerminateTheSearching', 'not_found': 'GenerateCandidates'},
 										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off})
 
 			# x:681 y:175
@@ -93,7 +94,7 @@ class HSRSearchObjectSimSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'pose': 'pose'})
 
-			# x:684 y:308
+			# x:675 y:314
 			OperatableStateMachine.add('GenerateCandidates',
 										hsr_GeneratingCandidatesState(srv_name="/viewpoint_planner_3d/generating_candidates", timeout=10.0),
 										transitions={'succeeded': 'EvaluateViewpoint'},
@@ -103,6 +104,12 @@ class HSRSearchObjectSimSM(Behavior):
 			OperatableStateMachine.add('Update octomap',
 										hsr_UpdateOctomapState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
 										transitions={'succeeded': 'ChangeOrientationForObjectDetection'},
+										autonomy={'succeeded': Autonomy.Off})
+
+			# x:406 y:442
+			OperatableStateMachine.add('TerminateTheSearching',
+										hsr_StopTimerState(param_name="/viewpoint_planner_viewer/start_total_search_timer"),
+										transitions={'succeeded': 'finished'},
 										autonomy={'succeeded': Autonomy.Off})
 
 

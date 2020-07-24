@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="SetupForExperiment">
+
+	<executable package_path="hsr_flexbe_behaviors.setupforexperiment_sm" class="SetupForExperimentSM" />
+	<tagstring></tagstring>
+	<author>YusukeMiake</author>
+	<date>Fri Jul 24 2020</date>
+	<description>
+		Setup for Experiment
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>
