@@ -10,6 +10,7 @@ from flexbe_core import EventState
 from flexbe_core import Logger
 from flexbe_core.proxy import ProxyServiceCaller
 import subprocess
+from std_srvs.srv import Empty
 
 
 class hsr_ResetOctomapState(EventState):
@@ -26,11 +27,11 @@ class hsr_ResetOctomapState(EventState):
         super(hsr_ResetOctomapState, self).__init__(outcomes=["succeeded"])
         self._srv_name = srv_name
         rospy.wait_for_service(self._srv_name)
+        self._service = rospy.ServiceProxy(self._srv_name, Empty)
 
     def execute(self, userdata):
         rospy.loginfo("Reset octomap")
-        cmd = "rosservice call " + self._srv_name
-        subprocess.call(cmd.split())
+        self._service()
         return "succeeded"
 
     def on_enter(self, userdata):
