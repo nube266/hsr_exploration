@@ -7,9 +7,6 @@
 #
 import rospy
 from flexbe_core import EventState
-from flexbe_core import Logger
-from flexbe_core.proxy import ProxyServiceCaller
-import subprocess
 from std_srvs.srv import Empty
 
 

@@ -55,7 +55,7 @@ class SpawnObjectSM(Behavior):
 		with _state_machine:
 			# x:101 y:160
 			OperatableStateMachine.add('SpawnModel',
-										hsr_SpawnModelState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/book_1/model.sdf", model_name="/models/book_1/model.sdf", model_format="sdf", x=1.0, y=1.0, z=0.0),
+										hsr_SpawnModelState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/book_1/model.sdf", model_name="book_1", model_format="sdf", x=1.0, y=1.0, z=0.0),
 										transitions={'succeeded': 'finished'},
 										autonomy={'succeeded': Autonomy.Off})
 
