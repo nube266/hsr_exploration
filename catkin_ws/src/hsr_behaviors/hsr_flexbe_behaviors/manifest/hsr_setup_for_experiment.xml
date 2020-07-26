@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="SetupForExperiment">
+<behavior name="hsr_setup_for_experiment">
 
-	<executable package_path="hsr_flexbe_behaviors.setupforexperiment_sm" class="SetupForExperimentSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_setup_for_experiment_sm" class="hsr_setup_for_experimentSM" />
 	<tagstring></tagstring>
 	<author>YusukeMiake</author>
 	<date>Fri Jul 24 2020</date>

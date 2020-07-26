@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="hsr_spawn_object">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_spawn_object_sm" class="hsr_spawn_objectSM" />
+	<tagstring></tagstring>
+	<author>Yusuke Miake</author>
+	<date>Sun Jul 26 2020</date>
+	<description>
+		The behavior that causes the object to spawn
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

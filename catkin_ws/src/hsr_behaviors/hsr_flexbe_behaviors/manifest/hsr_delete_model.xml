@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="SpawnObject">
+<behavior name="hsr_delete_model">
 
-	<executable package_path="hsr_flexbe_behaviors.spawnobject_sm" class="SpawnObjectSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_delete_model_sm" class="hsr_delete_modelSM" />
 	<tagstring></tagstring>
 	<author>Yusuke Miake</author>
 	<date>Sun Jul 26 2020</date>
 	<description>
-		The behavior that causes the object to spawn
+		Delete model
 	</description>
 
 

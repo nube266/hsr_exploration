@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="InitializeForObjectSearch">
+<behavior name="hsr_initialize_for_object_search">
 
-	<executable package_path="hsr_flexbe_behaviors.initializeforobjectsearch_sm" class="InitializeForObjectSearchSM" />
+	<executable package_path="hsr_flexbe_behaviors.hsr_initialize_for_object_search_sm" class="hsr_initialize_for_object_searchSM" />
 	<tagstring></tagstring>
 	<author>Yusuke Miake</author>
 	<date>Thu Jul 23 2020</date>

@@ -22,15 +22,15 @@ from hsr_flexbe_states.hsr_restart_gmapping_state import hsr_RestartGmappingStat
 Created on Fri Jul 24 2020
 @author: YusukeMiake
 '''
-class SetupForExperimentSM(Behavior):
+class hsr_setup_for_experimentSM(Behavior):
 	'''
 	Setup for Experiment
 	'''
 
 
 	def __init__(self):
-		super(SetupForExperimentSM, self).__init__()
-		self.name = 'SetupForExperiment'
+		super(hsr_setup_for_experimentSM, self).__init__()
+		self.name = 'hsr_setup_for_experiment'
 
 		# parameters of this behavior
 

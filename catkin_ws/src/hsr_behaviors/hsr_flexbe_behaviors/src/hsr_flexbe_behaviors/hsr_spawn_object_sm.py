@@ -19,15 +19,15 @@ from hsr_flexbe_states.hsr_spawn_model_state import hsr_SpawnModelState
 Created on Sun Jul 26 2020
 @author: Yusuke Miake
 '''
-class SpawnObjectSM(Behavior):
+class hsr_spawn_objectSM(Behavior):
 	'''
 	The behavior that causes the object to spawn
 	'''
 
 
 	def __init__(self):
-		super(SpawnObjectSM, self).__init__()
-		self.name = 'SpawnObject'
+		super(hsr_spawn_objectSM, self).__init__()
+		self.name = 'hsr_spawn_object'
 
 		# parameters of this behavior
 

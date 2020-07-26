@@ -26,15 +26,15 @@ from hsr_flexbe_states.hsr_stop_timer_state import hsr_StopTimerState
 Created on Tue May 19 2020
 @author: Yusuke Miake
 '''
-class HSRSearchObjectSimSM(Behavior):
+class hsr_search_object_simSM(Behavior):
 	'''
 	Simulation of object search
 	'''
 
 
 	def __init__(self):
-		super(HSRSearchObjectSimSM, self).__init__()
-		self.name = 'HSR Search Object Sim'
+		super(hsr_search_object_simSM, self).__init__()
+		self.name = 'hsr_search_object_sim'
 
 		# parameters of this behavior
 
