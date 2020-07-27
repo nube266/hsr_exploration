@@ -55,7 +55,7 @@ class hsr_delete_modelSM(Behavior):
 		with _state_machine:
 			# x:77 y:103
 			OperatableStateMachine.add('DeleteModel',
-										hsr_DeleteModelState(model_name="book_1", srv_name="/gazebo/delete_model"),
+										hsr_DeleteModelState(model_name="cup_blue", srv_name="/gazebo/delete_model"),
 										transitions={'succeeded': 'finished'},
 										autonomy={'succeeded': Autonomy.Off})
 

@@ -15,7 +15,7 @@ class hsr_MoveToViewpointState(EventState):
     '''
     Move the HSR base to the 'request' target pose using an Actionlib action.
 
-    ># request		Pose	Target pose that the base should reach.
+    ># pose 		Pose	Target pose that the base should reach.
 
     <= succeeded			The base has succesfully moved to the target pose.
     <= failed				The base could not move to the target pose.

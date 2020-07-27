@@ -8,7 +8,8 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from hsr_flexbe_states.hsr_spawn_model_state import hsr_SpawnModelState
+from hsr_flexbe_states.hsr_get_random_target_pose_state import hsr_GetRandomTargetPoseState
+from hsr_flexbe_states.hsr_spawn_model_to_input import hsr_SpawnModelToInputState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -43,7 +44,7 @@ class hsr_spawn_objectSM(Behavior):
 
 
 	def create(self):
-		# x:395 y:170, x:365 y:253
+		# x:725 y:168, x:668 y:249
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -53,11 +54,19 @@ class hsr_spawn_objectSM(Behavior):
 
 
 		with _state_machine:
-			# x:101 y:160
+			# x:116 y:157
+			OperatableStateMachine.add('GetRandomPose',
+										hsr_GetRandomTargetPoseState(x=0.0, y=0.0, yaw=0.0),
+										transitions={'succeeded': 'SpawnModel'},
+										autonomy={'succeeded': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:406 y:158
 			OperatableStateMachine.add('SpawnModel',
-										hsr_SpawnModelState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/book_1/model.sdf", model_name="book_1", model_format="sdf", x=1.0, y=1.0, z=0.0),
+										hsr_SpawnModelToInputState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/cup_blue/model.sdf", model_name="cup_blue"),
 										transitions={'succeeded': 'finished'},
-										autonomy={'succeeded': Autonomy.Off})
+										autonomy={'succeeded': Autonomy.Off},
+										remapping={'pose': 'pose'})
 
 
 		return _state_machine
