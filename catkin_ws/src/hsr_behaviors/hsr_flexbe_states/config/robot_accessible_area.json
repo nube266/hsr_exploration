@@ -1,0 +1,32 @@
+{
+    "accessible_area": {
+        "x_min": -1.980,
+        "x_max": 2.1543,
+        "y_min": -2.829,
+        "y_max": 2.58312
+    },
+    "impassable_area_1": {
+        "x_min": 0.8940,
+        "x_max": 2.8940,
+        "y_min": 0.7040,
+        "y_max": 2.7040
+    },
+    "impassable_area_2": {
+        "x_min": 1.1551,
+        "x_max": 2.5995,
+        "y_min": -1.803,
+        "y_max": -0.5126
+    },
+    "impassable_area_3": {
+        "x_min": -1.2814,
+        "x_max": 0.25087,
+        "y_min": -2.6731,
+        "y_max": -0.7093
+    },
+    "impassable_area_4": {
+        "x_min": -1.826,
+        "x_max": -0.2880,
+        "y_min": 0.3944,
+        "y_max": 2.5390
+    }
+}

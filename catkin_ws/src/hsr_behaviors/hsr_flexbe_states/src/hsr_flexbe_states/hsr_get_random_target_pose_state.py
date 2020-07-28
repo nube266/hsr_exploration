@@ -16,7 +16,7 @@ class hsr_GetRandomTargetPoseState(EventState):
     <= succeeded
     '''
 
-    def __init__(self, x=0.0, y=0.0, yaw=0.0):
+    def __init__(self):
         super(hsr_GetRandomTargetPoseState, self).__init__(outcomes=["succeeded"], output_keys=["pose"])
 
     def execute(self, userdata):
