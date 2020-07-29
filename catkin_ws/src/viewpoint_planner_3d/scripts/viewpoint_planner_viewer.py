@@ -7,9 +7,10 @@
 #
 # Yusuke Miake
 #
-from Tkinter import *
+from Tkinter import Tk, StringVar, Label
 import rospy
 import time
+from std_msgs.msg import Float32
 
 
 class ViewpointPlannerViewerNode:
@@ -79,18 +80,21 @@ class ViewpointPlannerViewerNode:
         rospy.set_param(self._reset_param, False)
 
     def update_total_search_time(self):
-        if rospy.get_param(self._start_total_search_timer_param, False) == True:
+        if rospy.get_param(self._start_total_search_timer_param, False) is True:
             self._total_search_time += time.time() - self._last_update_total_search_time
             self.set_label(770, 0, "{:.2f} [sec]".format(self._total_search_time))
         self._last_update_total_search_time = time.time()
+        rospy.set_param("/viewpoint_planner_viewer/total_search_time", self._total_search_time)
 
     def update_total_viewpoint_planning_time(self):
-        if rospy.get_param(self._start_viewpoint_planning_timer_param, False) == True:
+        if rospy.get_param(self._start_viewpoint_planning_timer_param, False) is True:
             self._total_viewpoint_planning_time += time.time() - self._last_update_total_viewpoint_planning_time
             self.set_label(770, 45, "{:.2f} [sec]".format(self._total_viewpoint_planning_time))
         self._last_update_total_viewpoint_planning_time = time.time()
+        rospy.set_param("/viewpoint_planner_viewer/total_viewpoint_planning_time", self._total_viewpoint_planning_time)
 
     def update_number_of_moves(self):
+        rospy.set_param("/viewpoint_planner_viewer/number_of_moves", self._number_of_moves)
         if int(rospy.get_param(self._add_number_of_moves_param, 0)) == 0:
             return
         self._number_of_moves += int(rospy.get_param(self._add_number_of_moves_param, 0))
@@ -98,10 +102,11 @@ class ViewpointPlannerViewerNode:
         self.set_label(770, 90, "{:.0f}".format(self._number_of_moves))
 
     def update_total_travel_time(self):
-        if rospy.get_param(self._start_total_travel_timer_param, False) == True:
+        if rospy.get_param(self._start_total_travel_timer_param, False) is True:
             self._total_travel_time += time.time() - self._last_update_total_travel_time
             self.set_label(770, 135, "{:.2f} [sec]".format(self._total_travel_time))
         self._last_update_total_travel_time = time.time()
+        rospy.set_param("/viewpoint_planner_viewer/total_travel_time", self._total_travel_time)
 
     def check_reset_param(self):
         if rospy.get_param(self._reset_param, False) is True:
