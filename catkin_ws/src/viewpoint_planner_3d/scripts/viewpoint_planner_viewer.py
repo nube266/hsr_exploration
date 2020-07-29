@@ -25,6 +25,7 @@ class ViewpointPlannerViewerNode:
         self.initialization_total_viewpoint_planning_time_label()
         self.initialization_number_of_moves()
         self.initialization_total_travel_time()
+        self.initialization_reset_param()
 
     def main_loop(self):
         while not rospy.is_shutdown():
@@ -32,6 +33,7 @@ class ViewpointPlannerViewerNode:
             self.update_total_viewpoint_planning_time()
             self.update_number_of_moves()
             self.update_total_travel_time()
+            self.check_reset_param()
             self._root.update_idletasks()
             time.sleep(0.1)
 
@@ -72,6 +74,10 @@ class ViewpointPlannerViewerNode:
         self._last_update_total_travel_time = time.time()
         self.set_label(770, 135, "{:.2f} [sec]".format(self._total_travel_time))
 
+    def initialization_reset_param(self):
+        self._reset_param = "/viewpoint_planner_viewer/reset"
+        rospy.set_param(self._reset_param, False)
+
     def update_total_search_time(self):
         if rospy.get_param(self._start_total_search_timer_param, False) == True:
             self._total_search_time += time.time() - self._last_update_total_search_time
@@ -96,6 +102,12 @@ class ViewpointPlannerViewerNode:
             self._total_travel_time += time.time() - self._last_update_total_travel_time
             self.set_label(770, 135, "{:.2f} [sec]".format(self._total_travel_time))
         self._last_update_total_travel_time = time.time()
+
+    def check_reset_param(self):
+        if rospy.get_param(self._reset_param, False) is True:
+            self._root.destroy()
+            self.setup_window()
+            rospy.set_param(self._reset_param, False)
 
 
 if __name__ == "__main__":

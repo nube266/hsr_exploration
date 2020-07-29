@@ -15,6 +15,7 @@ from hsr_flexbe_states.hsr_reset_octomap_state import hsr_ResetOctomapState
 from flexbe_states.wait_state import WaitState
 from hsr_flexbe_states.hsr_get_random_robot_pose import hsr_GetRandomRobotPose
 from hsr_flexbe_states.hsr_spawn_model_state import hsr_SpawnModelState
+from hsr_flexbe_states.hsr_reset_viewer_state import hsr_ResetViewerState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -49,7 +50,7 @@ class hsr_setup_for_experimentSM(Behavior):
 
 
 	def create(self):
-		# x:957 y:323, x:523 y:232
+		# x:831 y:564, x:523 y:232
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -75,7 +76,7 @@ class hsr_setup_for_experimentSM(Behavior):
 			# x:510 y:317
 			OperatableStateMachine.add('ResetMap',
 										hsr_RestartGmappingState(),
-										transitions={'succeeded': 'WaitSetup'},
+										transitions={'succeeded': 'ResetViewer'},
 										autonomy={'succeeded': Autonomy.Off})
 
 			# x:275 y:318
@@ -84,7 +85,7 @@ class hsr_setup_for_experimentSM(Behavior):
 										transitions={'succeeded': 'ResetMap'},
 										autonomy={'succeeded': Autonomy.Off})
 
-			# x:768 y:315
+			# x:793 y:438
 			OperatableStateMachine.add('WaitSetup',
 										WaitState(wait_time=15),
 										transitions={'done': 'finished'},
@@ -108,6 +109,12 @@ class hsr_setup_for_experimentSM(Behavior):
 			OperatableStateMachine.add('SpawnTarget',
 										hsr_SpawnModelState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/book_1/model.sdf", model_name="book_1", model_format="sdf", x=0.0, y=0.0, z=0.0),
 										transitions={'succeeded': 'GetRandomRobotPose'},
+										autonomy={'succeeded': Autonomy.Off})
+
+			# x:763 y:322
+			OperatableStateMachine.add('ResetViewer',
+										hsr_ResetViewerState(),
+										transitions={'succeeded': 'WaitSetup'},
 										autonomy={'succeeded': Autonomy.Off})
 
 
