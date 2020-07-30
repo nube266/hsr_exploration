@@ -9,6 +9,7 @@ import hsrb_interface
 import tf
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Quaternion
+import copy
 
 
 class hsr_MoveToViewpointState(EventState):
@@ -38,13 +39,13 @@ class hsr_MoveToViewpointState(EventState):
         print("-----------------")
         if self.check_equal_pose(userdata.pose, self._previous_pose) is True:
             return "failed"
-        self._previous_pose = userdata.pose
+        self._previous_pose = copy.deepcopy(userdata.pose)
         # Set goal
         goal = PoseStamped()
         goal.header.stamp = rospy.Time.now()
         goal.header.frame_id = "map"
         # Set viewpoint pose
-        base_pose = userdata.pose
+        base_pose = copy.deepcopy(userdata.pose)
         # Set viewpoint height
         arm_lift_height = base_pose.position.z - 1.0
         base_pose.position.z = 0.0
@@ -68,9 +69,6 @@ class hsr_MoveToViewpointState(EventState):
         rospy.loginfo("[Action move_base/move] succeeded.")
         rospy.loginfo("Change the height of the viewpoint")
         self._whole_body.move_to_go()
-        print("-------------")
-        print(head_tilt_joint)
-        print("-------------")
         self._whole_body.move_to_joint_positions({"arm_lift_joint": arm_lift_height,
                                                   "head_tilt_joint": -head_tilt_joint})
         return 'succeeded'

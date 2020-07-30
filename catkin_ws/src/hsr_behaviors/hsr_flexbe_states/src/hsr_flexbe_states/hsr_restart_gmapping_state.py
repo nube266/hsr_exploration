@@ -47,5 +47,8 @@ class hsr_RestartGmappingState(EventState):
         pass
 
     def launch_gmapping(self):
+        cmd = "rosnode kill /gmapping "
+        subprocess.call(cmd.split())
+        time.sleep(2)
         cmd = "roslaunch hsrb_mapping gmapping.launch"
         subprocess.call(cmd.split())
