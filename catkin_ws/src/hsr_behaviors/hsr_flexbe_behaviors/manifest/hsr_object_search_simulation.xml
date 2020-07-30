@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="hsr_object_search_simulation">
+
+	<executable package_path="hsr_flexbe_behaviors.hsr_object_search_simulation_sm" class="hsr_object_search_simulationSM" />
+	<tagstring></tagstring>
+	<author>Yusuke Miake</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		Simulation of object search
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="hsr_initialize_for_object_search" />
+
+	<!-- Available Parameters -->
+
+</behavior>

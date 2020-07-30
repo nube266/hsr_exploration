@@ -21,12 +21,13 @@ class hsr_SaveViewerDataState(EventState):
 
     '''
 
-    def __init__(self, save_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/src/hsr_flexbe_states/data/log.csv"):
+    def __init__(self, save_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/src/hsr_flexbe_states/data/log.csv", success=True):
         super(hsr_SaveViewerDataState, self).__init__(outcomes=["succeeded"])
         self._save_path = save_path
+        self._success = success
         if os.path.isfile(self._save_path) is False:
             with open(self._save_path, mode="w") as f:
-                f.write("date,total_search_time,total_viewpoint_planning_time,number_of_moves,total_travel_time\n")
+                f.write("area_name,date,success,total_search_time,total_viewpoint_planning_time,number_of_moves,total_travel_time\n")
 
     def execute(self, userdata):
         total_search_time = rospy.get_param("/viewpoint_planner_viewer/total_search_time", 0.0)
@@ -42,8 +43,8 @@ class hsr_SaveViewerDataState(EventState):
         print("---------------------")
         with open(self._save_path, mode="a") as f:
             dt_now = datetime.datetime.now()
-            f.write("{0},{1},{2},{3},{4}\n".format(dt_now.strftime("%Y-%m-%d-%H-%M-%S"), total_search_time, total_viewpoint_planning_time,
-                                                   number_of_moves, total_travel_time))
+            f.write("{0},{1},{2},{3},{4},{5}\n".format(dt_now.strftime("%Y-%m-%d-%H-%M-%S"), self._success, total_search_time,
+                                                       total_viewpoint_planning_time, number_of_moves, total_travel_time))
         return "succeeded"
 
     def on_enter(self, userdata):

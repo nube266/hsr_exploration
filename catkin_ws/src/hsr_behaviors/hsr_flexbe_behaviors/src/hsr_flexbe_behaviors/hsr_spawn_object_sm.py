@@ -10,6 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from hsr_flexbe_states.hsr_get_random_target_pose_state import hsr_GetRandomTargetPoseState
 from hsr_flexbe_states.hsr_spawn_model_to_input import hsr_SpawnModelToInputState
+from hsr_flexbe_states.hsr_delete_model_state import hsr_DeleteModelState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -54,17 +55,23 @@ class hsr_spawn_objectSM(Behavior):
 
 
 		with _state_machine:
-			# x:116 y:157
-			OperatableStateMachine.add('GetRandomPose',
-										hsr_GetRandomTargetPoseState(x=0.0, y=0.0, yaw=0.0),
-										transitions={'succeeded': 'SpawnModel'},
-										autonomy={'succeeded': Autonomy.Off},
-										remapping={'pose': 'pose'})
+			# x:128 y:34
+			OperatableStateMachine.add('DeleteModel',
+										hsr_DeleteModelState(model_name="cup_blue", srv_name="/gazebo/delete_model"),
+										transitions={'succeeded': 'GetRandomPose'},
+										autonomy={'succeeded': Autonomy.Off})
 
 			# x:406 y:158
 			OperatableStateMachine.add('SpawnModel',
 										hsr_SpawnModelToInputState(model_path="/root/HSR/catkin_ws/src/hsr_object_search_world/models/cup_blue/model.sdf", model_name="cup_blue"),
 										transitions={'succeeded': 'finished'},
+										autonomy={'succeeded': Autonomy.Off},
+										remapping={'pose': 'pose'})
+
+			# x:116 y:157
+			OperatableStateMachine.add('GetRandomPose',
+										hsr_GetRandomTargetPoseState(),
+										transitions={'succeeded': 'SpawnModel'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'pose': 'pose'})
 

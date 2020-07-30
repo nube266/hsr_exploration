@@ -362,7 +362,7 @@ int ViewpointEvaluatorServer::countUnknownObservable(geometry_msgs::Pose viewpoi
                 node = octree_->search(*_it);
                 visualization_voxel_key.insert(*_it);
                 octomap::point3d p = octree_->keyToCoord(*_it);
-                if(p.z() < min_raycast_height && p.z() > max_raycast_height) {
+                if(p.z() < min_raycast_height || p.z() > max_raycast_height) {
                     break;
                 }
                 if(node == nullptr) {
@@ -575,7 +575,7 @@ void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoi
                 visualization_voxel_key.insert(*_it);
                 if(node == nullptr) {
                     octomap::point3d p = octree_->keyToCoord(*_it);
-                    if(p.z() < min_raycast_height && p.z() > max_raycast_height) {
+                    if(p.z() < min_raycast_height || p.z() > max_raycast_height) {
                         break;
                     }
                     pcl::PointXYZ tmp(p.x(), p.y(), p.z());

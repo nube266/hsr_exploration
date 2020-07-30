@@ -10,7 +10,7 @@ from flexbe_core import EventState
 import subprocess
 import time
 import threading
-
+from std_srvs.srv import Empty
 
 class hsr_RestartGmappingState(EventState):
     '''
@@ -22,14 +22,16 @@ class hsr_RestartGmappingState(EventState):
 
     def __init__(self):
         super(hsr_RestartGmappingState, self).__init__(outcomes=["succeeded"])
+        rospy.wait_for_service("/move_base/clear_costmaps")
+        self._clear_costmap_srv = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
 
     def execute(self, userdata):
         rospy.loginfo("Restart gmapping")
         time.sleep(2)
         thread = threading.Thread(target=self.launch_gmapping)
         thread.start()
-        rospy.wait_for_service("/gmapping/get_loggers")
-        rospy.wait_for_service("/move_base/get_loggers")
+        time.sleep(5)
+        self._clear_costmap_srv()
         return "succeeded"
 
     def on_enter(self, userdata):
@@ -45,5 +47,5 @@ class hsr_RestartGmappingState(EventState):
         pass
 
     def launch_gmapping(self):
-        cmd = "roslaunch hsrb_mapping hsrb_mapping.launch"
+        cmd = "roslaunch hsrb_mapping gmapping.launch"
         subprocess.call(cmd.split())

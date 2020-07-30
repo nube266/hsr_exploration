@@ -18,7 +18,7 @@ class hsr_MoveToViewpointState(EventState):
     ># pose 		Pose	Target pose that the base should reach.
 
     <= succeeded			The base has succesfully moved to the target pose.
-    <= failed				The base could not move to the target pose.
+    <= failed				If the robot have selected a viewpoint that the robot have already visited
     '''
 
     def __init__(self):
@@ -27,8 +27,18 @@ class hsr_MoveToViewpointState(EventState):
         self.cli.wait_for_server()
         self._robot = hsrb_interface.Robot()
         self._whole_body = self._robot.get("whole_body")
+        self._previous_pose = Pose()
 
     def execute(self, userdata):
+        print("-----------------")
+        print("next:")
+        print(userdata.pose)
+        print("current")
+        print(self._previous_pose)
+        print("-----------------")
+        if self.check_equal_pose(userdata.pose, self._previous_pose) is True:
+            return "failed"
+        self._previous_pose = userdata.pose
         # Set goal
         goal = PoseStamped()
         goal.header.stamp = rospy.Time.now()
@@ -45,11 +55,6 @@ class hsr_MoveToViewpointState(EventState):
         # Set orientaion
         q = tf.transformations.quaternion_from_euler(0.0, 0.0, euler[2])
         base_pose.orientation = Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
-        print("-----------------")
-        print("base_pose:")
-        print(base_pose)
-        print("arm_lift_height: {0}".format(arm_lift_height))
-        print("-----------------")
         goal.pose = base_pose
         send_goal = MoveBaseGoal()
         send_goal.target_pose = goal
@@ -86,3 +91,10 @@ class hsr_MoveToViewpointState(EventState):
     def quaternion_to_euler(self, quaternion):
         e = tf.transformations.euler_from_quaternion((quaternion.x, quaternion.y, quaternion.z, quaternion.w))
         return Vector3(x=e[0], y=e[1], z=e[2])
+
+    def check_equal_pose(self, p1, p2):
+        if p1.position.x == p2.position.x and p1.position.y == p2.position.y and p1.position.z == p2.position.z:
+            if p1.orientation.x == p2.orientation.x and p1.orientation.y == p2.orientation.y:
+                if p1.orientation.x == p2.orientation.z and p1.orientation.y == p2.orientation.w:
+                    return True
+        return False

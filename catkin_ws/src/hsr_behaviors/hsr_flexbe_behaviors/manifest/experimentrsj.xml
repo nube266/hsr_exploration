@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="ExperimentRSJ">
+
+	<executable package_path="hsr_flexbe_behaviors.experimentrsj_sm" class="ExperimentRSJSM" />
+	<tagstring></tagstring>
+	<author>YusukeMiake</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		For RSJ
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="hsr_setup_for_experiment" />
+	<contains name="hsr_object_search_simulation" />
+
+	<!-- Available Parameters -->
+
+</behavior>

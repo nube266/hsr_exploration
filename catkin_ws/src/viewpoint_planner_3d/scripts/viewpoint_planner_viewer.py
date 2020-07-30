@@ -10,7 +10,6 @@
 from Tkinter import Tk, StringVar, Label
 import rospy
 import time
-from std_msgs.msg import Float32
 
 
 class ViewpointPlannerViewerNode:

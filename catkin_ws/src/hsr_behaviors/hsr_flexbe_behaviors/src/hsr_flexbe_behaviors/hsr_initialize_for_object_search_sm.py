@@ -11,6 +11,7 @@ from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyC
 from hsr_flexbe_states.hsr_start_timer_state import hsr_StartTimerState
 from hsr_flexbe_states.hsr_reset_octomap_state import hsr_ResetOctomapState
 from hsr_flexbe_states.hsr_update_octomap_state import hsr_UpdateOctomapState
+from hsr_flexbe_states.hsr_move_to_neutral_state import hsr_MoveToNeutralState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -45,7 +46,7 @@ class hsr_initialize_for_object_searchSM(Behavior):
 
 
 	def create(self):
-		# x:843 y:50, x:818 y:176
+		# x:843 y:50, x:168 y:271
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -55,11 +56,11 @@ class hsr_initialize_for_object_searchSM(Behavior):
 
 
 		with _state_machine:
-			# x:104 y:41
-			OperatableStateMachine.add('Start Timer',
-										hsr_StartTimerState(param_name="/viewpoint_planner_viewer/start_total_search_timer"),
-										transitions={'succeeded': 'Reset Octomap'},
-										autonomy={'succeeded': Autonomy.Off})
+			# x:75 y:103
+			OperatableStateMachine.add('MoveToNeutral',
+										hsr_MoveToNeutralState(open_hand=False),
+										transitions={'succeeded': 'Start Timer', 'failed': 'failed'},
+										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off})
 
 			# x:328 y:41
 			OperatableStateMachine.add('Reset Octomap',
@@ -71,6 +72,12 @@ class hsr_initialize_for_object_searchSM(Behavior):
 			OperatableStateMachine.add('Update Octomap',
 										hsr_UpdateOctomapState(srv_name="/octomap_publisher/update_octomap", timeout=10.0),
 										transitions={'succeeded': 'finished'},
+										autonomy={'succeeded': Autonomy.Off})
+
+			# x:348 y:153
+			OperatableStateMachine.add('Start Timer',
+										hsr_StartTimerState(param_name="/viewpoint_planner_viewer/start_total_search_timer"),
+										transitions={'succeeded': 'Reset Octomap'},
 										autonomy={'succeeded': Autonomy.Off})
 
 
