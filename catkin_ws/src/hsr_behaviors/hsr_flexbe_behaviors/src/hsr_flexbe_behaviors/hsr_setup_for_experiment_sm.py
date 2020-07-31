@@ -17,6 +17,7 @@ from hsr_flexbe_states.hsr_reset_viewer_state import hsr_ResetViewerState
 from hsr_flexbe_states.hsr_spawn_model_to_input import hsr_SpawnModelToInputState
 from hsr_flexbe_states.hsr_set_pose_state import hsr_SetBasePoseState
 from hsr_flexbe_states.hsr_get_object_pose_state import hsr_GetObjectPoseState
+from hsr_flexbe_states.hsr_object_detection_state import hsr_ObjectDetectionState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -51,7 +52,7 @@ class hsr_setup_for_experimentSM(Behavior):
 
 
 	def create(self):
-		# x:828 y:562, x:523 y:232
+		# x:805 y:466, x:523 y:232
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -74,7 +75,7 @@ class hsr_setup_for_experimentSM(Behavior):
 										autonomy={'succeeded': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'request': 'pose'})
 
-			# x:510 y:317
+			# x:281 y:437
 			OperatableStateMachine.add('ResetMap',
 										hsr_RestartGmappingState(),
 										transitions={'succeeded': 'ResetViewer'},
@@ -86,16 +87,16 @@ class hsr_setup_for_experimentSM(Behavior):
 										transitions={'succeeded': 'ResetMap'},
 										autonomy={'succeeded': Autonomy.Off})
 
-			# x:793 y:438
+			# x:778 y:305
 			OperatableStateMachine.add('WaitSetup',
 										WaitState(wait_time=5),
 										transitions={'done': 'finished'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:769 y:321
+			# x:523 y:436
 			OperatableStateMachine.add('ResetViewer',
 										hsr_ResetViewerState(),
-										transitions={'succeeded': 'WaitSetup'},
+										transitions={'succeeded': 'ResetObjectDetector'},
 										autonomy={'succeeded': Autonomy.Off})
 
 			# x:44 y:243
@@ -118,6 +119,12 @@ class hsr_setup_for_experimentSM(Behavior):
 										transitions={'succeeded': 'SpawnTarget'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'pose': 'pose'})
+
+			# x:519 y:308
+			OperatableStateMachine.add('ResetObjectDetector',
+										hsr_ObjectDetectionState(target_object_1="", target_object_2="", target_object_3="", timeout=2.0, bounding_box_topic="/darknet_ros/bounding_boxes"),
+										transitions={'found': 'WaitSetup', 'not_found': 'WaitSetup'},
+										autonomy={'found': Autonomy.Off, 'not_found': Autonomy.Off})
 
 
 		return _state_machine

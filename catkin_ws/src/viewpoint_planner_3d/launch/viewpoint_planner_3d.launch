@@ -18,7 +18,7 @@
     <!--  Minimum of robot head position([m]) -->
     <arg name="robot_head_pos_min" default="1.00"/>
     <!--  Maximum of robot head position([m]) -->
-    <arg name="robot_head_pos_max" default="1.20"/>
+    <arg name="robot_head_pos_max" default="1.00"/>
     <!--  Resolution of viewpoint candidates in the height direction -->
     <arg name="robot_head_candidate_resolution" default="0.20"/>
     <!-- Timeout time when stopped by some processing[s] -->

@@ -90,9 +90,15 @@ class hsr_MoveToViewpointState(EventState):
         e = tf.transformations.euler_from_quaternion((quaternion.x, quaternion.y, quaternion.z, quaternion.w))
         return Vector3(x=e[0], y=e[1], z=e[2])
 
+    def isclose(self, a, b):
+        error = 10 ** -6
+        if a - error <= b <= a + error:
+            return True
+        return False
+
     def check_equal_pose(self, p1, p2):
-        if p1.position.x == p2.position.x and p1.position.y == p2.position.y and p1.position.z == p2.position.z:
-            if p1.orientation.x == p2.orientation.x and p1.orientation.y == p2.orientation.y:
-                if p1.orientation.x == p2.orientation.z and p1.orientation.y == p2.orientation.w:
+        if self.isclose(p1.position.x, p2.position.x) and self.isclose(p1.position.y, p2.position.y) and self.isclose(p1.position.z, p2.position.z):
+            if self.isclose(p1.orientation.x, p2.orientation.x) and self.isclose(p1.orientation.y, p2.orientation.y):
+                if self.isclose(p1.orientation.z, p2.orientation.z) and self.isclose(p1.orientation.w, p2.orientation.w):
                     return True
         return False
