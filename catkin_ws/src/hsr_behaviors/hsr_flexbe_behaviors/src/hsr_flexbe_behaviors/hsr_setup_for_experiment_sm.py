@@ -115,7 +115,7 @@ class hsr_setup_for_experimentSM(Behavior):
 
 			# x:52 y:125
 			OperatableStateMachine.add('GetTargetPose',
-										hsr_GetObjectPoseState(pose_list_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/config/target_object_area_01.json", save_data_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/src/hsr_flexbe_states/data/log.csv"),
+										hsr_GetObjectPoseState(pose_list_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/config/temp.json", save_data_path="/root/HSR/catkin_ws/src/hsr_behaviors/hsr_flexbe_states/src/hsr_flexbe_states/data/log.csv"),
 										transitions={'succeeded': 'SpawnTarget'},
 										autonomy={'succeeded': Autonomy.Off},
 										remapping={'pose': 'pose'})

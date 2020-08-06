@@ -43,7 +43,7 @@ void ViewpointEvaluatorServer::setParam() {
     ros::param::get("/viewpoint_evaluator/candidate_marker_lifetime", candidate_marker_lifetime);
     ros::param::get("/viewpoint_evaluator/odom_topic", odom_topic);
     ros::param::get("/viewpoint_evaluator/sensor_max_range", sensor_max_range);
-    ros::param::get("/viewpoint_evaluator/sensor_horizotal_range", sensor_horizontal_range);
+    ros::param::get("/viewpoint_evaluator/sensor_horizontal_range", sensor_horizontal_range);
     ros::param::get("/viewpoint_evaluator/sensor_vertical_range", sensor_vertical_range);
     ros::param::get("/viewpoint_evaluator/raycast_horizontal_resolution", raycast_horizontal_resolution_);
     ros::param::get("/viewpoint_evaluator/raycast_vertical_resolution", raycast_vertical_resolution_);
@@ -542,6 +542,7 @@ void ViewpointEvaluatorServer::visualizationCandidates(void) {
 
 void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoint) {
     pcl::PointCloud<pcl::PointXYZ> cloud;
+    // std::vector<geometry_msgs::Point> unknown_voxel;
     // Get end points of raycast
     std::vector<geometry_msgs::Point> ray_end_points = computeRayDirections(viewpoint);
     // Preparing for speed up ray casting
@@ -578,6 +579,11 @@ void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoi
                     if(p.z() < min_raycast_height || p.z() > max_raycast_height) {
                         break;
                     }
+                    // geometry_msgs::Point tmp;
+                    // tmp.x = p.x();
+                    // tmp.y = p.y();
+                    // tmp.z = p.z();
+                    // unknown_voxel.push_back(tmp);
                     pcl::PointXYZ tmp(p.x(), p.y(), p.z());
                     cloud.push_back(tmp);
                 } else if(octree_->isNodeOccupied(node)) {
@@ -586,6 +592,32 @@ void ViewpointEvaluatorServer::publishVisibleUnknown(geometry_msgs::Pose viewpoi
             }
         }
     }
+    // visualization_msgs::MarkerArray marker_array;
+    // int id = 0;
+    // marker_array.markers.resize(unknown_voxel.size());
+    // for(geometry_msgs::Point point : unknown_voxel) {
+    //     marker_array.markers[id].header.frame_id = "/map";
+    //     marker_array.markers[id].header.stamp = ros::Time::now();
+    //     marker_array.markers[id].ns = "/raycast";
+    //     marker_array.markers[id].id = id;
+    //     marker_array.markers[id].type = visualization_msgs::Marker::CUBE;
+    //     marker_array.markers[id].action = visualization_msgs::Marker::ADD;
+    //     marker_array.markers[id].lifetime = ros::Duration(5.0);
+    //     marker_array.markers[id].pose.position.x = point.x;
+    //     marker_array.markers[id].pose.position.y = point.y;
+    //     marker_array.markers[id].pose.position.z = point.z;
+    //     double octomap_resolution;
+    //     ros::param::get("/octomap_server/resolution", octomap_resolution);
+    //     marker_array.markers[id].scale.x = octomap_resolution;
+    //     marker_array.markers[id].scale.y = octomap_resolution;
+    //     marker_array.markers[id].scale.z = octomap_resolution;
+    //     marker_array.markers[id].color.r = 0.0f;
+    //     marker_array.markers[id].color.g = 1.0f;
+    //     marker_array.markers[id].color.b = 1.0f;
+    //     marker_array.markers[id].color.a = 1.0f;
+    //     id++;
+    // }
+    // raycast_marker_pub_.publish(marker_array);
 
     // Convert pcl::PointCloud into sensor_msgs::PointCloud
     sensor_msgs::PointCloud2 output;
