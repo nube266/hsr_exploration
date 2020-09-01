@@ -196,27 +196,6 @@ RUN cd /tmp \
 	&& make \
 	&& make install
 
-COPY jdk* /tmp/
-
-RUN cd /tmp \ 
-	&& tar -zxvf jdk-8u121-linux-x64.tar.gz \
-	&& mkdir -p /usr/lib/jvm \
-	&& mv ./jdk1.8.0_121 /usr/lib/jvm/ \
-	&& update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_121/bin/java" 1 \
-	&& update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_121/bin/javac" 1 \
-	&& update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.8.0_121/bin/javaws" 1 \
-	&& chmod a+x /usr/bin/java \
-	&& chmod a+x /usr/bin/javac \
-	&& chmod a+x /usr/bin/javaws \
-	&& chown -R root:root /usr/lib/jvm/jdk1.8.0_121 \
-	&& update-alternatives --config java \
-	&& update-alternatives --config javac \
-	&& update-alternatives --config javaws
-
-# Stanford NLP
-COPY ./stanford-corenlp-full-2015-12-09.zip /tmp/.
-RUN  cd /tmp && unzip stanford-corenlp-full-2015-12-09.zip -d /root/.
-
 RUN apt-get update && apt-get install -y pulseaudio libpulse-dev mecab libmecab-dev portaudio19-dev ros-kinetic-tf2-sensor-msgs \
 	&& rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
