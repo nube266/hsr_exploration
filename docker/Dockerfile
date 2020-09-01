@@ -5,10 +5,11 @@
 ################################################################################
 
 # Pin the versions of the core tools and packages using global arguments for improved stability.
-ARG nvidia_cudagl_version=9.0-devel-ubuntu16.04
-ARG nvidia_cudnn_version=7.1.3.16-1+cuda9.0
-#ARG ros_desktop_version=1.3.2-0xenial-20190320-232543-0800
-ARG ros_tmc_version=0.10.0-1.xenial.20181129.0043.+0000
+ARG nvidia_cudagl_version=10.1-devel-ubuntu16.04
+ARG nvidia_cudnn_version=7.6.0.64-1+cuda10.1
+ARG ros_desktop_version=1.3.2-0xenial-20200812-160911+0000
+ARG ros_tmc_version=0.11.0-1.xenial.20190426.0557.+0000
+ARG gazebo_version=7.16.1-1~xenial
 
 ################################################################################
 
@@ -21,7 +22,7 @@ ARG ros_tmc_version=0.10.0-1.xenial.20181129.0043.+0000
 FROM nvidia/cudagl:${nvidia_cudagl_version}
 
 # Install the Nvidia cuDNN library missing in the parent image.
-# https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/10.1/devel/cudnn7/Dockerfile
+# https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu16.04/10.1/devel/cudnn7/Dockerfile
 ARG nvidia_cudnn_version
 ENV NVIDIA_CUDNN_VERSION=${nvidia_cudnn_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -35,17 +36,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install ROS Kinetic Kame.
 # http://wiki.ros.org/kinetic/Installation/Ubuntu
 
+# Support Intel 3D acceleration when no Nvidia drivers are found:
+# If the argument 'nvidia_gl' is 'false', remove the configuraion files related to the GL library provided by Nvidia and re-generate '/etc/ld.so.cache' by executing 'ldconfig'.
+# This is required to avoid problems occurring when the host system does not have the GL library provided by Nvidia.
+# In addition, remove the value of the environment variable 'LD_LIBRARY_PATH' which will be inherited from the base image.
+# The variable is not necessary as long as the same information is provided by '/etc/ld.so.cache'.
+ARG nvidia_gl="true"
+RUN if [ "${nvidia_gl}" = "false" ]; then \
+		rm /etc/ld.so.conf.d/nvidia.conf /etc/ld.so.conf.d/glvnd.conf; \
+		ldconfig; \
+	fi
+ENV LD_LIBRARY_PATH=
+
 # Update the package list.
 RUN echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros-latest.list
 
 # Add the package keys.
-RUN apt-key adv --keyserver 'hkp://ha.pool.sks-keyservers.net:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # Install 'ros-kinetic-desktop-full' packages (including ROS, Rqt, Rviz, and more).
-#ARG ros_desktop_version
-#ENV ROS_DESKTOP_VERSION=${ros_desktop_version}
+ARG ros_desktop_version
+ENV ROS_DESKTOP_VERSION=${ros_desktop_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	ros-kinetic-desktop-full \
+	ros-kinetic-desktop-full=${ROS_DESKTOP_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Initialize 'rosdep'.
@@ -61,6 +74,8 @@ RUN rosdep init
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	apt-transport-https \
 	wget \
+	apt-transport-https=1.2.32 \
+	wget=1.17.1-1ubuntu1.5 \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Update the package lists.
@@ -76,11 +91,30 @@ RUN wget https://hsr-user:jD3k4G2e@packages.hsr.io/tmc.key -P /tmp \
 	&& apt-key add /tmp/gazebo.key \
 	&& rm /tmp/gazebo.key
 
-# Install the Toyota Motor Corporation ROS packages (including the simulator).
+# Install the main Toyota Motor Corporation ROS packages.
 ARG ros_tmc_version
 ENV ROS_TMC_VERSION=${ros_tmc_version}
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	ros-kinetic-tmc-desktop-full=${ROS_TMC_VERSION} \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install additional Toyota Motor Corporation ROS packages not included in 'ros-kinetic-tmc-desktop-full'.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	ros-kinetic-hsrb-moveit=0.6.0-1.xenial.20190425.1022.+0000 \
+	ros-kinetic-hsrb-moveit-config=0.6.0-1.xenial.20190425.1022.+0000 \
+	ros-kinetic-hsrb-moveit-plugins=0.6.0-1.xenial.20190425.1022.+0000 \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Upgrade 'gazebo7' to a version >= 7.4.0:
+# This package is installed as a dependency of 'ros-kinetic-gazebo-dev' when installing 'ros-kinetic-desktop-full'.
+# However, its version is 7.0.0 (2018-07-12), which has a problem making 'gzserver' crashing on specific environments such as virtual or remote machines.
+# This problem is solved in version 7.4.0 and later according to https://bitbucket.org/osrf/gazebo/issues/1837/vmware-rendering-z-ordering-appears-random#comment-31716451.
+# The latest 7.x.x version is included in the repository 'http://packages.osrfoundation.org/gazebo/ubuntu-stable' added when installing the Toyota HSR packages.
+RUN apt-get update && apt-cache policy gazebo7 git python-catkin-tools
+ARG gazebo_version
+ENV GAZEBO_VERSION=${gazebo_version}
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	gazebo7=${GAZEBO_VERSION} \
 	&& rm -rf /var/lib/apt/lists/*
 
 ################################################################################
