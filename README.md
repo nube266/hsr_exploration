@@ -1,7 +1,7 @@
 # README
 ## 概要
 HSRによる物体探索を行うためのリポジトリ  
-./paper以下に資料を追加  
+./paper以下に資料がある  
 [論文](paper/rsj_2020_submit.pdf)  
 [スライド](paper/rsj_presentation.pptx)  
 <br/>
